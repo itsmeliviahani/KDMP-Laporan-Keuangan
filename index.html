@@ -183,8 +183,8 @@
       </select>
     </div>
     <div class="auth-field">
-      <label>E-Mail</label>
-      <input type="text" id="loginUsername" placeholder="contoh: budi@gmail.com" autocomplete="username">
+      <label>Username</label>
+      <input type="text" id="loginUsername" placeholder="Masukkan username" autocomplete="username">
     </div>
     <div class="auth-field">
       <label>Password</label>
@@ -217,16 +217,15 @@
       </select>
     </div>
     <div class="auth-field">
-      <label>E-Mail</label>
-      <input type="email" id="regEmail" placeholder="contoh: budi@gmail.com" autocomplete="email">
+      <label>Username</label>
+      <input type="text" id="regEmail" placeholder="Masukkan username baru" autocomplete="username">
     </div>
     <div class="auth-field">
-      <label>Password (Tanggal Lahir)</label>
+      <label>Password</label>
       <div class="password-wrap">
-        <input type="password" id="regPassword" placeholder="Format: YYYY/MM/DD" autocomplete="new-password">
+        <input type="password" id="regPassword" placeholder="Masukkan password baru" autocomplete="new-password">
         <span class="toggle-eye" onclick="togglePassword('regPassword', this)">👁️</span>
       </div>
-      <small style="color:#777; margin-top:5px; display:block; font-size:12px;">Gunakan format Tahun/Bulan/Tanggal (contoh: 1995/12/31).</small>
     </div>
     
     <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
@@ -243,13 +242,13 @@
     <div id="resetSuccess" class="auth-msg success"></div>
 
     <div class="auth-field">
-      <label>E-Mail</label>
-      <input type="email" id="resetEmail" placeholder="contoh: budi@gmail.com" readonly style="background:#f5f5f5; color:#666;">
+      <label>Username</label>
+      <input type="text" id="resetEmail" placeholder="Masukkan username" readonly style="background:#f5f5f5; color:#666;">
     </div>
     <div class="auth-field">
-      <label>Password Baru (Tanggal Lahir)</label>
+      <label>Password Baru</label>
       <div class="password-wrap">
-        <input type="password" id="resetPasswordInput" placeholder="Format: YYYY/MM/DD" autocomplete="new-password">
+        <input type="password" id="resetPasswordInput" placeholder="Masukkan password baru" autocomplete="new-password">
         <span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span>
       </div>
     </div>
@@ -322,8 +321,8 @@
     <section id="view-beli" class="view">
       <h2 class="panel-title">🛒 Pembelian</h2>
       <div class="mode-switch">
-        <button data-mode="existing" class="active">📦 Barang terdaftar</button>
-        <button data-mode="new">🆕 Barang baru</button>
+        <button id="btnModeExisting" data-mode="existing" class="active">📦 Barang terdaftar</button>
+        <button id="btnModeNew" data-mode="new">🆕 Barang baru</button>
       </div>
       <div class="form-card">
         <div class="grid">
@@ -792,7 +791,7 @@ async function handleLogin() {
   
   if (!u || !p) {
     errBox.className = "auth-msg error";
-    errBox.innerHTML = "Email dan Password harus diisi.";
+    errBox.innerHTML = "Username dan Password harus diisi.";
     return;
   }
 
@@ -808,8 +807,13 @@ async function handleLogin() {
       showApp(user);
     } else {
       errBox.className = "auth-msg error";
-      errBox.innerHTML = `${res.message || "Email atau password salah."} <br>
-        <a onclick="openResetForm('${esc(u)}')" style="cursor:pointer; color:#c62828; text-decoration:underline; font-size:12px; display:inline-block; margin-top:5px;">Lupa password? Ubah di sini</a>`;
+      let linkHtml = "";
+      if (res.status === "user_not_found") {
+        linkHtml = `<br><a onclick="toggleAuth('register')" style="cursor:pointer; color:#c62828; text-decoration:underline; font-size:12px; display:inline-block; margin-top:5px;">Username tidak ditemukan. Daftar di sini</a>`;
+      } else if (res.status === "wrong_password") {
+        linkHtml = `<br><a onclick="openResetForm('${esc(u)}')" style="cursor:pointer; color:#c62828; text-decoration:underline; font-size:12px; display:inline-block; margin-top:5px;">Lupa password? Ubah di sini</a>`;
+      }
+      errBox.innerHTML = `${res.message || "Gagal login."} ${linkHtml}`;
     }
   } catch (err) {
     errBox.className = "auth-msg error";
@@ -836,10 +840,9 @@ async function handleResetPassword() {
   errBox.className = "auth-msg";
   successBox.className = "auth-msg";
 
-  const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
-  if (!dateRegex.test(newPassword)) {
+  if (!newPassword) {
     errBox.className = "auth-msg error";
-    errBox.textContent = "Format password harus YYYY/MM/DD (contoh: 1995/12/31).";
+    errBox.textContent = "Password baru wajib diisi.";
     return;
   }
 
@@ -881,14 +884,7 @@ async function handleRegister() {
 
   if (!email || !password) {
     errBox.className = "auth-msg error";
-    errBox.textContent = "Email dan Password wajib diisi.";
-    return;
-  }
-
-  const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
-  if (!dateRegex.test(password)) {
-    errBox.className = "auth-msg error";
-    errBox.textContent = "Format password harus YYYY/MM/DD (contoh: 1995/12/31).";
+    errBox.textContent = "Username dan Password wajib diisi.";
     return;
   }
 
@@ -925,6 +921,7 @@ function showApp(user) {
   $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) 
     <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
   
+  // Sembunyikan tab manajer jika login sebagai karyawan
   document.querySelectorAll("nav.tabs button").forEach(btn => {
     if (btn.dataset.role === "manajer" && user.role !== "manajer") {
       btn.style.display = "none";
@@ -932,6 +929,14 @@ function showApp(user) {
       btn.style.display = "block";
     }
   });
+
+  // Sembunyikan opsi "Barang terdaftar" jika Karyawan
+  if (user.role === "karyawan") {
+    $("btnModeExisting").style.display = "none";
+    beliMode = "new"; // Paksa mode new
+  } else {
+    $("btnModeExisting").style.display = "block";
+  }
 
   switchTab("stok");
   applyBeliMode();
@@ -1074,6 +1079,9 @@ function expiredBadge(item) {
 function renderTable() {
   const q = $("search").value.toLowerCase().trim();
   const f = $("filter").value;
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  const isManajer = auth.role === "manajer";
+
   let list = items.filter(i => {
     if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
     if (f === "low" && !(i.stok > 0 && i.stok <= i.min)) return false;
@@ -1097,6 +1105,11 @@ function renderTable() {
       ? '<span class="badge zero">kosong</span>'
       : low ? '<span class="badge low">menipis</span>'
             : '<span class="sub">tersedia</span>';
+            
+    const btnRestock = isManajer ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : '';
+    const btnEdit = isManajer ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : '';
+    const btnDel = isManajer ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : '';
+
     return `<tr class="${cls}">
       <td><div class="name">${esc(i.nama)}</div><div class="sub">${label}</div></td>
       <td>${esc(i.kategori || "-")}</td>
@@ -1104,10 +1117,10 @@ function renderTable() {
       <td style="text-align:right" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
       <td>${expiredBadge(i)}</td>
       <td><div class="actions">
-        <button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>
+        ${btnRestock}
         <button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>
-        <button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>
-        <button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>
+        ${btnEdit}
+        ${btnDel}
       </div></td>
     </tr>`;
   }).join("");
