@@ -73,7 +73,6 @@
   td{padding:9px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
   tr:last-child td{border-bottom:none}
   tr:hover{background:#fffafa}
-  tr.low{background:#fff8e1}
   tr.exp{background:#ffebee}
   .name{font-weight:600}
   .sub{font-size:11px;color:#777}
@@ -81,12 +80,10 @@
   .badge.ok{background:#e8f5e9;color:#2e7d32}
   .badge.soon{background:#fff8e1;color:#ef6c00}
   .badge.exp{background:#ffebee;color:#c62828}
-  .badge.low{background:#ffebee;color:#c62828}
   .badge.zero{background:#eeeeee;color:#666}
   .badge.in{background:#e8f5e9;color:#2e7d32}
   .badge.out{background:#ffebee;color:#c62828}
   .qty{font-weight:700;font-variant-numeric:tabular-nums}
-  .qty.low{color:#c62828}
   .price{font-variant-numeric:tabular-nums;font-size:12.5px}
   .money-pos{color:#2e7d32;font-weight:700;font-variant-numeric:tabular-nums}
   .money-neg{color:#c62828;font-weight:700;font-variant-numeric:tabular-nums}
@@ -104,7 +101,6 @@
   .preview{margin-top:12px;padding:10px 12px;border-radius:7px;background:#fff5f5;
     border:1px solid #ffcdd2;font-size:12.5px;color:#8a1c1c}
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
-  .preview.err{background:#ffebee;border-color:#ef9a9a;color:#b71c1c}
   #toast{position:fixed;bottom:16px;right:16px;background:#222;color:#fff;
     padding:10px 14px;border-radius:7px;font-size:13px;display:none;max-width:340px;z-index:999}
   #toast.ok{background:#2e7d32}
@@ -156,8 +152,6 @@
   .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
 
   /* --- POS (KASIR) STYLES --- */
-  .pos-container{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start}
-  @media(max-width:800px){.pos-container{grid-template-columns:1fr}}
   .cart-table{min-width:100% !important;}
   .cart-table th,.cart-table td{padding:8px 10px;font-size:13px}
   .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:15px}
@@ -172,6 +166,8 @@
     .grid{grid-template-columns:1fr}
     nav.tabs button{padding:10px 10px;font-size:12px}
     .auth-card{padding:25px;}
+    .summary-row{flex-direction:column; align-items:flex-start; gap:5px;}
+    .summary-input{width:100% !important;}
   }
 </style>
 </head>
@@ -180,13 +176,11 @@
 <!-- ============ LOGIN & REGISTER & RESET SCREEN ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
   
-  <!-- FORM LOGIN -->
   <div class="auth-card" id="formLogin">
     <div class="auth-header">
       <h2>Login KDMP Kapas</h2>
       <p>Belum punya akun? <a onclick="toggleAuth('register')">Daftar di sini</a></p>
     </div>
-    
     <div class="auth-field">
       <label>Masuk Sebagai</label>
       <select id="loginRole">
@@ -205,22 +199,17 @@
         <span class="toggle-eye" onclick="togglePassword('loginPassword', this)">👁️</span>
       </div>
     </div>
-    
     <div id="loginError" class="auth-msg error"></div>
-    
     <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
   </div>
 
-  <!-- FORM REGISTER -->
   <div class="auth-card" id="formRegister" style="display:none;">
     <div class="auth-header">
       <h2>Daftar Akun Baru</h2>
       <p>Sudah punya akun? <a onclick="toggleAuth('login')">Masuk di sini</a></p>
     </div>
-    
     <div id="regError" class="auth-msg error"></div>
     <div id="regSuccess" class="auth-msg success"></div>
-
     <div class="auth-field">
       <label>Daftar Sebagai</label>
       <select id="regRole">
@@ -239,20 +228,16 @@
         <span class="toggle-eye" onclick="togglePassword('regPassword', this)">👁️</span>
       </div>
     </div>
-    
     <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
   </div>
 
-  <!-- FORM RESET PASSWORD -->
   <div class="auth-card" id="formResetPassword" style="display:none;">
     <div class="auth-header">
       <h2>Ubah Password</h2>
       <p>Masukkan password baru Anda</p>
     </div>
-    
     <div id="resetError" class="auth-msg error"></div>
     <div id="resetSuccess" class="auth-msg success"></div>
-
     <div class="auth-field">
       <label>Username</label>
       <input type="text" id="resetEmail" placeholder="Masukkan username" readonly style="background:#f5f5f5; color:#666;">
@@ -264,14 +249,11 @@
         <span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span>
       </div>
     </div>
-    
     <button class="auth-btn" id="btnReset" onclick="handleResetPassword()">Simpan Password Baru</button>
-    
     <div class="toggle-link" style="text-align:center; margin-top:15px; font-size:13px;">
       <a onclick="toggleAuth('login')" style="color:#c62828; text-decoration:none; font-weight:600; cursor:pointer;">Kembali ke Login</a>
     </div>
   </div>
-
 </div>
 
 <!-- ============ MAIN APP ============ -->
@@ -306,7 +288,6 @@
         <input type="text" id="search" placeholder="Cari barang…">
         <select id="filter">
           <option value="all">Semua</option>
-          <option value="low">Menipis</option>
           <option value="zero">Kosong</option>
           <option value="exp">Kedaluwarsa</option>
         </select>
@@ -383,10 +364,6 @@
               <option value="set">set</option><option value="rim">rim</option>
             </select>
           </div>
-          <div class="field" id="bMinWrap" style="display:none">
-            <label>Stok minimum</label>
-            <input type="number" id="bMin" min="0" value="5">
-          </div>
           <div class="field" id="bHargaWrap" style="display:none">
             <label>Harga beli (Rp)</label>
             <input type="number" id="bHarga" min="0" value="0">
@@ -420,69 +397,69 @@
     <section id="view-jual" class="view">
       <h2 class="panel-title">💰 Penjualan (Kasir)</h2>
       
-      <div class="pos-container">
-        <!-- Kiri: Pilih Barang -->
-        <div class="form-card" style="max-width:100%">
-          <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c">Tambah Barang</h3>
-          <div class="field full">
+      <!-- Form Input Barang (Atas) -->
+      <div class="form-card" style="max-width:100%; margin-bottom:20px;">
+        <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c">Tambah Barang</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+          <div class="field" style="flex:2; min-width:250px">
             <label>Cari & Pilih Barang</label>
             <select id="kItem"></select>
           </div>
-          <div class="field" style="margin-top:10px">
+          <div class="field" style="flex:1; min-width:100px">
             <label>Jumlah (Qty)</label>
             <input type="number" id="kQty" min="1" value="1">
           </div>
-          <button id="btnAddToCart" style="margin-top:15px; width:100%; background:#1976d2; border-color:#1976d2">➕ Tambah ke Keranjang</button>
+          <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">➕ Tambah ke Keranjang</button>
+        </div>
+      </div>
+
+      <!-- Invoice / Keranjang (Bawah) -->
+      <div>
+        <div class="table-wrap" style="min-height:200px">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Nama Barang</th>
+                <th style="text-align:right">Harga</th>
+                <th style="text-align:center">Qty</th>
+                <th style="text-align:right">Subtotal</th>
+                <th style="text-align:center">Hapus</th>
+              </tr>
+            </thead>
+            <tbody id="cartBody">
+              <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
+            </tbody>
+          </table>
         </div>
 
-        <!-- Kanan: Keranjang & Pembayaran -->
-        <div>
-          <div class="table-wrap" style="min-height:200px">
-            <table class="cart-table">
-              <thead>
-                <tr>
-                  <th>Nama Barang</th>
-                  <th style="text-align:right">Harga</th>
-                  <th style="text-align:center">Qty</th>
-                  <th style="text-align:right">Subtotal</th>
-                  <th style="text-align:center">Hapus</th>
-                </tr>
-              </thead>
-              <tbody id="cartBody">
-                <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
-              </tbody>
-            </table>
+        <div class="pos-summary">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="posSubtotal">Rp 0</span>
+          </div>
+          <div class="summary-row">
+            <span>Diskon (Rp):</span>
+            <input type="number" id="posDiskon" class="summary-input" min="0" value="0" oninput="calculateTotal()">
+          </div>
+          <div class="summary-row total">
+            <span>Total Bayar:</span>
+            <span id="posTotal">Rp 0</span>
+          </div>
+          <div class="summary-row" style="margin-top:15px; align-items:center;">
+            <span>Uang Tunai:</span>
+            <input type="number" id="posTunai" class="summary-input" min="0" value="0" oninput="calculateTotal()" style="font-size:16px; font-weight:bold; color:#2e7d32">
+          </div>
+          <div class="summary-row">
+            <span>Kembalian:</span>
+            <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
+          </div>
+          
+          <div class="field full" style="margin-top:15px">
+            <label>Nama Kasir</label>
+            <input type="text" id="kNote" placeholder="Nama kasir/petugas">
           </div>
 
-          <div class="pos-summary">
-            <div class="summary-row">
-              <span>Subtotal:</span>
-              <span id="posSubtotal">Rp 0</span>
-            </div>
-            <div class="summary-row">
-              <span>Diskon (Rp):</span>
-              <input type="number" id="posDiskon" class="summary-input" min="0" value="0" oninput="calculateTotal()">
-            </div>
-            <div class="summary-row total">
-              <span>Total Bayar:</span>
-              <span id="posTotal">Rp 0</span>
-            </div>
-            <div class="summary-row" style="margin-top:15px; align-items:center;">
-              <span>Uang Tunai:</span>
-              <input type="number" id="posTunai" class="summary-input" min="0" value="0" oninput="calculateTotal()" style="font-size:16px; font-weight:bold; color:#2e7d32">
-            </div>
-            <div class="summary-row">
-              <span>Kembalian:</span>
-              <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
-            </div>
-            
-            <div class="field full" style="margin-top:15px">
-              <label>Nama Kasir</label>
-              <input type="text" id="kNote" placeholder="Nama kasir/petugas">
-            </div>
-
-            <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
-          </div>
+          <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
         </div>
       </div>
     </section>
@@ -670,13 +647,13 @@
         <h3>Tab Penjualan (Kasir)</h3>
         <p>Khusus untuk melayani pembeli dengan banyak barang sekaligus:</p>
         <ol>
-          <li>Pilih barang dari dropdown, isi jumlah, lalu klik <b>➕ Tambah ke Keranjang</b>.</li>
-          <li>Ulangi langkah 1 jika pembeli membeli barang lain.</li>
+          <li>Di bagian <b>Tambah Barang</b> (atas), pilih barang, isi jumlah, lalu klik <b>➕ Tambah ke Keranjang</b>.</li>
+          <li>Ulangi langkah 1 jika pembeli membeli barang lain. Daftar belanja akan muncul di tabel bawah.</li>
           <li>Di bagian bawah, isi <b>Diskon</b> (jika ada).</li>
           <li>Masukkan <b>Uang Tunai</b> yang diserahkan pembeli. Sistem akan otomatis menghitung <b>Kembalian</b>.</li>
           <li>Isi <b>Nama Kasir</b>, lalu klik <b>💳 Proses Pembayaran</b>.</li>
         </ol>
-        <p>Stok semua barang di keranjang akan otomatis berkurang dan tercatat di Riwayat.</p>
+        <p>Setelah diproses, stok barang otomatis berkurang, dan pendapatan penjualan akan langsung masuk ke Laporan Laba Rugi.</p>
 
         <h3>HPP Metode FIFO</h3>
         <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
@@ -1091,7 +1068,6 @@ function renderTable() {
 
   let list = items.filter(i => {
     if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
-    if (f === "low" && !(i.stok > 0 && i.stok <= i.min)) return false;
     if (f === "zero" && i.stok !== 0) return false;
     if (f === "exp") { const d = daysLeft(i.expired); if (!(d !== null && d < 0)) return false; }
     return true;
@@ -1105,13 +1081,11 @@ function renderTable() {
   tb.innerHTML = list.map(i => {
     const d = daysLeft(i.expired);
     const zero = i.stok === 0;
-    const low = !zero && i.stok <= i.min;
     const exp = d !== null && d < 0;
-    const cls = exp ? "exp" : (low ? "low" : "");
+    const cls = exp ? "exp" : "";
     const label = zero
       ? '<span class="badge zero">kosong</span>'
-      : low ? '<span class="badge low">menipis</span>'
-            : '<span class="sub">tersedia</span>';
+      : '<span class="sub">tersedia</span>';
             
     const btnRestock = isManajer ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : '';
     const btnEdit = isManajer ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : '';
@@ -1120,7 +1094,7 @@ function renderTable() {
     return `<tr class="${cls}">
       <td><div class="name">${esc(i.nama)}</div><div class="sub">${label}</div></td>
       <td>${esc(i.kategori || "-")}</td>
-      <td style="text-align:right"><span class="qty ${low ? "low" : ""}">${i.stok}</span> <span class="sub">${esc(i.satuan)}</span></td>
+      <td style="text-align:right"><span class="qty">${i.stok}</span> <span class="sub">${esc(i.satuan)}</span></td>
       <td style="text-align:right" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
       <td>${expiredBadge(i)}</td>
       <td><div class="actions">
@@ -1191,7 +1165,6 @@ async function submitEdit() {
     kategori: $("eKategori").value,
     satuan: $("eSatuan").value,
     stok: item.stok, 
-    min: item.min, 
     harga: item.harga, 
     harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
     expired: item.expired, 
@@ -1225,7 +1198,7 @@ function applyBeliMode() {
   ["bExistingWrap","bQtyExistingWrap","bHargaBaruWrap","bExpiredBaruWrap"].forEach(id => {
     $(id).style.display = isNew ? "none" : "flex";
   });
-  ["bNewWrap","bKategoriWrap","bSatuanWrap","bMinWrap","bHargaWrap","bHargaJualWrap","bExpiredWrap","bQtyNewWrap"].forEach(id => {
+  ["bNewWrap","bKategoriWrap","bSatuanWrap","bHargaWrap","bHargaJualWrap","bExpiredWrap","bQtyNewWrap"].forEach(id => {
     $(id).style.display = isNew ? "flex" : "none";
   });
   updateBeliPreview();
@@ -1273,7 +1246,6 @@ async function submitBeli() {
       kategori: $("bKategori").value,
       satuan: $("bSatuan").value,
       stok: qty,
-      min: Math.max(0, parseInt($("bMin").value, 10) || 0),
       harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
       harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0),
       expired: $("bExpired").value || "",
@@ -1346,7 +1318,6 @@ function resetBeliNew() {
   $("bNama").value = "";
   $("bKategori").value = "Makanan";
   $("bSatuan").value = "pcs";
-  $("bMin").value = 5;
   $("bHarga").value = 0;
   $("bHargaJual").value = 0;
   $("bExpired").value = "";
