@@ -875,6 +875,7 @@ async function handleResetPassword() {
 async function handleRegister() {
   const email = $("regEmail").value.trim();
   const password = $("regPassword").value.trim();
+  const role = $("regRole").value; // Ambil value role dari dropdown
   const btn = $("btnRegister");
   const errBox = $("regError");
   const successBox = $("regSuccess");
@@ -892,7 +893,8 @@ async function handleRegister() {
   btn.disabled = true;
 
   try {
-    const res = await api({ action: "register", data: { email, password } }, "POST");
+    // Kirim role ke backend
+    const res = await api({ action: "register", data: { email, password, role } }, "POST");
     if (res.ok) {
       successBox.className = "auth-msg success";
       successBox.textContent = res.message;
