@@ -18,6 +18,7 @@
   .login-card .field input{width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;font-size:13.5px;font-family:inherit}
   .login-card button{width:100%;padding:12px;font-size:14px;border-radius:7px;background:#c62828;color:#fff;border:none;font-weight:600;cursor:pointer;margin-top:10px}
   .login-card button:hover{background:#b71c1c}
+  .login-card button:disabled{background:#e57373;cursor:not-allowed}
 
   /* --- MAIN APP --- */
   header{background:#c62828;color:#fff;padding:14px 18px;
@@ -26,6 +27,7 @@
   header small{opacity:.85;font-size:12px}
   #status{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px}
   .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .user-actions a{color:#fff;text-decoration:underline;cursor:pointer;font-size:12px;margin-left:8px;}
   nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e0e0e0;overflow-x:auto}
   nav.tabs button{background:none;border:none;padding:12px 14px;font-size:13px;
     font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;
@@ -128,6 +130,14 @@
   .guide th{background:#ffebee;color:#b71c1c;padding:8px 10px;text-align:left;font-size:12px;border:1px solid #e0e0e0}
   .guide td{padding:8px 10px;border:1px solid #e0e0e0}
 
+  /* --- MODAL --- */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);
+    display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
+  .modal-backdrop.show{display:flex}
+  .modal{background:#fff;border-radius:12px;padding:22px;max-width:400px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
+
   @media(max-width:600px){
     header h1{font-size:15px}
     .grid{grid-template-columns:1fr}
@@ -146,17 +156,17 @@
     </div>
     <div class="field">
       <label>Username</label>
-      <input type="text" id="loginUsername" placeholder="manajer / karyawan" autocomplete="username">
+      <input type="text" id="loginUsername" placeholder="Masukkan username" autocomplete="username">
     </div>
     <div class="field">
       <label>Password</label>
       <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
     </div>
     <div id="loginError" style="display:none; color:#c62828; font-size:12px; margin-top:5px;">Username atau password salah.</div>
-    <button onclick="handleLogin()">Masuk</button>
+    <button id="btnLogin" onclick="handleLogin()">Masuk</button>
     
     <div style="margin-top:20px; font-size:11px; color:#888; text-align:center; line-height:1.5;">
-      <b>Akun Default:</b><br>
+      <b>Akun Default (dapat diubah di Google Sheets):</b><br>
       Manajer: <code>manajer</code> / <code>manajer123</code><br>
       Karyawan: <code>karyawan</code> / <code>karyawan123</code>
     </div>
@@ -171,8 +181,8 @@
       <small>Stok & Laporan Keuangan · FIFO</small>
     </div>
     <div class="topbar-actions">
-      <span id="userInfo" style="font-size:12px; font-weight:600;"></span>
-      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent;" data-hint="Keluar dari akun">Keluar</button>
+      <span id="userInfo" class="user-actions" style="font-size:12px; font-weight:600;"></span>
+      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent;">Keluar</button>
       <span id="status">Menghubungkan…</span>
     </div>
   </header>
@@ -509,7 +519,7 @@
           <li><b>Manajer</b> — memiliki akses penuh ke semua fitur (termasuk Edit Barang, Laporan, dan Riwayat).</li>
           <li><b>Karyawan</b> — hanya bisa mengakses Stok, Pembelian, Penjualan, dan Keuangan.</li>
         </ul>
-        <p>Untuk mengubah username atau password, edit objek <code>ACCOUNTS</code> di dalam file <code>index.html</code>.</p>
+        <p>Data akun (Username, Password, Role) disimpan di tab <b>PENGGUNA</b> di Google Sheets Anda. Anda bisa menambah, menghapus, atau mengganti password langsung dari Google Sheets kapan saja.</p>
 
         <h3>Alur kerja singkat</h3>
         <ol>
@@ -580,19 +590,32 @@
   </main>
 </div>
 
+<!-- ============ MODAL GANTI PASSWORD ============ -->
+<div class="modal-backdrop" id="modalPassword">
+  <div class="modal">
+    <h3>Ganti Sandi</h3>
+    <div class="field" style="margin-bottom:10px">
+      <label>Password Lama</label>
+      <input type="password" id="oldPassword" placeholder="Masukkan password lama">
+    </div>
+    <div class="field" style="margin-bottom:15px">
+      <label>Password Baru</label>
+      <input type="password" id="newPassword" placeholder="Masukkan password baru">
+    </div>
+    <div class="actions-row" style="justify-content:flex-end; margin-top:0">
+      <button class="ghost" onclick="closeModalPassword()">Batal</button>
+      <button onclick="submitChangePassword()">Simpan Sandi</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 /* =========================================================
-   KONFIGURASI LOGIN & API
+   KONFIGURASI API (GANTI DENGAN URL APPS SCRIPT)
    ========================================================= */
-const ACCOUNTS = {
-  manajer: { password: "manajer123", role: "manajer" },
-  karyawan: { password: "karyawan123", role: "karyawan" }
-};
-
-// GANTI DENGAN URL WEB APP APPS SCRIPT (berakhiran /exec)
-const API_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
+const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
 
 const K_KASIR = "kdmpkapas_kasir";
 const K_SUPPLIER = "kdmpkapas_supplier";
@@ -616,6 +639,17 @@ const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const dateFromStr = s => new Date(String(s).replace(" ", "T"));
 const pad2 = n => String(n).padStart(2, "0");
 
+/* ---------- API CALLER ---------- */
+async function api(payload = null, method = "GET", query = "") {
+  const opts = method === "GET"
+    ? { method: "GET" }
+    : { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) };
+  const url = method === "GET" ? API_URL + "?" + query + "&t=" + Date.now() : API_URL;
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+
 /* ---------- AUTHENTICATION ---------- */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
@@ -628,23 +662,47 @@ function checkAuth() {
   }
 }
 
-function handleLogin() {
-  const u = $("loginUsername").value.trim().toLowerCase();
+async function handleLogin() {
+  const u = $("loginUsername").value.trim();
   const p = $("loginPassword").value;
-  if (ACCOUNTS[u] && ACCOUNTS[u].password === p) {
-    const user = { username: u, role: ACCOUNTS[u].role };
-    localStorage.setItem("kdmp_auth", JSON.stringify(user));
-    $("loginError").style.display = "none";
-    showApp(user);
-  } else {
-    $("loginError").style.display = "block";
+  const btn = $("btnLogin");
+  const errBox = $("loginError");
+  
+  if (!u || !p) {
+    errBox.style.display = "block";
+    errBox.textContent = "Username dan password harus diisi.";
+    return;
+  }
+
+  errBox.style.display = "none";
+  btn.textContent = "Memproses...";
+  btn.disabled = true;
+
+  try {
+    const res = await api({ action: "login", username: u, password: p }, "POST");
+    if (res.ok) {
+      const user = { username: u, role: res.role };
+      localStorage.setItem("kdmp_auth", JSON.stringify(user));
+      showApp(user);
+    } else {
+      errBox.style.display = "block";
+      errBox.textContent = res.message || "Username atau password salah.";
+    }
+  } catch (err) {
+    errBox.style.display = "block";
+    errBox.textContent = "Gagal terhubung ke server. Periksa koneksi internet.";
+  } finally {
+    btn.textContent = "Masuk";
+    btn.disabled = false;
   }
 }
 
 function showApp(user) {
   $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
-  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'})`;
+  
+  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) 
+    <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
   
   // Sembunyikan tab manajer jika login sebagai karyawan
   document.querySelectorAll("nav.tabs button").forEach(btn => {
@@ -656,7 +714,6 @@ function showApp(user) {
   });
 
   switchTab("stok");
-  
   applyBeliMode();
   updateKategoriOptions();
   loadNames();
@@ -667,6 +724,40 @@ function showApp(user) {
 function logout() {
   localStorage.removeItem("kdmp_auth");
   location.reload();
+}
+
+/* ---------- GANTI PASSWORD MODAL ---------- */
+function openChangePassword() {
+  $("oldPassword").value = "";
+  $("newPassword").value = "";
+  $("modalPassword").classList.add("show");
+}
+function closeModalPassword() {
+  $("modalPassword").classList.remove("show");
+}
+async function submitChangePassword() {
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  const oldP = $("oldPassword").value;
+  const newP = $("newPassword").value;
+  if (!oldP || !newP) { toast("Isi kedua kolom.", "err"); return; }
+  
+  try {
+    const res = await api({ 
+      action: "change_password", 
+      username: auth.username, 
+      oldPassword: oldP, 
+      newPassword: newP 
+    }, "POST");
+    
+    if (res.ok) {
+      toast(res.message, "ok");
+      closeModalPassword();
+    } else {
+      toast(res.message, "err");
+    }
+  } catch (e) {
+    toast("Gagal terhubung ke server.", "err");
+  }
 }
 
 /* ---------- TOAST & STATUS ---------- */
@@ -682,15 +773,6 @@ function setStatus(text, ok = true) {
   const el = $("status");
   el.textContent = text;
   el.style.background = ok ? "rgba(255,255,255,.18)" : "rgba(255,0,0,.35)";
-}
-async function api(payload = null, method = "GET", query = "") {
-  const opts = method === "GET"
-    ? { method: "GET" }
-    : { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) };
-  const url = method === "GET" ? API_URL + "?" + query + "&t=" + Date.now() : API_URL;
-  const res = await fetch(url, opts);
-  if (!res.ok) throw new Error("HTTP " + res.status);
-  return res.json();
 }
 
 /* ---------- NAMA KASIR / SUPPLIER ---------- */
