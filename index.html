@@ -155,6 +155,18 @@
     box-shadow:0 20px 60px rgba(0,0,0,.3)}
   .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
 
+  /* --- POS (KASIR) STYLES --- */
+  .pos-container{display:grid;grid-template-columns:1fr 1.2fr;gap:20px;align-items:start}
+  @media(max-width:800px){.pos-container{grid-template-columns:1fr}}
+  .cart-table{min-width:100% !important;}
+  .cart-table th,.cart-table td{padding:8px 10px;font-size:13px}
+  .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:15px}
+  .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600;font-size:14px}
+  .summary-row.total{font-size:18px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:10px;margin-top:10px}
+  .summary-input{width:120px !important;text-align:right;padding:5px 8px !important;}
+  .pos-btn{background:#2e7d32;border-color:#2e7d32;width:100%;padding:15px;font-size:16px;margin-top:15px;}
+  .pos-btn:hover{background:#1b5e20}
+
   @media(max-width:600px){
     header h1{font-size:15px}
     .grid{grid-template-columns:1fr}
@@ -266,8 +278,8 @@
 <div id="appContent" style="display:none;">
   <header>
     <div>
-      <h1>Koperasi Desa Merah Putih Kapas</h1>
-      <small>Kabupaten Bojonegoro, Jawa Timur</small>
+      <h1>KDMP Kapas</h1>
+      <small>Stok & Laporan Keuangan · FIFO</small>
     </div>
     <div class="topbar-actions">
       <span id="userInfo" class="user-actions" style="font-size:12px; font-weight:600;"></span>
@@ -279,7 +291,7 @@
   <nav class="tabs">
     <button data-tab="stok" class="active" data-role="all">📦 Stok</button>
     <button data-tab="beli" data-role="all">🛒 Pembelian</button>
-    <button data-tab="jual" data-role="all">💰 Penjualan</button>
+    <button data-tab="jual" data-role="all">💰 Penjualan (Kasir)</button>
     <button data-tab="edit" data-role="manajer">✎ Edit Barang</button>
     <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
     <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
@@ -404,27 +416,73 @@
       </div>
     </section>
 
-    <!-- ============ PENJUALAN ============ -->
+    <!-- ============ PENJUALAN (POS) ============ -->
     <section id="view-jual" class="view">
-      <h2 class="panel-title">💰 Penjualan</h2>
-      <div class="form-card">
-        <div class="grid">
+      <h2 class="panel-title">💰 Penjualan (Kasir)</h2>
+      
+      <div class="pos-container">
+        <!-- Kiri: Pilih Barang -->
+        <div class="form-card" style="max-width:100%">
+          <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c">Tambah Barang</h3>
           <div class="field full">
-            <label>Barang <span class="req">*</span></label>
+            <label>Cari & Pilih Barang</label>
             <select id="kItem"></select>
           </div>
-          <div class="field">
-            <label>Jumlah <span class="req">*</span></label>
+          <div class="field" style="margin-top:10px">
+            <label>Jumlah (Qty)</label>
             <input type="number" id="kQty" min="1" value="1">
           </div>
-          <div class="field full">
-            <label>Nama Kasir</label>
-            <input type="text" id="kNote" placeholder="Nama kasir/petugas" autocomplete="name">
-          </div>
+          <button id="btnAddToCart" style="margin-top:15px; width:100%; background:#1976d2; border-color:#1976d2">➕ Tambah ke Keranjang</button>
         </div>
-        <div class="preview" id="kPreview">Pilih barang.</div>
-        <div class="actions-row">
-          <button id="btnJual">✅ Simpan</button>
+
+        <!-- Kanan: Keranjang & Pembayaran -->
+        <div>
+          <div class="table-wrap" style="min-height:200px">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Nama Barang</th>
+                  <th style="text-align:right">Harga</th>
+                  <th style="text-align:center">Qty</th>
+                  <th style="text-align:right">Subtotal</th>
+                  <th style="text-align:center">Hapus</th>
+                </tr>
+              </thead>
+              <tbody id="cartBody">
+                <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pos-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="posSubtotal">Rp 0</span>
+            </div>
+            <div class="summary-row">
+              <span>Diskon (Rp):</span>
+              <input type="number" id="posDiskon" class="summary-input" min="0" value="0" oninput="calculateTotal()">
+            </div>
+            <div class="summary-row total">
+              <span>Total Bayar:</span>
+              <span id="posTotal">Rp 0</span>
+            </div>
+            <div class="summary-row" style="margin-top:15px; align-items:center;">
+              <span>Uang Tunai:</span>
+              <input type="number" id="posTunai" class="summary-input" min="0" value="0" oninput="calculateTotal()" style="font-size:16px; font-weight:bold; color:#2e7d32">
+            </div>
+            <div class="summary-row">
+              <span>Kembalian:</span>
+              <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
+            </div>
+            
+            <div class="field full" style="margin-top:15px">
+              <label>Nama Kasir</label>
+              <input type="text" id="kNote" placeholder="Nama kasir/petugas">
+            </div>
+
+            <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
+          </div>
         </div>
       </div>
     </section>
@@ -608,68 +666,20 @@
           <li><b>Manajer</b> — memiliki akses penuh ke semua fitur (termasuk Edit Barang, Laporan, dan Riwayat).</li>
           <li><b>Karyawan</b> — hanya bisa mengakses Stok, Pembelian, Penjualan, dan Keuangan.</li>
         </ul>
-        <p>Data akun (Username, Password, Role) disimpan di tab <b>PENGGUNA</b> di Google Sheets Anda. Anda bisa menambah, menghapus, atau mengganti password langsung dari Google Sheets kapan saja.</p>
 
-        <h3>Alur kerja singkat</h3>
+        <h3>Tab Penjualan (Kasir)</h3>
+        <p>Khusus untuk melayani pembeli dengan banyak barang sekaligus:</p>
         <ol>
-          <li><b>Barang baru masuk?</b> → tab <b>Pembelian</b> → <b>🆕 Barang baru</b></li>
-          <li><b>Restock?</b> → tab <b>Pembelian</b> → <b>📦 Barang terdaftar</b></li>
-          <li><b>Barang terjual?</b> → tab <b>Penjualan</b></li>
-          <li><b>Ubah nama, harga jual?</b> → tab <b>✎ Edit Barang</b></li>
-          <li><b>Pendapatan/beban lain?</b> → tab <b>Keuangan</b></li>
-          <li><b>Lihat hasil?</b> → tab <b>Laporan</b></li>
+          <li>Pilih barang dari dropdown, isi jumlah, lalu klik <b>➕ Tambah ke Keranjang</b>.</li>
+          <li>Ulangi langkah 1 jika pembeli membeli barang lain.</li>
+          <li>Di bagian bawah, isi <b>Diskon</b> (jika ada).</li>
+          <li>Masukkan <b>Uang Tunai</b> yang diserahkan pembeli. Sistem akan otomatis menghitung <b>Kembalian</b>.</li>
+          <li>Isi <b>Nama Kasir</b>, lalu klik <b>💳 Proses Pembayaran</b>.</li>
         </ol>
+        <p>Stok semua barang di keranjang akan otomatis berkurang dan tercatat di Riwayat.</p>
 
         <h3>HPP Metode FIFO</h3>
         <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
-        <p>Contoh:</p>
-        <ul>
-          <li>Beli 10 Indomie @ Rp 3.000 → batch A</li>
-          <li>Beli 10 Indomie lagi @ Rp 3.200 → batch B</li>
-          <li>Jual 15 Indomie @ Rp 3.500 = Rp 52.500</li>
-          <li>HPP = (10 × 3.000) + (5 × 3.200) = <b>Rp 46.000</b></li>
-          <li>Laba Kotor = 52.500 − 46.000 = <b>Rp 6.500</b></li>
-          <li>Sisa persediaan = 5 × 3.200 = <b>Rp 16.000</b></li>
-        </ul>
-        <p>Sistem menghitung ini otomatis dari riwayat transaksi.</p>
-
-        <h3>Tab Keuangan</h3>
-        <p>Mencatat uang masuk/keluar yang <b>bukan</b> dari penjualan/pembelian barang:</p>
-        <ul>
-          <li><b>Pendapatan Lain-lain</b> — bunga bank, donasi, penjualan aset, dsb.</li>
-          <li><b>Beban Lain-lain</b> — listrik, air, sewa, gaji, transport, dsb.</li>
-          <li><b>Setoran Modal</b> — uang pemilik yang dimasukkan ke usaha.</li>
-          <li><b>Prive</b> — uang usaha yang diambil pemilik pribadi.</li>
-          <li><b>Utang Baru</b> — pinjaman masuk (kas +, utang +).</li>
-          <li><b>Bayar Utang</b> — pelunasan (kas −, utang −).</li>
-        </ul>
-
-        <h3>Tab Laporan</h3>
-        <p>Pilih rentang bulan, klik <b>Tampilkan</b>:</p>
-        <ul>
-          <li><b>Laba Rugi</b> — Penjualan − HPP (FIFO) = Laba Kotor, lalu + Pendapatan Lain − Beban Lain = Laba Bersih.</li>
-          <li><b>Neraca</b> — Aset (kas + persediaan FIFO) vs Utang vs Ekuitas.</li>
-          <li><b>Perubahan Ekuitas</b> — Ekuitas Awal + Laba − Prive = Ekuitas Akhir.</li>
-          <li><b>Grafik</b> — Penjualan, HPP+Beban, Laba Bersih per bulan.</li>
-        </ul>
-
-        <h3>Arti tombol di tabel Stok</h3>
-        <table>
-          <tr><th>Tombol</th><th>Fungsi</th></tr>
-          <tr><td><b>+</b></td><td>Pembelian — tambah stok</td></tr>
-          <tr><td><b>−</b></td><td>Penjualan — kurangi stok</td></tr>
-          <tr><td><b>✎</b></td><td>Pintasan ke tab Edit Barang</td></tr>
-          <tr><td><b>×</b></td><td>Hapus barang</td></tr>
-        </table>
-
-        <h3>Arti warna</h3>
-        <ul>
-          <li><span class="badge zero">kosong</span> — stok 0</li>
-          <li><span class="badge low">menipis</span> — stok ≤ minimum</li>
-          <li><span class="badge ok">aman</span> — stok di atas minimum</li>
-          <li><span class="badge soon">expired dekat</span> — ≤ 30 hari</li>
-          <li><span class="badge exp">expired</span> — sudah lewat</li>
-        </ul>
 
         <div class="note">
           <b>Penting:</b> Data tersimpan di <b>Google Sheets</b>, bukan di browser. Aman meskipun browser ditutup, cache dihapus, atau ganti perangkat.
@@ -702,7 +712,7 @@
 
 <script>
 /* =========================================================
-   KONFIGURASI API (GANTI DENGAN URL APPS SCRIPT)
+   KONFIGURASI API
    ========================================================= */
 const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
 
@@ -715,6 +725,9 @@ let keuangan = [];
 let beliMode = "existing";
 let editingId = null;
 let chartInstance = null;
+
+// CART STATE
+let cart = [];
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -739,12 +752,11 @@ async function api(payload = null, method = "GET", query = "") {
   return res.json();
 }
 
-/* ---------- AUTHENTICATION (LOGIN, REGISTER, RESET) ---------- */
+/* ---------- AUTHENTICATION ---------- */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) {
-    const user = JSON.parse(auth);
-    showApp(user);
+    showApp(JSON.parse(auth));
   } else {
     $("loginScreen").style.display = "flex";
     $("appContent").style.display = "none";
@@ -757,13 +769,9 @@ function toggleAuth(mode) {
   $("formRegister").style.display = "none";
   $("formResetPassword").style.display = "none";
 
-  if (mode === 'register') {
-    $("formRegister").style.display = "block";
-  } else if (mode === 'reset') {
-    $("formResetPassword").style.display = "block";
-  } else {
-    $("formLogin").style.display = "block";
-  }
+  if (mode === 'register') $("formRegister").style.display = "block";
+  else if (mode === 'reset') $("formResetPassword").style.display = "block";
+  else $("formLogin").style.display = "block";
   
   $("loginError").className = "auth-msg";
   $("regError").className = "auth-msg";
@@ -875,7 +883,7 @@ async function handleResetPassword() {
 async function handleRegister() {
   const email = $("regEmail").value.trim();
   const password = $("regPassword").value.trim();
-  const role = $("regRole").value; // Ambil value role dari dropdown
+  const role = $("regRole").value;
   const btn = $("btnRegister");
   const errBox = $("regError");
   const successBox = $("regSuccess");
@@ -893,7 +901,6 @@ async function handleRegister() {
   btn.disabled = true;
 
   try {
-    // Kirim role ke backend
     const res = await api({ action: "register", data: { email, password, role } }, "POST");
     if (res.ok) {
       successBox.className = "auth-msg success";
@@ -923,7 +930,6 @@ function showApp(user) {
   $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) 
     <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
   
-  // Sembunyikan tab manajer jika login sebagai karyawan
   document.querySelectorAll("nav.tabs button").forEach(btn => {
     if (btn.dataset.role === "manajer" && user.role !== "manajer") {
       btn.style.display = "none";
@@ -932,10 +938,9 @@ function showApp(user) {
     }
   });
 
-  // Sembunyikan opsi "Barang terdaftar" jika Karyawan
   if (user.role === "karyawan") {
     $("btnModeExisting").style.display = "none";
-    beliMode = "new"; // Paksa mode new
+    beliMode = "new";
   } else {
     $("btnModeExisting").style.display = "block";
   }
@@ -953,7 +958,7 @@ function logout() {
   location.reload();
 }
 
-/* ---------- GANTI PASSWORD MODAL (Bagi yang sudah login) ---------- */
+/* ---------- GANTI PASSWORD MODAL ---------- */
 function openChangePassword() {
   $("oldPassword").value = "";
   $("newPassword").value = "";
@@ -1136,14 +1141,15 @@ function fillSelects() {
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prevB && items.some(i => i.id === prevB)) selB.value = prevB;
+  
   const selK = $("kItem");
   const prevK = selK.value;
   selK.innerHTML = items.length
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prevK && items.some(i => i.id === prevK)) selK.value = prevK;
+  
   updateBeliPreview();
-  updateJualPreview();
 }
 
 /* ---------- EDIT VIEW ---------- */
@@ -1256,21 +1262,6 @@ function updateBeliPreview() {
     box.innerHTML = `<b>${esc(item.nama)}</b> × ${qty} = <b>${rp(totalBeli)}</b> · stok ${item.stok} → <b>${sisa}</b> ${esc(item.satuan)}.${extrasHtml}`;
   }
 }
-function updateJualPreview() {
-  const item = items.find(i => i.id === $("kItem").value);
-  const qty = parseInt($("kQty").value, 10) || 0;
-  const box = $("kPreview");
-  if (!item) { box.className = "preview"; box.textContent = "Pilih barang."; return; }
-  const sisa = item.stok - qty;
-  if (sisa < 0) {
-    box.className = "preview err";
-    box.innerHTML = `Stok tidak cukup! Sisa <b>${item.stok} ${esc(item.satuan)}</b>.`;
-  } else {
-    box.className = "preview ok";
-    const totalJual = qty * (item.harga_jual || 0);
-    box.innerHTML = `<b>${esc(item.nama)}</b> × ${qty} = <b>${rp(totalJual)}</b> · sisa ${sisa} ${esc(item.satuan)}.`;
-  }
-}
 
 async function submitBeli() {
   const supplier = val("bNote");
@@ -1363,39 +1354,149 @@ function resetBeliNew() {
   updateBeliPreview();
 }
 
-async function submitJual() {
+/* ==================== KASIR / PENJUALAN ==================== */
+function addToCart() {
   const id = $("kItem").value;
   const qty = parseInt($("kQty").value, 10) || 0;
-  const kasir = val("kNote");
   const item = items.find(i => i.id === id);
+  
   if (!item) { toast("Pilih barang.", "err"); return; }
   if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
-  if (qty > item.stok) { toast(`Stok kurang. Sisa ${item.stok} ${item.satuan}.`, "err"); return; }
-  try {
-    setStatus("Menyimpan…");
-    const res = await api({ action: "out", id, qty, note: kasir }, "POST");
-    if (!res.ok) throw new Error(res.message);
-    saveKasir(kasir);
-    toast(`−${qty} ${item.satuan} ${item.nama}`, "ok");
-    $("kQty").value = 1;
-    setStatus("Terhubung ke Google Sheets");
-    await load();
-  } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+  
+  const existing = cart.find(c => c.id === id);
+  const currentQty = existing ? existing.qty : 0;
+  
+  if (currentQty + qty > item.stok) {
+    toast(`Stok tidak cukup. Sisa ${item.stok} ${item.satuan}.`, "err");
+    return;
+  }
+
+  if (existing) {
+    existing.qty += qty;
+    existing.subtotal = existing.qty * item.harga_jual;
+  } else {
+    cart.push({
+      id: item.id,
+      nama: item.nama,
+      harga: item.harga_jual || 0,
+      qty: qty,
+      subtotal: qty * (item.harga_jual || 0),
+      satuan: item.satuan
+    });
+  }
+  
+  $("kQty").value = 1;
+  renderCart();
 }
 
-async function deleteItem(id) {
-  const item = items.find(i => i.id === id);
-  if (!item) return;
-  const kasir = (localStorage.getItem(K_KASIR) || "").trim();
-  const msg = kasir ? `Hapus "${item.nama}"?\n\nDicatat atas nama: ${kasir}` : `Hapus "${item.nama}"?`;
-  if (!confirm(msg)) return;
-  try {
-    const res = await api({ action: "delete", id, kasir }, "POST");
-    if (!res.ok) throw new Error(res.message);
-    toast("Dihapus.", "ok");
-    await load();
-  } catch (e) { toast(e.message, "err"); }
+function renderCart() {
+  const tb = $("cartBody");
+  if (cart.length === 0) {
+    tb.innerHTML = '<tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>';
+    calculateTotal();
+    return;
+  }
+  
+  tb.innerHTML = cart.map((c, index) => `
+    <tr>
+      <td><div class="name">${esc(c.nama)}</div></td>
+      <td style="text-align:right">${rp(c.harga)}</td>
+      <td style="text-align:center">
+        <input type="number" min="1" value="${c.qty}" style="width:60px; padding:4px; text-align:center;" onchange="updateCartQty(${index}, this.value)">
+      </td>
+      <td style="text-align:right; font-weight:bold">${rp(c.subtotal)}</td>
+      <td style="text-align:center">
+        <button class="small ghost" style="color:#c62828; border-color:#c62828;" onclick="removeFromCart(${index})">×</button>
+      </td>
+    </tr>
+  `).join("");
+  
+  calculateTotal();
 }
+
+function updateCartQty(index, newQty) {
+  const item = items.find(i => i.id === cart[index].id);
+  newQty = parseInt(newQty, 10) || 1;
+  if (newQty > item.stok) {
+    toast(`Stok maksimal ${item.stok}`, "err");
+    newQty = item.stok;
+  }
+  cart[index].qty = newQty;
+  cart[index].subtotal = newQty * cart[index].harga;
+  renderCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function calculateTotal() {
+  const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
+  const diskon = parseInt($("posDiskon").value, 10) || 0;
+  const total = Math.max(0, subtotal - diskon);
+  const tunai = parseInt($("posTunai").value, 10) || 0;
+  const kembali = Math.max(0, tunai - total);
+
+  $("posSubtotal").textContent = rp(subtotal);
+  $("posTotal").textContent = rp(total);
+  $("posKembali").textContent = rp(kembali);
+  
+  if (tunai > 0 && tunai < total) {
+    $("posKembali").style.color = "#c62828";
+    $("posKembali").textContent = "Uang kurang!";
+  } else {
+    $("posKembali").style.color = "#2e7d32";
+  }
+}
+
+async function submitCheckout() {
+  if (cart.length === 0) { toast("Keranjang kosong.", "err"); return; }
+  
+  const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
+  const diskon = parseInt($("posDiskon").value, 10) || 0;
+  const total = Math.max(0, subtotal - diskon);
+  const tunai = parseInt($("posTunai").value, 10) || 0;
+  const kasir = val("kNote");
+  
+  if (tunai < total) { toast("Uang tunai kurang dari total bayar.", "err"); return; }
+  if (!kasir) { toast("Nama Kasir wajib diisi.", "err"); return; }
+  
+  const btn = $("btnCheckout");
+  btn.textContent = "Memproses...";
+  btn.disabled = true;
+
+  try {
+    const res = await api({
+      action: "checkout",
+      items: cart,
+      kasir: kasir,
+      diskon: diskon,
+      tunai: tunai,
+      total: total
+    }, "POST");
+
+    if (res.ok) {
+      toast("Transaksi berhasil disimpan!", "ok");
+      cart = [];
+      renderCart();
+      $("posDiskon").value = 0;
+      $("posTunai").value = 0;
+      saveKasir(kasir);
+      await load();
+    } else {
+      toast(res.message, "err");
+    }
+  } catch (e) {
+    toast("Gagal memproses pembayaran.", "err");
+  } finally {
+    btn.textContent = "💳 Proses Pembayaran";
+    btn.disabled = false;
+  }
+}
+
+$("btnAddToCart").addEventListener("click", addToCart);
+$("btnCheckout").addEventListener("click", submitCheckout);
 
 /* ==================== KEUANGAN ==================== */
 const KATEGORI = {
@@ -1810,9 +1911,11 @@ $("bHargaJual").addEventListener("input", updateBeliPreview);
 $("btnBeli").addEventListener("click", submitBeli);
 $("btnKeuangan").addEventListener("click", submitKeuangan);
 
-$("kItem").addEventListener("change", updateJualPreview);
-$("kQty").addEventListener("input", updateJualPreview);
-$("btnJual").addEventListener("click", submitJual);
+// KASIR EVENTS
+$("btnAddToCart").addEventListener("click", addToCart);
+$("btnCheckout").addEventListener("click", submitCheckout);
+$("posDiskon").addEventListener("input", calculateTotal);
+$("posTunai").addEventListener("input", calculateTotal);
 
 $("tbody").addEventListener("click", e => {
   const btn = e.target.closest("button[data-act]");
@@ -1839,10 +1942,10 @@ $("tbody").addEventListener("click", e => {
     $("bQtyExisting").select();
   }
   if (act === "out") {
+    // Redirect ke POS
+    switchTab("jual");
     $("kItem").value = id;
     $("kQty").value = 1;
-    updateJualPreview();
-    switchTab("jual");
     $("kQty").focus();
     $("kQty").select();
   }
