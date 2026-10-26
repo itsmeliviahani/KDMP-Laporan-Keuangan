@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laporan Keuangan KDMP Kapas</title>
+<title>KDMP Kapas — Stok & Laporan</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   *{box-sizing:border-box}
@@ -327,6 +327,15 @@
             <option value="set">set</option><option value="rim">rim</option>
           </select>
         </div>
+        <div class="field">
+          <label>Harga jual (Rp)</label>
+          <input type="number" id="eHargaJual" min="0">
+        </div>
+        <div class="field full">
+          <label>Nama Kasir <span class="opt">(yang mengedit)</span></label>
+          <input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name">
+        </div>
+      </div>
       <div class="actions-row">
         <button id="btnSaveEdit">💾 Simpan Perubahan</button>
       </div>
@@ -456,14 +465,14 @@
         <li><b>Barang baru masuk?</b> → tab <b>Pembelian</b> → <b>🆕 Barang baru</b></li>
         <li><b>Restock?</b> → tab <b>Pembelian</b> → <b>📦 Barang terdaftar</b></li>
         <li><b>Barang terjual?</b> → tab <b>Penjualan</b></li>
-        <li><b>Ubah nama, harga, expired?</b> → tab <b>✎ Edit Barang</b></li>
+        <li><b>Ubah nama, harga jual?</b> → tab <b>✎ Edit Barang</b></li>
         <li><b>Pendapatan/beban lain?</b> → tab <b>Keuangan</b></li>
         <li><b>Lihat hasil?</b> → tab <b>Laporan</b></li>
       </ol>
 
       <h3>Tab Edit Barang</h3>
-      <p>Semua perubahan data barang dilakukan di tab ini — tidak lewat popup. Pilih barang dari dropdown, ubah field, klik <b>Simpan Perubahan</b>. Stok tidak bisa diubah di sini; ubah lewat Pembelian/Penjualan supaya tercatat di riwayat.</p>
-      <p>Pintasan: dari tab <b>Stok</b>, klik ikon <b>✎</b> pada baris barang untuk langsung membuka tab Edit dengan barang tersebut terpilih.</p>
+      <p>Untuk mengoreksi <b>nama, kategori, satuan, dan harga jual</b> barang. Pilih barang dari dropdown, ubah, klik <b>Simpan Perubahan</b>.</p>
+      <p>Stok, harga beli, dan expired <b>tidak bisa diubah</b> dari tab ini — stok diubah lewat <b>Pembelian</b> atau <b>Penjualan</b> agar tercatat di riwayat.</p>
 
       <h3>HPP Metode FIFO</h3>
       <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
@@ -526,13 +535,6 @@
       <div class="note">
         <b>Penting:</b> Data tersimpan di <b>Google Sheets</b>, bukan di browser. Aman meskipun browser ditutup, cache dihapus, atau ganti perangkat.
       </div>
-
-      <h3>Kalau data tidak muncul</h3>
-      <ol>
-        <li>Klik <b>Muat Ulang</b>.</li>
-        <li>Cek Sheet: tab harus bernama <code>Barang</code>, <code>Riwayat</code>, <code>Keuangan</code>.</li>
-        <li>Kalau badge status bukan "Terhubung", hubungi admin.</li>
-      </ol>
     </div>
   </section>
 
@@ -544,7 +546,7 @@
 /* =========================================================
    GANTI DENGAN URL WEB APP APPS SCRIPT (berakhiran /exec)
    ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
+const API_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
 
 const K_KASIR = "kdmpkapas_kasir";
 const K_SUPPLIER = "kdmpkapas_supplier";
@@ -738,6 +740,7 @@ function clearEditForm() {
   $("eNama").value = "";
   $("eKategori").value = "Makanan";
   $("eSatuan").value = "pcs";
+  $("eHargaJual").value = 0;
 }
 function loadEditForm(id) {
   const item = items.find(i => i.id === id);
@@ -746,6 +749,7 @@ function loadEditForm(id) {
   $("eNama").value = item.nama;
   $("eKategori").value = item.kategori || "Lainnya";
   $("eSatuan").value = item.satuan || "pcs";
+  $("eHargaJual").value = item.harga_jual || 0;
 }
 $("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
 
@@ -758,11 +762,11 @@ async function submitEdit() {
     nama: $("eNama").value.trim(),
     kategori: $("eKategori").value,
     satuan: $("eSatuan").value,
-    stok: item.stok,
-    min: item.min,
-    harga: item.harga,
-    harga_jual: item.harga_jual,
-    expired: item.expired,
+    stok: item.stok, // Tetap gunakan stok lama
+    min: item.min, // Tetap gunakan min lama
+    harga: item.harga, // Tetap gunakan harga beli lama
+    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), // Hanya ini yang berubah
+    expired: item.expired, // Tetap gunakan expired lama
     note: kasir
   };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
@@ -1114,7 +1118,6 @@ function computeFifoHpp(startDate, endDate) {
       let hppSale = 0;
       const q = queues[ev.nama] || [];
 
-      // FIFO: ambil dari batch terlama
       while (remaining > 0 && q.length > 0) {
         const b = q[0];
         const take = Math.min(remaining, b.qty);
@@ -1124,7 +1127,6 @@ function computeFifoHpp(startDate, endDate) {
         if (b.qty <= 0) q.shift();
       }
 
-      // Fallback: sisa tidak tercatat dalam batch (data lama)
       if (remaining > 0) {
         const item = items.find(i => norm(i.nama) === norm(ev.nama));
         const fallback = item ? (Number(item.harga) || 0) : 0;
@@ -1175,7 +1177,6 @@ function computeFifoPersediaan(endDate) {
     }
   }
 
-  // Fallback untuk stok yang tidak tercatat di batch
   for (const item of items) {
     const recordedQty = (queues[item.nama] || []).reduce((s, b) => s + b.qty, 0);
     const unrecorded = Math.max(0, (Number(item.stok) || 0) - recordedQty);
