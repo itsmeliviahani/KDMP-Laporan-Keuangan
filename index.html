@@ -89,7 +89,7 @@
   .money-neg{color:#c62828;font-weight:700;font-variant-numeric:tabular-nums}
   .actions{display:flex;gap:4px;justify-content:flex-end}
   .actions button{width:28px;height:28px;padding:0;font-size:13px;line-height:1}
-  .form-card{border:1px solid #e0e0e0;border-radius:10px;padding:20px;max-width:760px}
+  .form-card{border:1px solid #e0e0e0;border-radius:10px;padding:20px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
   .field{display:flex;flex-direction:column;gap:5px}
   .field.full{grid-column:1/-1}
@@ -152,9 +152,11 @@
   .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
 
   /* --- POS (KASIR) STYLES --- */
+  .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+  @media(max-width:900px){.pos-container{grid-template-columns:1fr}}
   .cart-table{min-width:100% !important;}
   .cart-table th,.cart-table td{padding:8px 10px;font-size:13px}
-  .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:15px}
+  .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:0}
   .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600;font-size:14px}
   .summary-row.total{font-size:18px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:10px;margin-top:10px}
   .summary-input{width:120px !important;text-align:right;padding:5px 8px !important;}
@@ -397,69 +399,75 @@
     <section id="view-jual" class="view">
       <h2 class="panel-title">💰 Penjualan (Kasir)</h2>
       
-      <!-- Form Input Barang (Atas) -->
-      <div class="form-card" style="max-width:100%; margin-bottom:20px;">
-        <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c">Tambah Barang</h3>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
-          <div class="field" style="flex:2; min-width:250px">
-            <label>Cari & Pilih Barang</label>
-            <select id="kItem"></select>
+      <div class="pos-container">
+        <!-- Kiri: Form & Keranjang -->
+        <div>
+          <div class="form-card" style="margin-bottom:15px;">
+            <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c">Tambah Barang</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+              <div class="field" style="flex:2; min-width:200px">
+                <label>Cari & Pilih Barang</label>
+                <select id="kItem"></select>
+              </div>
+              <div class="field" style="flex:1; min-width:80px">
+                <label>Jumlah (Qty)</label>
+                <input type="number" id="kQty" min="1" value="1">
+              </div>
+              <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">➕ Tambah</button>
+            </div>
           </div>
-          <div class="field" style="flex:1; min-width:100px">
-            <label>Jumlah (Qty)</label>
-            <input type="number" id="kQty" min="1" value="1">
+
+          <div class="table-wrap" style="min-height:200px">
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Nama Barang</th>
+                  <th style="text-align:right">Harga</th>
+                  <th style="text-align:center">Qty</th>
+                  <th style="text-align:right">Subtotal</th>
+                  <th style="text-align:center">Hapus</th>
+                </tr>
+              </thead>
+              <tbody id="cartBody">
+                <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
+              </tbody>
+            </table>
           </div>
-          <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">➕ Tambah ke Keranjang</button>
         </div>
-      </div>
 
-      <!-- Invoice / Keranjang (Bawah) -->
-      <div>
-        <div class="table-wrap" style="min-height:200px">
-          <table class="cart-table">
-            <thead>
-              <tr>
-                <th>Nama Barang</th>
-                <th style="text-align:right">Harga</th>
-                <th style="text-align:center">Qty</th>
-                <th style="text-align:right">Subtotal</th>
-                <th style="text-align:center">Hapus</th>
-              </tr>
-            </thead>
-            <tbody id="cartBody">
-              <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- Kanan: Invoice & Pembayaran -->
+        <div>
+          <div class="pos-summary">
+            <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c; border-bottom:1px solid #ffcdd2; padding-bottom:10px;">Ringkasan Pembayaran</h3>
+            
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="posSubtotal">Rp 0</span>
+            </div>
+            <div class="summary-row">
+              <span>Diskon (Rp):</span>
+              <input type="number" id="posDiskon" class="summary-input" min="0" value="0" oninput="calculateTotal()">
+            </div>
+            <div class="summary-row total">
+              <span>Total Bayar:</span>
+              <span id="posTotal">Rp 0</span>
+            </div>
+            <div class="summary-row" style="margin-top:15px; align-items:center;">
+              <span>Uang Tunai:</span>
+              <input type="number" id="posTunai" class="summary-input" min="0" value="0" oninput="calculateTotal()" style="font-size:16px; font-weight:bold; color:#2e7d32">
+            </div>
+            <div class="summary-row">
+              <span>Kembalian:</span>
+              <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
+            </div>
+            
+            <div class="field full" style="margin-top:15px">
+              <label>Nama Kasir</label>
+              <input type="text" id="kNote" placeholder="Nama kasir/petugas">
+            </div>
 
-        <div class="pos-summary">
-          <div class="summary-row">
-            <span>Subtotal:</span>
-            <span id="posSubtotal">Rp 0</span>
+            <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
           </div>
-          <div class="summary-row">
-            <span>Diskon (Rp):</span>
-            <input type="number" id="posDiskon" class="summary-input" min="0" value="0" oninput="calculateTotal()">
-          </div>
-          <div class="summary-row total">
-            <span>Total Bayar:</span>
-            <span id="posTotal">Rp 0</span>
-          </div>
-          <div class="summary-row" style="margin-top:15px; align-items:center;">
-            <span>Uang Tunai:</span>
-            <input type="number" id="posTunai" class="summary-input" min="0" value="0" oninput="calculateTotal()" style="font-size:16px; font-weight:bold; color:#2e7d32">
-          </div>
-          <div class="summary-row">
-            <span>Kembalian:</span>
-            <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
-          </div>
-          
-          <div class="field full" style="margin-top:15px">
-            <label>Nama Kasir</label>
-            <input type="text" id="kNote" placeholder="Nama kasir/petugas">
-          </div>
-
-          <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
         </div>
       </div>
     </section>
@@ -647,13 +655,13 @@
         <h3>Tab Penjualan (Kasir)</h3>
         <p>Khusus untuk melayani pembeli dengan banyak barang sekaligus:</p>
         <ol>
-          <li>Di bagian <b>Tambah Barang</b> (atas), pilih barang, isi jumlah, lalu klik <b>➕ Tambah ke Keranjang</b>.</li>
+          <li>Di bagian <b>Tambah Barang</b>, pilih barang, isi jumlah, lalu klik <b>➕ Tambah</b>.</li>
           <li>Ulangi langkah 1 jika pembeli membeli barang lain. Daftar belanja akan muncul di tabel bawah.</li>
-          <li>Di bagian bawah, isi <b>Diskon</b> (jika ada).</li>
+          <li>Di bagian kanan (Ringkasan), isi <b>Diskon</b> (jika ada).</li>
           <li>Masukkan <b>Uang Tunai</b> yang diserahkan pembeli. Sistem akan otomatis menghitung <b>Kembalian</b>.</li>
           <li>Isi <b>Nama Kasir</b>, lalu klik <b>💳 Proses Pembayaran</b>.</li>
         </ol>
-        <p>Setelah diproses, stok barang otomatis berkurang, dan pendapatan penjualan akan langsung masuk ke Laporan Laba Rugi.</p>
+        <p>Setelah diproses, stok otomatis berkurang, dan pendapatan penjualan akan langsung masuk ke Laporan Laba Rugi serta menambah Kas di Neraca.</p>
 
         <h3>HPP Metode FIFO</h3>
         <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
