@@ -275,11 +275,12 @@
   <nav class="tabs">
     <button data-tab="stok" class="active" data-role="all">📦 Stok</button>
     <button data-tab="beli" data-role="all">🛒 Pembelian</button>
-    <button data-tab="jual" data-role="all">💰 Penjualan</button>
+    <button data-tab="jual" data-role="all">💰 Penjualan (Kasir)</button>
     <button data-tab="edit" data-role="manajer">✎ Edit Barang</button>
     <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
     <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
-    <button data-tab="riwayat" data-role="manajer">🕒 Riwayat</button>
+    <button data-tab="penjualan" data-role="manajer">📈 Riwayat Penjualan</button>
+    <button data-tab="riwayat" data-role="manajer">🕒 Riwayat Umum</button>
     <button data-tab="panduan" data-role="all">📖 Panduan</button>
   </nav>
 
@@ -397,7 +398,7 @@
 
     <!-- ============ PENJUALAN (POS) ============ -->
     <section id="view-jual" class="view">
-      <h2 class="panel-title">💰 Penjualan</h2>
+      <h2 class="panel-title">💰 Penjualan (Kasir)</h2>
       
       <div class="pos-container">
         <!-- Kiri: Form & Keranjang -->
@@ -633,9 +634,29 @@
       </div>
     </section>
 
-    <!-- ============ RIWAYAT (Manajer Only) ============ -->
+    <!-- ============ RIWAYAT PENJUALAN (Manajer Only) ============ -->
+    <section id="view-penjualan" class="view">
+      <h2 class="panel-title">📈 Riwayat Penjualan</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Kasir</th>
+              <th>Nama Barang</th>
+              <th style="text-align:center">Qty</th>
+              <th style="text-align:right">Harga Satuan</th>
+              <th style="text-align:right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPenjualan"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ RIWAYAT UMUM (Manajer Only) ============ -->
     <section id="view-riwayat" class="view">
-      <h2 class="panel-title">🕒 Riwayat</h2>
+      <h2 class="panel-title">🕒 Riwayat Umum</h2>
       <div class="hist-list" id="histList">
         <div class="empty">Memuat…</div>
       </div>
@@ -652,7 +673,7 @@
           <li><b>Karyawan</b> — hanya bisa mengakses Stok, Pembelian, Penjualan, dan Keuangan.</li>
         </ul>
 
-        <h3>Tab Penjualan</h3>
+        <h3>Tab Penjualan (Kasir)</h3>
         <p>Khusus untuk melayani pembeli dengan banyak barang sekaligus:</p>
         <ol>
           <li>Di bagian <b>Tambah Barang</b>, pilih barang, isi jumlah, lalu klik <b>➕ Tambah</b>.</li>
@@ -707,6 +728,7 @@ const K_SUPPLIER = "kdmpkapas_supplier";
 let items = [];
 let riwayat = [];
 let keuangan = [];
+let penjualan = []; // Data Penjualan
 let beliMode = "existing";
 let editingId = null;
 let chartInstance = null;
@@ -1010,7 +1032,7 @@ function val(id) { return String($(id).value || "").trim(); }
 /* ---------- TAB ---------- */
 function switchTab(name) {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
-  if (auth.role !== "manajer" && ["edit", "laporan", "riwayat"].includes(name)) {
+  if (auth.role !== "manajer" && ["edit", "laporan", "riwayat", "penjualan"].includes(name)) {
     toast("Akses ditolak. Fitur ini khusus Manajer.", "err");
     return;
   }
@@ -1023,6 +1045,7 @@ function switchTab(name) {
   if (name === "laporan") renderLaporan();
   if (name === "keuangan") renderKeuangan();
   if (name === "edit") populateEditView();
+  if (name === "penjualan") loadPenjualan();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 document.querySelectorAll("nav.tabs button").forEach(b => {
@@ -1049,6 +1072,17 @@ async function load() {
   } catch (e) {
     setStatus("Gagal: " + e.message, false);
     toast("Gagal memuat data.", "err");
+  }
+}
+
+/* ---------- LOAD PENJUALAN ---------- */
+async function loadPenjualan() {
+  try {
+    const res = await api(null, "GET", "penjualan=1");
+    penjualan = res.penjualan || [];
+    renderPenjualan();
+  } catch (e) {
+    toast("Gagal memuat riwayat penjualan.", "err");
   }
 }
 
@@ -1113,6 +1147,25 @@ function renderTable() {
       </div></td>
     </tr>`;
   }).join("");
+}
+
+/* ---------- RENDER PENJUALAN ---------- */
+function renderPenjualan() {
+  const tb = $("tbodyPenjualan");
+  if (penjualan.length === 0) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada riwayat penjualan.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = penjualan.map(p => `
+    <tr>
+      <td class="sub">${esc(p.waktu)}</td>
+      <td><b>${esc(p.kasir)}</b></td>
+      <td>${esc(p.nama)}</td>
+      <td style="text-align:center"><span class="qty">${p.qty}</span></td>
+      <td style="text-align:right" class="price">${rp(p.harga)}</td>
+      <td style="text-align:right" class="money-pos">${rp(p.subtotal)}</td>
+    </tr>
+  `).join("");
 }
 
 /* ---------- SELECTS ---------- */
@@ -1564,7 +1617,7 @@ function renderKeuangan() {
 }
 $("filterKeuangan").addEventListener("change", renderKeuangan);
 
-/* ==================== RIWAYAT ==================== */
+/* ==================== RIWAYAT UMUM ==================== */
 function formatCatatan(catatan, tipe) {
   if (!catatan) return '';
   const match = catatan.match(/^(.+?)\s*\((.+?)\)\s*$/);
