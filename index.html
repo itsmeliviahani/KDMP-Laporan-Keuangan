@@ -154,8 +154,16 @@
   /* --- POS (KASIR) STYLES --- */
   .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
   @media(max-width:900px){.pos-container{grid-template-columns:1fr}}
-  .cart-table{min-width:100% !important;}
-  .cart-table th,.cart-table td{padding:8px 10px;font-size:13px;border:1px solid #000;}
+  
+  /* TABLE KASIR DENGAN GARIS HITAM */
+  .cart-table{min-width:100% !important; border-collapse: collapse !important;}
+  .cart-table th,.cart-table td{
+    padding:10px 12px;
+    font-size:13px;
+    border: 1px solid #000 !important; /* Garis hitam tegas */
+  }
+  .cart-table th{ background:#ffe4e4; } /* Sedikit lebih gelap untuk header */
+  
   .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:0}
   .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600;font-size:14px}
   .summary-row.total{font-size:18px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:10px;margin-top:10px}
@@ -427,7 +435,7 @@
             </div>
           </div>
 
-          <div class="table-wrap" style="min-height:200px">
+          <div class="table-wrap" style="min-height:200px; border:1px solid #000; padding:0;">
             <table class="cart-table">
               <thead>
                 <tr>
@@ -439,7 +447,7 @@
                 </tr>
               </thead>
               <tbody id="cartBody">
-                <tr><td colspan="5" class="empty">Keranjang masih kosong.</td></tr>
+                <tr><td colspan="5" class="empty" style="border:none">Keranjang masih kosong.</td></tr>
               </tbody>
             </table>
           </div>
@@ -1118,3 +1126,911 @@ async function loadPenjualan() {
     const res = await api(null, "GET", "penjualan=1");
     penjualan = res.penjualan || [];
     renderPenjualan();
+  } catch (e) {
+    toast("Gagal memuat riwayat penjualan.", "err");
+  }
+}
+
+/* ---------- TABEL STOK ---------- */
+function daysLeft(dateStr) {
+  if (!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d)) return null;
+  return Math.round((d - today) / 86400000);
+}
+function expiredBadge(item) {
+  const d = daysLeft(item.expired);
+  if (d === null) return '<span class="badge">—</span>';
+  if (d < 0) return `<span class="badge exp">Lewat ${Math.abs(d)} hr</span>`;
+  if (d === 0) return '<span class="badge exp">Hari ini</span>';
+  if (d <= 30) return `<span class="badge soon">${d} hr</span>`;
+  return `<span class="badge ok">${d} hr</span>`;
+}
+function renderTable() {
+  const q = $("search").value.toLowerCase().trim();
+  const f = $("filter").value;
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  const isManajer = auth.role === "manajer";
+
+  let list = items.filter(i => {
+    if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
+    if (f === "zero" && i.stok !== 0) return false;
+    if (f === "exp") { const d = daysLeft(i.expired); if (!(d !== null && d < 0)) return false; }
+    return true;
+  });
+  list.sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
+  const tb = $("tbody");
+  if (list.length === 0) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = list.map(i => {
+    const d = daysLeft(i.expired);
+    const zero = i.stok === 0;
+    const exp = d !== null && d < 0;
+    const cls = exp ? "exp" : "";
+    const label = zero
+      ? '<span class="badge zero">kosong</span>'
+      : '<span class="sub">tersedia</span>';
+            
+    const btnRestock = isManajer ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : '';
+    const btnEdit = isManajer ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : '';
+    const btnDel = isManajer ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : '';
+
+    return `<tr class="${cls}">
+      <td><div class="name">${esc(i.nama)}</div><div class="sub">${label}</div></td>
+      <td>${esc(i.kategori || "-")}</td>
+      <td style="text-align:right"><span class="qty">${i.stok}</span> <span class="sub">${esc(i.satuan)}</span></td>
+      <td style="text-align:right" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
+      <td>${expiredBadge(i)}</td>
+      <td><div class="actions">
+        ${btnRestock}
+        <button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>
+        ${btnEdit}
+        ${btnDel}
+      </div></td>
+    </tr>`;
+  }).join("");
+}
+
+/* ---------- RENDER PENJUALAN ---------- */
+function renderPenjualan() {
+  const tb = $("tbodyPenjualan");
+  if (penjualan.length === 0) {
+    tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada riwayat penjualan.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = penjualan.map(p => `
+    <tr>
+      <td class="sub">${esc(p.waktu)}</td>
+      <td><b>${esc(p.kasir)}</b></td>
+      <td>${esc(p.nama)}</td>
+      <td style="text-align:center"><span class="qty">${p.qty}</span></td>
+      <td style="text-align:right" class="price">${rp(p.harga)}</td>
+      <td style="text-align:right" class="money-pos">${rp(p.subtotal)}</td>
+    </tr>
+  `).join("");
+}
+
+/* ---------- SELECTS ---------- */
+function fillSelects() {
+  const selB = $("bExisting");
+  const prevB = selB.value;
+  selB.innerHTML = items.length
+    ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
+    : '<option value="">— Belum ada barang —</option>';
+  if (prevB && items.some(i => i.id === prevB)) selB.value = prevB;
+  
+  const selK = $("kItem");
+  const prevK = selK.value;
+  selK.innerHTML = items.length
+    ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
+    : '<option value="">— Belum ada barang —</option>';
+  if (prevK && items.some(i => i.id === prevK)) selK.value = prevK;
+  
+  updateBeliPreview();
+}
+
+/* ---------- EDIT VIEW ---------- */
+function populateEditView() {
+  const sel = $("editItemSelect");
+  const prev = sel.value;
+  sel.innerHTML = items.length
+    ? items.map(i => `<option value="${i.id}">${esc(i.nama)}</option>`).join("")
+    : '<option value="">— Belum ada barang —</option>';
+  if (prev && items.some(i => i.id === prev)) sel.value = prev;
+  if (sel.value) loadEditForm(sel.value);
+  else clearEditForm();
+}
+function clearEditForm() {
+  editingId = null;
+  $("eNama").value = "";
+  $("eKategori").value = "Makanan";
+  $("eSatuan").value = "pcs";
+  $("eHargaJual").value = 0;
+}
+function loadEditForm(id) {
+  const item = items.find(i => i.id === id);
+  if (!item) { clearEditForm(); return; }
+  editingId = id;
+  $("eNama").value = item.nama;
+  $("eKategori").value = item.kategori || "Lainnya";
+  $("eSatuan").value = item.satuan || "pcs";
+  $("eHargaJual").value = item.harga_jual || 0;
+}
+$("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
+
+async function submitEdit() {
+  if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
+  const item = items.find(i => i.id === editingId);
+  if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
+  const kasir = val("eKasir");
+  const data = {
+    nama: $("eNama").value.trim(),
+    kategori: $("eKategori").value,
+    satuan: $("eSatuan").value,
+    stok: item.stok, 
+    harga: item.harga, 
+    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
+    expired: item.expired, 
+    note: kasir
+  };
+  if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
+  try {
+    setStatus("Menyimpan…");
+    const res = await api({ action: "update", id: editingId, data }, "POST");
+    if (!res.ok && res.duplicate) { toast(res.message, "err"); setStatus("Terhubung ke Google Sheets"); return; }
+    if (!res.ok) throw new Error(res.message);
+    saveKasir(kasir);
+    toast("Perubahan tersimpan.", "ok");
+    setStatus("Terhubung ke Google Sheets");
+    await load();
+  } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+}
+$("btnSaveEdit").addEventListener("click", submitEdit);
+
+/* ---------- BELI ---------- */
+document.querySelectorAll(".mode-switch button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    beliMode = btn.dataset.mode;
+    document.querySelectorAll(".mode-switch button").forEach(b =>
+      b.classList.toggle("active", b.dataset.mode === beliMode));
+    applyBeliMode();
+  });
+});
+function applyBeliMode() {
+  const isNew = beliMode === "new";
+  ["bExistingWrap","bQtyExistingWrap","bHargaBaruWrap","bExpiredBaruWrap"].forEach(id => {
+    $(id).style.display = isNew ? "none" : "flex";
+  });
+  ["bNewWrap","bKategoriWrap","bSatuanWrap","bHargaWrap","bHargaJualWrap","bExpiredWrap","bQtyNewWrap"].forEach(id => {
+    $(id).style.display = isNew ? "flex" : "none";
+  });
+  updateBeliPreview();
+}
+function updateBeliPreview() {
+  const box = $("bPreview");
+  const isNew = beliMode === "new";
+  if (isNew) {
+    const qty = parseInt($("bQtyNew").value, 10) || 0;
+    const nama = $("bNama").value.trim() || "(belum diisi)";
+    const satuan = $("bSatuan").value;
+    const hb = parseInt($("bHarga").value, 10) || 0;
+    if (qty > 0 && nama !== "(belum diisi)") {
+      box.className = "preview ok";
+      box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
+    } else {
+      box.className = "preview";
+      box.textContent = "Isi nama dan jumlah.";
+    }
+  } else {
+    const item = items.find(i => i.id === $("bExisting").value);
+    const qty = parseInt($("bQtyExisting").value, 10) || 0;
+    const hargaBaru = $("bHargaBaru").value.trim();
+    const expBaru = $("bExpiredBaru").value;
+    if (!item) { box.className = "preview"; box.textContent = "Belum ada barang."; return; }
+    const harga = hargaBaru !== "" ? parseInt(hargaBaru, 10) || 0 : item.harga;
+    const totalBeli = qty * harga;
+    const sisa = item.stok + qty;
+    let extras = [];
+    if (hargaBaru !== "" && parseInt(hargaBaru, 10) !== item.harga) extras.push(`harga → ${rp(parseInt(hargaBaru, 10))}`);
+    if (expBaru && expBaru !== item.expired) extras.push(`expired → ${esc(expBaru)}`);
+    const extrasHtml = extras.length ? `<br><span class="sub">Update: ${extras.join(" · ")}</span>` : "";
+    box.className = "preview ok";
+    box.innerHTML = `<b>${esc(item.nama)}</b> × ${qty} = <b>${rp(totalBeli)}</b> · stok ${item.stok} → <b>${sisa}</b> ${esc(item.satuan)}.${extrasHtml}`;
+  }
+}
+
+async function submitBeli() {
+  const supplier = val("bNote");
+  if (beliMode === "new") {
+    const qty = parseInt($("bQtyNew").value, 10) || 0;
+    if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
+    const data = {
+      nama: $("bNama").value.trim(),
+      kategori: $("bKategori").value,
+      satuan: $("bSatuan").value,
+      stok: qty,
+      harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
+      harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0),
+      expired: $("bExpired").value || "",
+      note: supplier
+    };
+    if (!data.nama) { toast("Nama wajib diisi.", "err"); return; }
+    const dup = items.find(i => norm(i.nama) === norm(data.nama));
+    if (dup) {
+      const go = confirm(`"${dup.nama}" sudah ada (stok ${dup.stok}). Tambah stok saja?`);
+      if (go) {
+        beliMode = "existing";
+        document.querySelectorAll(".mode-switch button").forEach(b =>
+          b.classList.toggle("active", b.dataset.mode === "existing"));
+        applyBeliMode();
+        $("bExisting").value = dup.id;
+        $("bQtyExisting").value = qty;
+        updateBeliPreview();
+      }
+      return;
+    }
+    try {
+      setStatus("Menyimpan…");
+      const res = await api({ action: "add", data }, "POST");
+      if (!res.ok && res.duplicate && res.existingId) {
+        const go = confirm("Barang sudah ada. Tambah stok saja?");
+        if (go) {
+          beliMode = "existing";
+          document.querySelectorAll(".mode-switch button").forEach(b =>
+            b.classList.toggle("active", b.dataset.mode === "existing"));
+          applyBeliMode();
+          $("bExisting").value = res.existingId;
+          $("bQtyExisting").value = qty;
+        }
+        setStatus("Terhubung ke Google Sheets");
+        return;
+      }
+      if (!res.ok) throw new Error(res.message || "Gagal");
+      saveSupplier(supplier);
+      toast(`+${qty} ${data.satuan} ${data.nama}`, "ok");
+      resetBeliNew();
+      setStatus("Terhubung ke Google Sheets");
+      await load();
+    } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+  } else {
+    const id = $("bExisting").value;
+    const qty = parseInt($("bQtyExisting").value, 10) || 0;
+    const item = items.find(i => i.id === id);
+    if (!item) { toast("Pilih barang.", "err"); return; }
+    if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
+    const hargaBaruStr = $("bHargaBaru").value.trim();
+    const expBaru = $("bExpiredBaru").value;
+    const payload = { action: "in", id, qty, note: supplier };
+    if (hargaBaruStr !== "") payload.harga = parseInt(hargaBaruStr, 10) || 0;
+    if (expBaru) payload.expired = expBaru;
+    try {
+      setStatus("Menyimpan…");
+      const res = await api(payload, "POST");
+      if (!res.ok) throw new Error(res.message);
+      saveSupplier(supplier);
+      toast(`+${qty} ${item.satuan} ${item.nama}`, "ok");
+      $("bQtyExisting").value = 1;
+      $("bHargaBaru").value = "";
+      $("bExpiredBaru").value = "";
+      setStatus("Terhubung ke Google Sheets");
+      await load();
+    } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+  }
+}
+function resetBeliNew() {
+  $("bNama").value = "";
+  $("bKategori").value = "Makanan";
+  $("bSatuan").value = "pcs";
+  $("bHarga").value = 0;
+  $("bHargaJual").value = 0;
+  $("bExpired").value = "";
+  $("bQtyNew").value = 1;
+  updateBeliPreview();
+}
+
+/* ==================== KASIR / PENJUALAN ==================== */
+function addToCart() {
+  const id = $("kItem").value;
+  const qty = parseInt($("kQty").value, 10) || 0;
+  const item = items.find(i => i.id === id);
+  
+  if (!item) { toast("Pilih barang.", "err"); return; }
+  if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
+  
+  const existing = cart.find(c => c.id === id);
+  const currentQty = existing ? existing.qty : 0;
+  
+  if (currentQty + qty > item.stok) {
+    toast(`Stok tidak cukup. Sisa ${item.stok} ${item.satuan}.`, "err");
+    return;
+  }
+
+  if (existing) {
+    existing.qty += qty;
+    existing.subtotal = existing.qty * item.harga_jual;
+  } else {
+    cart.push({
+      id: item.id,
+      nama: item.nama,
+      harga: item.harga_jual || 0,
+      qty: qty,
+      subtotal: qty * (item.harga_jual || 0),
+      satuan: item.satuan
+    });
+  }
+  
+  $("kQty").value = 1;
+  renderCart();
+}
+
+function renderCart() {
+  const tb = $("cartBody");
+  if (cart.length === 0) {
+    tb.innerHTML = '<tr><td colspan="5" class="empty" style="border:none">Keranjang masih kosong.</td></tr>';
+    calculateTotal();
+    return;
+  }
+  
+  tb.innerHTML = cart.map((c, index) => `
+    <tr>
+      <td><div class="name">${esc(c.nama)}</div></td>
+      <td style="text-align:right">${rp(c.harga)}</td>
+      <td style="text-align:center">
+        <input type="number" min="1" value="${c.qty}" style="width:60px; padding:4px; text-align:center; border:1px solid #ccc; border-radius:4px;" onchange="updateCartQty(${index}, this.value)">
+      </td>
+      <td style="text-align:right; font-weight:bold">${rp(c.subtotal)}</td>
+      <td style="text-align:center">
+        <button class="small ghost" style="color:#c62828; border-color:#c62828;" onclick="removeFromCart(${index})">×</button>
+      </td>
+    </tr>
+  `).join("");
+  
+  calculateTotal();
+}
+
+function updateCartQty(index, newQty) {
+  const item = items.find(i => i.id === cart[index].id);
+  newQty = parseInt(newQty, 10) || 1;
+  if (newQty > item.stok) {
+    toast(`Stok maksimal ${item.stok}`, "err");
+    newQty = item.stok;
+  }
+  cart[index].qty = newQty;
+  cart[index].subtotal = newQty * cart[index].harga;
+  renderCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function calculateTotal() {
+  const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
+  const diskon = getMoneyValue("posDiskon");
+  const total = Math.max(0, subtotal - diskon);
+  const tunai = getMoneyValue("posTunai");
+  const kembali = Math.max(0, tunai - total);
+
+  $("posSubtotal").textContent = rp(subtotal);
+  $("posTotal").textContent = rp(total);
+  $("posKembali").textContent = rp(kembali);
+  
+  if (tunai > 0 && tunai < total) {
+    $("posKembali").style.color = "#c62828";
+    $("posKembali").textContent = "Uang kurang!";
+  } else {
+    $("posKembali").style.color = "#2e7d32";
+  }
+}
+
+async function submitCheckout() {
+  if (cart.length === 0) { toast("Keranjang kosong.", "err"); return; }
+  
+  const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
+  const diskon = getMoneyValue("posDiskon");
+  const total = Math.max(0, subtotal - diskon);
+  const tunai = getMoneyValue("posTunai");
+  const kasir = val("kNote");
+  
+  if (tunai < total) { toast("Uang tunai kurang dari total bayar.", "err"); return; }
+  if (!kasir) { toast("Nama Kasir wajib diisi.", "err"); return; }
+  
+  const btn = $("btnCheckout");
+  btn.textContent = "Memproses...";
+  btn.disabled = true;
+
+  try {
+    const res = await api({
+      action: "checkout",
+      items: cart,
+      kasir: kasir,
+      diskon: diskon,
+      tunai: tunai,
+      total: total
+    }, "POST");
+
+    if (res.ok) {
+      toast("Transaksi berhasil disimpan!", "ok");
+      cart = [];
+      renderCart();
+      $("posDiskon").value = "0";
+      $("posTunai").value = "0";
+      saveKasir(kasir);
+      await load();
+    } else {
+      toast(res.message, "err");
+    }
+  } catch (e) {
+    toast("Gagal memproses pembayaran.", "err");
+  } finally {
+    btn.textContent = "💳 Proses Pembayaran";
+    btn.disabled = false;
+  }
+}
+
+$("btnAddToCart").addEventListener("click", addToCart);
+$("btnCheckout").addEventListener("click", submitCheckout);
+
+/* ==================== KEUANGAN ==================== */
+const KATEGORI = {
+  pendapatan_lain: ["Bunga Bank", "Donasi", "Penjualan Aset", "Pengembalian", "Jasa", "Lainnya"],
+  beban_lain: ["Listrik", "Air", "Telepon/Internet", "Sewa", "Gaji", "Transport", "Perlengkapan", "Pemeliharaan", "Pajak", "Administrasi", "Lainnya"],
+  modal: ["Setoran Pemilik", "Modal Tambahan", "Lainnya"],
+  prive: ["Pengambilan Pribadi"],
+  utang: ["Bank", "Supplier", "Koperasi", "Pihak Ketiga", "Lainnya"],
+  bayar_utang: ["Bank", "Supplier", "Koperasi", "Pihak Ketiga", "Lainnya"]
+};
+const TIPE_LABEL = {
+  pendapatan_lain: "Pendapatan Lain", beban_lain: "Beban Lain",
+  modal: "Modal", prive: "Prive", utang: "Utang Baru", bayar_utang: "Bayar Utang"
+};
+const TIPE_BADGE = {
+  pendapatan_lain: "in", beban_lain: "out", modal: "in",
+  prive: "out", utang: "in", bayar_utang: "out"
+};
+
+function updateKategoriOptions() {
+  const tipe = $("kfTipe").value;
+  const opts = KATEGORI[tipe] || ["Lainnya"];
+  $("kfKategori").innerHTML = opts.map(o => `<option>${esc(o)}</option>`).join("");
+}
+$("kfTipe").addEventListener("change", updateKategoriOptions);
+
+async function submitKeuangan() {
+  const data = {
+    tipe: $("kfTipe").value,
+    kategori: $("kfKategori").value,
+    keterangan: $("kfKeterangan").value.trim(),
+    jumlah: Math.abs(parseInt($("kfJumlah").value, 10) || 0),
+    nama: $("kfNama").value.trim()
+  };
+  if (data.jumlah <= 0) { toast("Jumlah harus > 0.", "err"); $("kfJumlah").focus(); return; }
+  try {
+    setStatus("Menyimpan…");
+    const res = await api({ action: "add_keuangan", data }, "POST");
+    if (!res.ok) throw new Error(res.message);
+    saveKasir(data.nama);
+    toast("Tersimpan.", "ok");
+    $("kfJumlah").value = 0;
+    $("kfKeterangan").value = "";
+    setStatus("Terhubung ke Google Sheets");
+    await load();
+    renderKeuangan();
+  } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+}
+
+function renderKeuangan() {
+  const f = $("filterKeuangan").value;
+  const list = keuangan.filter(k => f === "all" || k.tipe === f)
+    .sort((a, b) => b.waktu.localeCompare(a.waktu));
+  const tb = $("tbodyKeuangan");
+  if (list.length === 0) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">Belum ada catatan.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = list.map(k => {
+    const badge = TIPE_BADGE[k.tipe] || "in";
+    const isMasuk = k.tipe === "pendapatan_lain" || k.tipe === "modal" || k.tipe === "utang";
+    const sign = isMasuk ? "+" : "−";
+    const cls = isMasuk ? "money-pos" : "money-neg";
+    return `<tr>
+      <td class="sub">${esc(k.waktu)}</td>
+      <td><span class="badge ${badge}">${esc(TIPE_LABEL[k.tipe] || k.tipe)}</span></td>
+      <td>${esc(k.kategori || "-")}</td>
+      <td>${esc(k.keterangan || "-")}</td>
+      <td class="sub">${esc(k.nama || "-")}</td>
+      <td style="text-align:right" class="${cls}">${sign} ${rp(k.jumlah)}</td>
+      <td><div class="actions"><button class="small ghost" data-kdel="${k.id}" title="Hapus">×</button></div></td>
+    </tr>`;
+  }).join("");
+  tb.querySelectorAll("[data-kdel]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Hapus catatan ini?")) return;
+      try {
+        const res = await api({ action: "delete_keuangan", id: btn.dataset.kdel }, "POST");
+        if (!res.ok) throw new Error(res.message);
+        toast("Dihapus.", "ok");
+        await load();
+        renderKeuangan();
+      } catch (e) { toast(e.message, "err"); }
+    });
+  });
+}
+$("filterKeuangan").addEventListener("change", renderKeuangan);
+
+/* ==================== RIWAYAT UMUM ==================== */
+function formatCatatan(catatan, tipe) {
+  if (!catatan) return '';
+  const match = catatan.match(/^(.+?)\s*\((.+?)\)\s*$/);
+  if (match) {
+    const prep = (tipe === "masuk" || tipe === "baru") ? "dari" : "oleh";
+    return `${esc(match[1])} · ${prep} <span class="kasir">${esc(match[2])}</span>`;
+  }
+  return esc(catatan);
+}
+function loadHistory() {
+  const box = $("histList");
+  if (!riwayat.length) { box.innerHTML = '<div class="empty">Belum ada riwayat.</div>'; return; }
+  box.innerHTML = riwayat.slice(0, 30).map(h => {
+    const tanda = h.tipe === "masuk" ? "+" : h.tipe === "keluar" ? "−" : "";
+    const jumlahTeks = h.jumlah ? `${tanda}${h.jumlah} ${esc(h.satuan || "")}` : "";
+    const totalTeks = h.total ? ` · <b>${rp(h.total)}</b>` : "";
+    const catatanHtml = h.catatan ? ` · ${formatCatatan(h.catatan, h.tipe)}` : "";
+    return `<div class="hist-item">
+      <div style="flex:1">
+        <b>${esc(h.nama)}</b>
+        <div class="meta">${esc(h.tipe)}${jumlahTeks ? " · " + jumlahTeks : ""}${totalTeks} · ${esc(h.waktu)}${catatanHtml}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ==================== FIFO ENGINE ==================== */
+function computeFifoHpp(startDate, endDate) {
+  const start = new Date(startDate + "T00:00:00");
+  const end = new Date(endDate + "T23:59:59");
+
+  const sorted = [...riwayat].sort((a, b) => {
+    return dateFromStr(a.waktu) - dateFromStr(b.waktu);
+  });
+
+  const queues = {};
+  let revenue = 0;
+  let hpp = 0;
+  let fallbackQty = 0;
+
+  for (const ev of sorted) {
+    const waktu = dateFromStr(ev.waktu);
+    if (isNaN(waktu.getTime()) || waktu > end) continue;
+
+    if (ev.tipe === "baru" || ev.tipe === "masuk") {
+      if (!queues[ev.nama]) queues[ev.nama] = [];
+      if (ev.jumlah > 0 && ev.harga_satuan > 0) {
+        queues[ev.nama].push({ qty: ev.jumlah, harga: ev.harga_satuan });
+      }
+    } else if (ev.tipe === "keluar") {
+      const inPeriod = waktu >= start;
+      let remaining = ev.jumlah;
+      let hppSale = 0;
+      const q = queues[ev.nama] || [];
+
+      while (remaining > 0 && q.length > 0) {
+        const b = q[0];
+        const take = Math.min(remaining, b.qty);
+        hppSale += take * b.harga;
+        b.qty -= take;
+        remaining -= take;
+        if (b.qty <= 0) q.shift();
+      }
+
+      if (remaining > 0) {
+        const item = items.find(i => norm(i.nama) === norm(ev.nama));
+        const fallback = item ? (Number(item.harga) || 0) : 0;
+        hppSale += remaining * fallback;
+        if (inPeriod) fallbackQty += remaining;
+      }
+
+      if (inPeriod) {
+        revenue += ev.jumlah * (ev.harga_satuan || 0);
+        hpp += hppSale;
+      }
+    }
+  }
+
+  return { revenue, hpp, labaKotor: revenue - hpp, fallbackQty };
+}
+
+function computeFifoPersediaan(endDate) {
+  const end = new Date(endDate + "T23:59:59");
+  const sorted = [...riwayat].sort((a, b) => dateFromStr(a.waktu) - dateFromStr(b.waktu));
+  const queues = {};
+
+  for (const ev of sorted) {
+    const waktu = dateFromStr(ev.waktu);
+    if (isNaN(waktu.getTime()) || waktu > end) continue;
+    if (ev.tipe === "baru" || ev.tipe === "masuk") {
+      if (!queues[ev.nama]) queues[ev.nama] = [];
+      if (ev.jumlah > 0 && ev.harga_satuan > 0) {
+        queues[ev.nama].push({ qty: ev.jumlah, harga: ev.harga_satuan });
+      }
+    } else if (ev.tipe === "keluar") {
+      let remaining = ev.jumlah;
+      const q = queues[ev.nama] || [];
+      while (remaining > 0 && q.length > 0) {
+        const b = q[0];
+        const take = Math.min(remaining, b.qty);
+        b.qty -= take;
+        remaining -= take;
+        if (b.qty <= 0) q.shift();
+      }
+    }
+  }
+
+  let total = 0;
+  for (const nama in queues) {
+    for (const b of queues[nama]) {
+      total += b.qty * b.harga;
+    }
+  }
+
+  for (const item of items) {
+    const recordedQty = (queues[item.nama] || []).reduce((s, b) => s + b.qty, 0);
+    const unrecorded = Math.max(0, (Number(item.stok) || 0) - recordedQty);
+    if (unrecorded > 0) {
+      total += unrecorded * (Number(item.harga) || 0);
+    }
+  }
+
+  return total;
+}
+
+/* ==================== LAPORAN ==================== */
+function lastDayOfMonth(y, m) { return new Date(y, m, 0).getDate(); }
+function fmtMonthLabel(y, m) {
+  const bulan = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+  return `${bulan[m-1]} ${y}`;
+}
+function monthRangeOf(monthStr) {
+  const [y, m] = monthStr.split("-").map(Number);
+  return { y, m,
+    start: `${y}-${pad2(m)}-01`,
+    end: `${y}-${pad2(m)}-${lastDayOfMonth(y, m)}`
+  };
+}
+
+function computeLaporan(startDate, endDate) {
+  const start = new Date(startDate + "T00:00:00");
+  const end = new Date(endDate + "T23:59:59");
+  const keuIn = keuangan.filter(k => {
+    const d = dateFromStr(k.waktu);
+    return d >= start && d <= end;
+  });
+
+  const fifo = computeFifoHpp(startDate, endDate);
+  const pendapatanPenjualan = fifo.revenue;
+  const hpp = fifo.hpp;
+  const labaKotor = fifo.labaKotor;
+  const pendapatanLain = keuIn.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
+  const bebanLain = keuIn.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  const modal = keuIn.filter(k => k.tipe === "modal").reduce((s, k) => s + k.jumlah, 0);
+  const prive = keuIn.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
+  const totalPendapatan = pendapatanPenjualan + pendapatanLain;
+  const labaBersih = labaKotor + pendapatanLain - bebanLain;
+
+  return {
+    pendapatanPenjualan, hpp, labaKotor,
+    pendapatanLain, bebanLain,
+    totalPendapatan, labaBersih,
+    modal, prive,
+    fallbackQty: fifo.fallbackQty
+  };
+}
+
+function computeNeraca(endDate) {
+  const end = new Date(endDate + "T23:59:59");
+  const toDate = (waktu) => dateFromStr(waktu) <= end;
+  const riwayatUp = riwayat.filter(r => toDate(r.waktu));
+  const keuUp = keuangan.filter(k => toDate(k.waktu));
+
+  const totalPenjualan = riwayatUp.filter(r => r.tipe === "keluar")
+    .reduce((s, r) => s + (Number(r.total) || 0), 0);
+  const totalPembelian = riwayatUp.filter(r => r.tipe === "masuk")
+    .reduce((s, r) => s + (Number(r.total) || 0), 0);
+  const pendLain = keuUp.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
+  const bebLain = keuUp.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  const modal = keuUp.filter(k => k.tipe === "modal").reduce((s, k) => s + k.jumlah, 0);
+  const prive = keuUp.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
+  const utangBaru = keuUp.filter(k => k.tipe === "utang").reduce((s, k) => s + k.jumlah, 0);
+  const bayarUtang = keuUp.filter(k => k.tipe === "bayar_utang").reduce((s, k) => s + k.jumlah, 0);
+
+  const kas = (totalPenjualan + pendLain + modal + utangBaru)
+            - (totalPembelian + bebLain + prive + bayarUtang);
+
+  const persediaan = computeFifoPersediaan(endDate);
+  const totalAset = kas + persediaan;
+  const utang = utangBaru - bayarUtang;
+  const ekuitas = totalAset - utang;
+
+  return { kas, persediaan, totalAset, utang, ekuitas };
+}
+
+function renderLaporan() {
+  const startMonth = $("periodStart").value;
+  const endMonth = $("periodEnd").value;
+  if (!startMonth || !endMonth) return;
+  const startR = monthRangeOf(startMonth);
+  const endR = monthRangeOf(endMonth);
+  const lr = computeLaporan(startR.start, endR.end);
+  const neraca = computeNeraca(endR.end);
+
+  const dayBefore = new Date(startR.start + "T00:00:00");
+  dayBefore.setDate(dayBefore.getDate() - 1);
+  const ekuitasAwalDate = dayBefore.toISOString().slice(0, 10);
+  const neracaAwal = computeNeraca(ekuitasAwalDate);
+  const ekuitasAwal = neracaAwal.ekuitas;
+  const ekuitasAkhir = neraca.ekuitas;
+
+  $("tableLabaRugi").innerHTML = `
+    <tr><th>Periode: ${fmtMonthLabel(startR.y, startR.m)} – ${fmtMonthLabel(endR.y, endR.m)}</th><th></th></tr>
+    <tr><td colspan="2" style="padding-top:8px"><b>Pendapatan</b></td></tr>
+    <tr><td>Penjualan</td><td>${rpFull(lr.pendapatanPenjualan)}</td></tr>
+    <tr><td>HPP (FIFO)</td><td class="money-neg">(${rpFull(lr.hpp)})</td></tr>
+    <tr class="sub"><td>Laba Kotor</td><td class="${lr.labaKotor >= 0 ? 'money-pos' : 'money-neg'}">${rpFull(lr.labaKotor)}</td></tr>
+    <tr><td colspan="2" style="padding-top:8px"><b>Pendapatan & Beban Lain</b></td></tr>
+    <tr><td>Pendapatan Lain-lain</td><td>${rpFull(lr.pendapatanLain)}</td></tr>
+    <tr><td>Beban Lain-lain</td><td class="money-neg">(${rpFull(lr.bebanLain)})</td></tr>
+    <tr class="total"><td>Laba Bersih</td><td class="${lr.labaBersih >= 0 ? 'money-pos' : 'money-neg'}">${rpFull(lr.labaBersih)}</td></tr>
+    ${lr.fallbackQty > 0 ? `<tr><td colspan="2" style="padding-top:10px;font-size:11.5px;color:#888"><i>ℹ️ ${lr.fallbackQty} unit terjual tanpa batch tercatat (data lama). HPP-nya pakai harga beli saat ini.</i></td></tr>` : ""}
+  `;
+
+  $("tableNeraca").innerHTML = `
+    <tr><th>Per ${fmtMonthLabel(endR.y, endR.m)}</th><th></th></tr>
+    <tr><td colspan="2" style="padding-top:8px"><b>Aset</b></td></tr>
+    <tr><td>Kas</td><td>${rpFull(neraca.kas)}</td></tr>
+    <tr><td>Persediaan Barang (FIFO)</td><td>${rpFull(neraca.persediaan)}</td></tr>
+    <tr class="sub"><td>Total Aset</td><td>${rpFull(neraca.totalAset)}</td></tr>
+    <tr><td colspan="2" style="padding-top:8px"><b>Kewajiban & Ekuitas</b></td></tr>
+    <tr><td>Utang</td><td>${rpFull(neraca.utang)}</td></tr>
+    <tr><td>Ekuitas</td><td>${rpFull(neraca.ekuitas)}</td></tr>
+    <tr class="total"><td>Total Kewajiban & Ekuitas</td><td>${rpFull(neraca.utang + neraca.ekuitas)}</td></tr>
+  `;
+
+  $("tableEkuitas").innerHTML = `
+    <tr><th>Periode: ${fmtMonthLabel(startR.y, startR.m)} – ${fmtMonthLabel(endR.y, endR.m)}</th><th></th></tr>
+    <tr><td>Ekuitas Awal</td><td>${rpFull(ekuitasAwal)}</td></tr>
+    <tr><td>(+) Laba Bersih</td><td class="money-pos">${rpFull(lr.labaBersih)}</td></tr>
+    <tr><td>(+) Setoran Modal</td><td class="money-pos">${rpFull(lr.modal)}</td></tr>
+    <tr><td>(−) Prive</td><td class="money-neg">${rpFull(-lr.prive)}</td></tr>
+    <tr class="total"><td>Ekuitas Akhir</td><td>${rpFull(ekuitasAkhir)}</td></tr>
+  `;
+
+  const months = [];
+  let cur = new Date(startR.y, startR.m - 1, 1);
+  const endD = new Date(endR.y, endR.m - 1, 1);
+  while (cur <= endD) {
+    months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 });
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  const labels = [], dataPendapatan = [], dataBeban = [], dataLaba = [];
+  months.forEach(({ y, m }) => {
+    const s = `${y}-${pad2(m)}-01`;
+    const e = `${y}-${pad2(m)}-${lastDayOfMonth(y, m)}`;
+    const l = computeLaporan(s, e);
+    labels.push(fmtMonthLabel(y, m));
+    dataPendapatan.push(l.pendapatanPenjualan);
+    dataBeban.push(l.hpp + l.bebanLain);
+    dataLaba.push(l.labaBersih);
+  });
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = $("chartLaba").getContext("2d");
+  chartInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Penjualan", data: dataPendapatan, backgroundColor: "#4caf50" },
+        { label: "HPP + Beban", data: dataBeban, backgroundColor: "#ef5350" },
+        { label: "Laba Bersih", data: dataLaba, type: "line",
+          borderColor: "#c62828", backgroundColor: "#c62828",
+          borderWidth: 2, tension: 0.2, pointRadius: 4, fill: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom" } },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => "Rp " + Number(v).toLocaleString("id-ID") } } }
+    }
+  });
+}
+
+document.querySelectorAll("[data-quick]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const n = parseInt(btn.dataset.quick, 10) || 6;
+    const now = new Date();
+    const endM = now.getFullYear() + "-" + pad2(now.getMonth() + 1);
+    const startD = new Date(now.getFullYear(), now.getMonth() - (n - 1), 1);
+    const startM = startD.getFullYear() + "-" + pad2(startD.getMonth() + 1);
+    $("periodStart").value = startM;
+    $("periodEnd").value = endM;
+    renderLaporan();
+  });
+});
+
+function initPeriod() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  $("periodEnd").value = `${y}-${pad2(m)}`;
+  const start = new Date(y, m - 7, 1);
+  $("periodStart").value = `${start.getFullYear()}-${pad2(start.getMonth() + 1)}`;
+}
+$("btnTampilkan").addEventListener("click", renderLaporan);
+
+/* ==================== EVENTS ==================== */
+$("search").addEventListener("input", renderTable);
+$("filter").addEventListener("change", renderTable);
+$("btnReload").addEventListener("click", load);
+
+$("bExisting").addEventListener("change", updateBeliPreview);
+$("bQtyExisting").addEventListener("input", updateBeliPreview);
+$("bHargaBaru").addEventListener("input", updateBeliPreview);
+$("bExpiredBaru").addEventListener("change", updateBeliPreview);
+$("bNama").addEventListener("input", updateBeliPreview);
+$("bQtyNew").addEventListener("input", updateBeliPreview);
+$("bSatuan").addEventListener("change", updateBeliPreview);
+$("bHarga").addEventListener("input", updateBeliPreview);
+$("bHargaJual").addEventListener("input", updateBeliPreview);
+$("btnBeli").addEventListener("click", submitBeli);
+$("btnKeuangan").addEventListener("click", submitKeuangan);
+
+// KASIR EVENTS
+$("btnAddToCart").addEventListener("click", addToCart);
+$("btnCheckout").addEventListener("click", submitCheckout);
+$("posDiskon").addEventListener("input", calculateTotal);
+$("posTunai").addEventListener("input", calculateTotal);
+
+$("tbody").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const act = btn.dataset.act;
+  if (act === "edit") {
+    switchTab("edit");
+    $("editItemSelect").value = id;
+    loadEditForm(id);
+    return;
+  }
+  if (act === "del") { deleteItem(id); return; }
+  if (act === "in") {
+    beliMode = "existing";
+    document.querySelectorAll(".mode-switch button").forEach(b =>
+      b.classList.toggle("active", b.dataset.mode === "existing"));
+    applyBeliMode();
+    $("bExisting").value = id;
+    $("bQtyExisting").value = 1;
+    updateBeliPreview();
+    switchTab("beli");
+    $("bQtyExisting").focus();
+    $("bQtyExisting").select();
+  }
+  if (act === "out") {
+    // Redirect ke POS
+    switchTab("jual");
+    $("kItem").value = id;
+    $("kQty").value = 1;
+    $("kQty").focus();
+    $("kQty").select();
+  }
+});
+
+/* ==================== START ==================== */
+checkAuth();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
