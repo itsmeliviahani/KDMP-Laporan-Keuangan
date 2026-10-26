@@ -9,11 +9,23 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     background:#fff;color:#222;font-size:14px;line-height:1.5}
+  
+  /* --- LOGIN SCREEN --- */
+  .login-screen{position:fixed;inset:0;background:#f5f5f5;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .login-card{background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);width:100%;max-width:400px;border-top:5px solid #c62828}
+  .login-card .field{margin-bottom:15px}
+  .login-card .field label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
+  .login-card .field input{width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;font-size:13.5px;font-family:inherit}
+  .login-card button{width:100%;padding:12px;font-size:14px;border-radius:7px;background:#c62828;color:#fff;border:none;font-weight:600;cursor:pointer;margin-top:10px}
+  .login-card button:hover{background:#b71c1c}
+
+  /* --- MAIN APP --- */
   header{background:#c62828;color:#fff;padding:14px 18px;
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   header h1{margin:0;font-size:17px;font-weight:600}
   header small{opacity:.85;font-size:12px}
   #status{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px}
+  .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e0e0e0;overflow-x:auto}
   nav.tabs button{background:none;border:none;padding:12px 14px;font-size:13px;
     font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;
@@ -125,428 +137,462 @@
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>KDMP Kapas</h1>
-    <small>Stok & Laporan Keuangan · FIFO</small>
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="login-screen" style="display:none;">
+  <div class="login-card">
+    <div style="text-align:center; margin-bottom:20px;">
+      <h2 style="margin:0; color:#c62828; font-size:22px;">KDMP Kapas</h2>
+      <p style="margin:5px 0 0; color:#666; font-size:13px;">Silakan masuk ke sistem</p>
+    </div>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="loginUsername" placeholder="manajer / karyawan" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div id="loginError" style="display:none; color:#c62828; font-size:12px; margin-top:5px;">Username atau password salah.</div>
+    <button onclick="handleLogin()">Masuk</button>
+    
+    <div style="margin-top:20px; font-size:11px; color:#888; text-align:center; line-height:1.5;">
+      <b>Akun Default:</b><br>
+      Manajer: <code>manajer</code> / <code>manajer123</code><br>
+      Karyawan: <code>karyawan</code> / <code>karyawan123</code>
+    </div>
   </div>
-  <span id="status">Menghubungkan…</span>
-</header>
+</div>
 
-<nav class="tabs">
-  <button data-tab="stok" class="active">📦 Stok</button>
-  <button data-tab="beli">🛒 Pembelian</button>
-  <button data-tab="jual">💰 Penjualan</button>
-  <button data-tab="edit">✎ Edit Barang</button>
-  <button data-tab="keuangan">💵 Keuangan</button>
-  <button data-tab="laporan">📊 Laporan</button>
-  <button data-tab="riwayat">🕒 Riwayat</button>
-  <button data-tab="panduan">📖 Panduan</button>
-</nav>
-
-<main>
-
-  <!-- ============ STOK ============ -->
-  <section id="view-stok" class="view active">
-    <div class="bar">
-      <input type="text" id="search" placeholder="Cari barang…">
-      <select id="filter">
-        <option value="all">Semua</option>
-        <option value="low">Menipis</option>
-        <option value="zero">Kosong</option>
-        <option value="exp">Kedaluwarsa</option>
-      </select>
-      <button class="ghost" id="btnReload">Muat Ulang</button>
+<!-- ============ MAIN APP ============ -->
+<div id="appContent" style="display:none;">
+  <header>
+    <div>
+      <h1>KDMP Kapas</h1>
+      <small>Stok & Laporan Keuangan · FIFO</small>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Kategori</th>
-            <th style="text-align:right">Stok</th>
-            <th style="text-align:right">H. Jual</th>
-            <th>Expired</th>
-            <th style="text-align:right">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
+    <div class="topbar-actions">
+      <span id="userInfo" style="font-size:12px; font-weight:600;"></span>
+      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent;" data-hint="Keluar dari akun">Keluar</button>
+      <span id="status">Menghubungkan…</span>
     </div>
-  </section>
+  </header>
 
-  <!-- ============ PEMBELIAN ============ -->
-  <section id="view-beli" class="view">
-    <h2 class="panel-title">🛒 Pembelian</h2>
-    <div class="mode-switch">
-      <button data-mode="existing" class="active">📦 Barang terdaftar</button>
-      <button data-mode="new">🆕 Barang baru</button>
-    </div>
-    <div class="form-card">
-      <div class="grid">
-        <div class="field full" id="bExistingWrap">
-          <label>Barang <span class="req">*</span></label>
-          <select id="bExisting"></select>
-        </div>
-        <div class="field" id="bQtyExistingWrap">
-          <label>Jumlah <span class="req">*</span></label>
-          <input type="number" id="bQtyExisting" min="1" value="1">
-        </div>
-        <div class="field" id="bHargaBaruWrap">
-          <label>Harga beli baru <span class="opt">(opsional)</span></label>
-          <input type="number" id="bHargaBaru" min="0" placeholder="Jika berubah">
-        </div>
-        <div class="field" id="bExpiredBaruWrap">
-          <label>Expired baru <span class="opt">(opsional)</span></label>
-          <input type="date" id="bExpiredBaru">
-        </div>
+  <nav class="tabs">
+    <button data-tab="stok" class="active" data-role="all">📦 Stok</button>
+    <button data-tab="beli" data-role="all">🛒 Pembelian</button>
+    <button data-tab="jual" data-role="all">💰 Penjualan</button>
+    <button data-tab="edit" data-role="manajer">✎ Edit Barang</button>
+    <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
+    <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
+    <button data-tab="riwayat" data-role="manajer">🕒 Riwayat</button>
+    <button data-tab="panduan" data-role="all">📖 Panduan</button>
+  </nav>
 
-        <div class="field full" id="bNewWrap" style="display:none">
-          <label>Nama barang <span class="req">*</span></label>
-          <input type="text" id="bNama" placeholder="Indomie Goreng">
-        </div>
-        <div class="field" id="bKategoriWrap" style="display:none">
-          <label>Kategori</label>
-          <select id="bKategori">
-            <option>Makanan</option><option>Minuman</option><option>Snack</option>
-            <option>Bumbu & Bahan</option><option>Kebutuhan Rumah</option>
-            <option>Kebersihan</option><option>Lainnya</option>
-          </select>
-        </div>
-        <div class="field" id="bSatuanWrap" style="display:none">
-          <label>Satuan <span class="req">*</span></label>
-          <select id="bSatuan">
-            <option value="pcs">pcs</option><option value="box">box</option>
-            <option value="bungkus">bungkus</option><option value="botol">botol</option>
-            <option value="karung">karung</option><option value="kg">kg</option>
-            <option value="gram">gram</option><option value="liter">liter</option>
-            <option value="ml">ml</option><option value="sachet">sachet</option>
-            <option value="pack">pack</option><option value="dus">dus</option>
-            <option value="roll">roll</option><option value="lembar">lembar</option>
-            <option value="cup">cup</option><option value="kotak">kotak</option>
-            <option value="kaleng">kaleng</option><option value="tube">tube</option>
-            <option value="lusin">lusin</option><option value="unit">unit</option>
-            <option value="set">set</option><option value="rim">rim</option>
-          </select>
-        </div>
-        <div class="field" id="bMinWrap" style="display:none">
-          <label>Stok minimum</label>
-          <input type="number" id="bMin" min="0" value="5">
-        </div>
-        <div class="field" id="bHargaWrap" style="display:none">
-          <label>Harga beli (Rp)</label>
-          <input type="number" id="bHarga" min="0" value="0">
-        </div>
-        <div class="field" id="bHargaJualWrap" style="display:none">
-          <label>Harga jual (Rp)</label>
-          <input type="number" id="bHargaJual" min="0" value="0">
-        </div>
-        <div class="field" id="bExpiredWrap" style="display:none">
-          <label>Expired</label>
-          <input type="date" id="bExpired">
-        </div>
-        <div class="field" id="bQtyNewWrap" style="display:none">
-          <label>Jumlah <span class="req">*</span></label>
-          <input type="number" id="bQtyNew" min="1" value="1">
-        </div>
+  <main>
+    <!-- ============ STOK ============ -->
+    <section id="view-stok" class="view active">
+      <div class="bar">
+        <input type="text" id="search" placeholder="Cari barang…">
+        <select id="filter">
+          <option value="all">Semua</option>
+          <option value="low">Menipis</option>
+          <option value="zero">Kosong</option>
+          <option value="exp">Kedaluwarsa</option>
+        </select>
+        <button class="ghost" id="btnReload">Muat Ulang</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Kategori</th>
+              <th style="text-align:right">Stok</th>
+              <th style="text-align:right">H. Jual</th>
+              <th>Expired</th>
+              <th style="text-align:right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
 
-        <div class="field full">
-          <label>Nama Supplier</label>
-          <input type="text" id="bNote" placeholder="cth: Supplier A" autocomplete="organization">
+    <!-- ============ PEMBELIAN ============ -->
+    <section id="view-beli" class="view">
+      <h2 class="panel-title">🛒 Pembelian</h2>
+      <div class="mode-switch">
+        <button data-mode="existing" class="active">📦 Barang terdaftar</button>
+        <button data-mode="new">🆕 Barang baru</button>
+      </div>
+      <div class="form-card">
+        <div class="grid">
+          <div class="field full" id="bExistingWrap">
+            <label>Barang <span class="req">*</span></label>
+            <select id="bExisting"></select>
+          </div>
+          <div class="field" id="bQtyExistingWrap">
+            <label>Jumlah <span class="req">*</span></label>
+            <input type="number" id="bQtyExisting" min="1" value="1">
+          </div>
+          <div class="field" id="bHargaBaruWrap">
+            <label>Harga beli baru <span class="opt">(opsional)</span></label>
+            <input type="number" id="bHargaBaru" min="0" placeholder="Jika berubah">
+          </div>
+          <div class="field" id="bExpiredBaruWrap">
+            <label>Expired baru <span class="opt">(opsional)</span></label>
+            <input type="date" id="bExpiredBaru">
+          </div>
+
+          <div class="field full" id="bNewWrap" style="display:none">
+            <label>Nama barang <span class="req">*</span></label>
+            <input type="text" id="bNama" placeholder="Indomie Goreng">
+          </div>
+          <div class="field" id="bKategoriWrap" style="display:none">
+            <label>Kategori</label>
+            <select id="bKategori">
+              <option>Makanan</option><option>Minuman</option><option>Snack</option>
+              <option>Bumbu & Bahan</option><option>Kebutuhan Rumah</option>
+              <option>Kebersihan</option><option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field" id="bSatuanWrap" style="display:none">
+            <label>Satuan <span class="req">*</span></label>
+            <select id="bSatuan">
+              <option value="pcs">pcs</option><option value="box">box</option>
+              <option value="bungkus">bungkus</option><option value="botol">botol</option>
+              <option value="karung">karung</option><option value="kg">kg</option>
+              <option value="gram">gram</option><option value="liter">liter</option>
+              <option value="ml">ml</option><option value="sachet">sachet</option>
+              <option value="pack">pack</option><option value="dus">dus</option>
+              <option value="roll">roll</option><option value="lembar">lembar</option>
+              <option value="cup">cup</option><option value="kotak">kotak</option>
+              <option value="kaleng">kaleng</option><option value="tube">tube</option>
+              <option value="lusin">lusin</option><option value="unit">unit</option>
+              <option value="set">set</option><option value="rim">rim</option>
+            </select>
+          </div>
+          <div class="field" id="bMinWrap" style="display:none">
+            <label>Stok minimum</label>
+            <input type="number" id="bMin" min="0" value="5">
+          </div>
+          <div class="field" id="bHargaWrap" style="display:none">
+            <label>Harga beli (Rp)</label>
+            <input type="number" id="bHarga" min="0" value="0">
+          </div>
+          <div class="field" id="bHargaJualWrap" style="display:none">
+            <label>Harga jual (Rp)</label>
+            <input type="number" id="bHargaJual" min="0" value="0">
+          </div>
+          <div class="field" id="bExpiredWrap" style="display:none">
+            <label>Expired</label>
+            <input type="date" id="bExpired">
+          </div>
+          <div class="field" id="bQtyNewWrap" style="display:none">
+            <label>Jumlah <span class="req">*</span></label>
+            <input type="number" id="bQtyNew" min="1" value="1">
+          </div>
+
+          <div class="field full">
+            <label>Nama Supplier</label>
+            <input type="text" id="bNote" placeholder="cth: Supplier A" autocomplete="organization">
+          </div>
+        </div>
+        <div class="preview" id="bPreview">Pilih barang.</div>
+        <div class="actions-row">
+          <button id="btnBeli">✅ Simpan</button>
         </div>
       </div>
-      <div class="preview" id="bPreview">Pilih barang.</div>
-      <div class="actions-row">
-        <button id="btnBeli">✅ Simpan</button>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ============ PENJUALAN ============ -->
-  <section id="view-jual" class="view">
-    <h2 class="panel-title">💰 Penjualan</h2>
-    <div class="form-card">
-      <div class="grid">
-        <div class="field full">
-          <label>Barang <span class="req">*</span></label>
-          <select id="kItem"></select>
+    <!-- ============ PENJUALAN ============ -->
+    <section id="view-jual" class="view">
+      <h2 class="panel-title">💰 Penjualan</h2>
+      <div class="form-card">
+        <div class="grid">
+          <div class="field full">
+            <label>Barang <span class="req">*</span></label>
+            <select id="kItem"></select>
+          </div>
+          <div class="field">
+            <label>Jumlah <span class="req">*</span></label>
+            <input type="number" id="kQty" min="1" value="1">
+          </div>
+          <div class="field full">
+            <label>Nama Kasir</label>
+            <input type="text" id="kNote" placeholder="Nama kasir/petugas" autocomplete="name">
+          </div>
         </div>
-        <div class="field">
-          <label>Jumlah <span class="req">*</span></label>
-          <input type="number" id="kQty" min="1" value="1">
-        </div>
-        <div class="field full">
-          <label>Nama Kasir</label>
-          <input type="text" id="kNote" placeholder="Nama kasir/petugas" autocomplete="name">
+        <div class="preview" id="kPreview">Pilih barang.</div>
+        <div class="actions-row">
+          <button id="btnJual">✅ Simpan</button>
         </div>
       </div>
-      <div class="preview" id="kPreview">Pilih barang.</div>
-      <div class="actions-row">
-        <button id="btnJual">✅ Simpan</button>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ============ EDIT BARANG ============ -->
-  <section id="view-edit" class="view">
-    <h2 class="panel-title">✎ Edit Barang</h2>
-    <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-      Pilih barang, ubah data, lalu simpan. Stok tidak bisa diedit di sini — gunakan <b>Pembelian</b> atau <b>Penjualan</b>.
-    </p>
-    <div class="form-card">
-      <div class="grid">
-        <div class="field full">
-          <label>Pilih barang <span class="req">*</span></label>
-          <select id="editItemSelect"></select>
+    <!-- ============ EDIT BARANG (Manajer Only) ============ -->
+    <section id="view-edit" class="view">
+      <h2 class="panel-title">✎ Edit Barang</h2>
+      <p class="sub" style="margin-bottom:14px;font-size:12.5px">
+        Pilih barang, ubah data, lalu simpan. Stok tidak bisa diedit di sini — gunakan <b>Pembelian</b> atau <b>Penjualan</b>.
+      </p>
+      <div class="form-card">
+        <div class="grid">
+          <div class="field full">
+            <label>Pilih barang <span class="req">*</span></label>
+            <select id="editItemSelect"></select>
+          </div>
+          <div class="field full">
+            <label>Nama <span class="req">*</span></label>
+            <input type="text" id="eNama">
+          </div>
+          <div class="field">
+            <label>Kategori</label>
+            <select id="eKategori">
+              <option>Makanan</option><option>Minuman</option><option>Snack</option>
+              <option>Bumbu & Bahan</option><option>Kebutuhan Rumah</option>
+              <option>Kebersihan</option><option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Satuan</label>
+            <select id="eSatuan">
+              <option value="pcs">pcs</option><option value="box">box</option>
+              <option value="bungkus">bungkus</option><option value="botol">botol</option>
+              <option value="karung">karung</option><option value="kg">kg</option>
+              <option value="gram">gram</option><option value="liter">liter</option>
+              <option value="ml">ml</option><option value="sachet">sachet</option>
+              <option value="pack">pack</option><option value="dus">dus</option>
+              <option value="roll">roll</option><option value="lembar">lembar</option>
+              <option value="cup">cup</option><option value="kotak">kotak</option>
+              <option value="kaleng">kaleng</option><option value="tube">tube</option>
+              <option value="lusin">lusin</option><option value="unit">unit</option>
+              <option value="set">set</option><option value="rim">rim</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Harga jual (Rp)</label>
+            <input type="number" id="eHargaJual" min="0">
+          </div>
+          <div class="field full">
+            <label>Nama Kasir <span class="opt">(yang mengedit)</span></label>
+            <input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name">
+          </div>
         </div>
-        <div class="field full">
-          <label>Nama <span class="req">*</span></label>
-          <input type="text" id="eNama">
-        </div>
-        <div class="field">
-          <label>Kategori</label>
-          <select id="eKategori">
-            <option>Makanan</option><option>Minuman</option><option>Snack</option>
-            <option>Bumbu & Bahan</option><option>Kebutuhan Rumah</option>
-            <option>Kebersihan</option><option>Lainnya</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Satuan</label>
-          <select id="eSatuan">
-            <option value="pcs">pcs</option><option value="box">box</option>
-            <option value="bungkus">bungkus</option><option value="botol">botol</option>
-            <option value="karung">karung</option><option value="kg">kg</option>
-            <option value="gram">gram</option><option value="liter">liter</option>
-            <option value="ml">ml</option><option value="sachet">sachet</option>
-            <option value="pack">pack</option><option value="dus">dus</option>
-            <option value="roll">roll</option><option value="lembar">lembar</option>
-            <option value="cup">cup</option><option value="kotak">kotak</option>
-            <option value="kaleng">kaleng</option><option value="tube">tube</option>
-            <option value="lusin">lusin</option><option value="unit">unit</option>
-            <option value="set">set</option><option value="rim">rim</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Harga jual (Rp)</label>
-          <input type="number" id="eHargaJual" min="0">
-        </div>
-        <div class="field full">
-          <label>Nama Kasir <span class="opt">(yang mengedit)</span></label>
-          <input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name">
-        </div>
-      </div>
-      <div class="actions-row">
-        <button id="btnSaveEdit">💾 Simpan Perubahan</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ KEUANGAN ============ -->
-  <section id="view-keuangan" class="view">
-    <h2 class="panel-title">💵 Keuangan Lain</h2>
-    <div class="form-card">
-      <div class="grid">
-        <div class="field">
-          <label>Tipe <span class="req">*</span></label>
-          <select id="kfTipe">
-            <option value="pendapatan_lain">Pendapatan Lain-lain</option>
-            <option value="beban_lain">Beban Lain-lain</option>
-            <option value="modal">Setoran Modal</option>
-            <option value="prive">Prive (Ambil Pribadi)</option>
-            <option value="utang">Utang Baru</option>
-            <option value="bayar_utang">Bayar Utang</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Kategori</label>
-          <select id="kfKategori"></select>
-        </div>
-        <div class="field">
-          <label>Jumlah (Rp) <span class="req">*</span></label>
-          <input type="number" id="kfJumlah" min="0" value="0">
-        </div>
-        <div class="field full">
-          <label>Keterangan</label>
-          <input type="text" id="kfKeterangan" placeholder="Opsional">
-        </div>
-        <div class="field full">
-          <label>Nama Pencatat</label>
-          <input type="text" id="kfNama" placeholder="Nama" autocomplete="name">
+        <div class="actions-row">
+          <button id="btnSaveEdit">💾 Simpan Perubahan</button>
         </div>
       </div>
-      <div class="actions-row">
-        <button id="btnKeuangan">✅ Simpan</button>
+    </section>
+
+    <!-- ============ KEUANGAN ============ -->
+    <section id="view-keuangan" class="view">
+      <h2 class="panel-title">💵 Keuangan Lain</h2>
+      <div class="form-card">
+        <div class="grid">
+          <div class="field">
+            <label>Tipe <span class="req">*</span></label>
+            <select id="kfTipe">
+              <option value="pendapatan_lain">Pendapatan Lain-lain</option>
+              <option value="beban_lain">Beban Lain-lain</option>
+              <option value="modal">Setoran Modal</option>
+              <option value="prive">Prive (Ambil Pribadi)</option>
+              <option value="utang">Utang Baru</option>
+              <option value="bayar_utang">Bayar Utang</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Kategori</label>
+            <select id="kfKategori"></select>
+          </div>
+          <div class="field">
+            <label>Jumlah (Rp) <span class="req">*</span></label>
+            <input type="number" id="kfJumlah" min="0" value="0">
+          </div>
+          <div class="field full">
+            <label>Keterangan</label>
+            <input type="text" id="kfKeterangan" placeholder="Opsional">
+          </div>
+          <div class="field full">
+            <label>Nama Pencatat</label>
+            <input type="text" id="kfNama" placeholder="Nama" autocomplete="name">
+          </div>
+        </div>
+        <div class="actions-row">
+          <button id="btnKeuangan">✅ Simpan</button>
+        </div>
       </div>
-    </div>
 
-    <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Daftar Keuangan</h3>
-    <div class="bar">
-      <select id="filterKeuangan">
-        <option value="all">Semua</option>
-        <option value="pendapatan_lain">Pendapatan Lain</option>
-        <option value="beban_lain">Beban Lain</option>
-        <option value="modal">Modal</option>
-        <option value="prive">Prive</option>
-        <option value="utang">Utang</option>
-        <option value="bayar_utang">Bayar Utang</option>
-      </select>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Tanggal</th>
-            <th>Tipe</th>
-            <th>Kategori</th>
-            <th>Keterangan</th>
-            <th>Nama</th>
-            <th style="text-align:right">Jumlah</th>
-            <th style="text-align:right">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyKeuangan"></tbody>
-      </table>
-    </div>
-  </section>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Daftar Keuangan</h3>
+      <div class="bar">
+        <select id="filterKeuangan">
+          <option value="all">Semua</option>
+          <option value="pendapatan_lain">Pendapatan Lain</option>
+          <option value="beban_lain">Beban Lain</option>
+          <option value="modal">Modal</option>
+          <option value="prive">Prive</option>
+          <option value="utang">Utang</option>
+          <option value="bayar_utang">Bayar Utang</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Tipe</th>
+              <th>Kategori</th>
+              <th>Keterangan</th>
+              <th>Nama</th>
+              <th style="text-align:right">Jumlah</th>
+              <th style="text-align:right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyKeuangan"></tbody>
+        </table>
+      </div>
+    </section>
 
-  <!-- ============ LAPORAN ============ -->
-  <section id="view-laporan" class="view">
-    <h2 class="panel-title">📊 Laporan Keuangan</h2>
-    <div class="bar">
-      <label style="font-size:12px;font-weight:600">Dari</label>
-      <input type="month" id="periodStart" style="width:auto">
-      <label style="font-size:12px;font-weight:600">sampai</label>
-      <input type="month" id="periodEnd" style="width:auto">
-      <button id="btnTampilkan">Tampilkan</button>
-      <button class="ghost small" data-quick="3">3 bln</button>
-      <button class="ghost small" data-quick="6">6 bln</button>
-      <button class="ghost small" data-quick="12">12 bln</button>
-    </div>
+    <!-- ============ LAPORAN (Manajer Only) ============ -->
+    <section id="view-laporan" class="view">
+      <h2 class="panel-title">📊 Laporan Keuangan</h2>
+      <div class="bar">
+        <label style="font-size:12px;font-weight:600">Dari</label>
+        <input type="month" id="periodStart" style="width:auto">
+        <label style="font-size:12px;font-weight:600">sampai</label>
+        <input type="month" id="periodEnd" style="width:auto">
+        <button id="btnTampilkan">Tampilkan</button>
+        <button class="ghost small" data-quick="3">3 bln</button>
+        <button class="ghost small" data-quick="6">6 bln</button>
+        <button class="ghost small" data-quick="12">12 bln</button>
+      </div>
 
-    <div class="report-grid">
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Laporan Laba Rugi</h3>
+          <table class="report-table" id="tableLabaRugi"></table>
+        </div>
+        <div class="report-card">
+          <h3>Neraca</h3>
+          <table class="report-table" id="tableNeraca"></table>
+        </div>
+      </div>
+
       <div class="report-card">
-        <h3>Laporan Laba Rugi</h3>
-        <table class="report-table" id="tableLabaRugi"></table>
+        <h3>Laporan Perubahan Ekuitas</h3>
+        <table class="report-table" id="tableEkuitas"></table>
       </div>
+
       <div class="report-card">
-        <h3>Neraca</h3>
-        <table class="report-table" id="tableNeraca"></table>
+        <h3>Grafik Laba Rugi Bulanan</h3>
+        <div class="chart-wrap">
+          <canvas id="chartLaba"></canvas>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="report-card">
-      <h3>Laporan Perubahan Ekuitas</h3>
-      <table class="report-table" id="tableEkuitas"></table>
-    </div>
-
-    <div class="report-card">
-      <h3>Grafik Laba Rugi Bulanan</h3>
-      <div class="chart-wrap">
-        <canvas id="chartLaba"></canvas>
+    <!-- ============ RIWAYAT (Manajer Only) ============ -->
+    <section id="view-riwayat" class="view">
+      <h2 class="panel-title">🕒 Riwayat</h2>
+      <div class="hist-list" id="histList">
+        <div class="empty">Memuat…</div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ============ RIWAYAT ============ -->
-  <section id="view-riwayat" class="view">
-    <h2 class="panel-title">🕒 Riwayat</h2>
-    <div class="hist-list" id="histList">
-      <div class="empty">Memuat…</div>
-    </div>
-  </section>
+    <!-- ============ PANDUAN ============ -->
+    <section id="view-panduan" class="view">
+      <h2 class="panel-title">📖 Panduan</h2>
+      <div class="guide">
+        <h3>Akses Pengguna (Login)</h3>
+        <p>Aplikasi ini memiliki dua peran pengguna:</p>
+        <ul>
+          <li><b>Manajer</b> — memiliki akses penuh ke semua fitur (termasuk Edit Barang, Laporan, dan Riwayat).</li>
+          <li><b>Karyawan</b> — hanya bisa mengakses Stok, Pembelian, Penjualan, dan Keuangan.</li>
+        </ul>
+        <p>Untuk mengubah username atau password, edit objek <code>ACCOUNTS</code> di dalam file <code>index.html</code>.</p>
 
-  <!-- ============ PANDUAN ============ -->
-  <section id="view-panduan" class="view">
-    <h2 class="panel-title">📖 Panduan</h2>
-    <div class="guide">
-      <h3>Alur kerja singkat</h3>
-      <ol>
-        <li><b>Barang baru masuk?</b> → tab <b>Pembelian</b> → <b>🆕 Barang baru</b></li>
-        <li><b>Restock?</b> → tab <b>Pembelian</b> → <b>📦 Barang terdaftar</b></li>
-        <li><b>Barang terjual?</b> → tab <b>Penjualan</b></li>
-        <li><b>Ubah nama, harga jual?</b> → tab <b>✎ Edit Barang</b></li>
-        <li><b>Pendapatan/beban lain?</b> → tab <b>Keuangan</b></li>
-        <li><b>Lihat hasil?</b> → tab <b>Laporan</b></li>
-      </ol>
+        <h3>Alur kerja singkat</h3>
+        <ol>
+          <li><b>Barang baru masuk?</b> → tab <b>Pembelian</b> → <b>🆕 Barang baru</b></li>
+          <li><b>Restock?</b> → tab <b>Pembelian</b> → <b>📦 Barang terdaftar</b></li>
+          <li><b>Barang terjual?</b> → tab <b>Penjualan</b></li>
+          <li><b>Ubah nama, harga jual?</b> → tab <b>✎ Edit Barang</b></li>
+          <li><b>Pendapatan/beban lain?</b> → tab <b>Keuangan</b></li>
+          <li><b>Lihat hasil?</b> → tab <b>Laporan</b></li>
+        </ol>
 
-      <h3>Tab Edit Barang</h3>
-      <p>Untuk mengoreksi <b>nama, kategori, satuan, dan harga jual</b> barang. Pilih barang dari dropdown, ubah, klik <b>Simpan Perubahan</b>.</p>
-      <p>Stok, harga beli, dan expired <b>tidak bisa diubah</b> dari tab ini — stok diubah lewat <b>Pembelian</b> atau <b>Penjualan</b> agar tercatat di riwayat.</p>
+        <h3>HPP Metode FIFO</h3>
+        <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
+        <p>Contoh:</p>
+        <ul>
+          <li>Beli 10 Indomie @ Rp 3.000 → batch A</li>
+          <li>Beli 10 Indomie lagi @ Rp 3.200 → batch B</li>
+          <li>Jual 15 Indomie @ Rp 3.500 = Rp 52.500</li>
+          <li>HPP = (10 × 3.000) + (5 × 3.200) = <b>Rp 46.000</b></li>
+          <li>Laba Kotor = 52.500 − 46.000 = <b>Rp 6.500</b></li>
+          <li>Sisa persediaan = 5 × 3.200 = <b>Rp 16.000</b></li>
+        </ul>
+        <p>Sistem menghitung ini otomatis dari riwayat transaksi.</p>
 
-      <h3>HPP Metode FIFO</h3>
-      <p>HPP (Harga Pokok Penjualan) dihitung dengan metode <b>FIFO</b> — barang yang <b>paling awal masuk</b> dianggap <b>paling awal terjual</b>.</p>
-      <p>Contoh:</p>
-      <ul>
-        <li>Beli 10 Indomie @ Rp 3.000 → batch A</li>
-        <li>Beli 10 Indomie lagi @ Rp 3.200 → batch B</li>
-        <li>Jual 15 Indomie @ Rp 3.500 = Rp 52.500</li>
-        <li>HPP = (10 × 3.000) + (5 × 3.200) = <b>Rp 46.000</b></li>
-        <li>Laba Kotor = 52.500 − 46.000 = <b>Rp 6.500</b></li>
-        <li>Sisa persediaan = 5 × 3.200 = <b>Rp 16.000</b></li>
-      </ul>
-      <p>Sistem menghitung ini otomatis dari riwayat transaksi.</p>
+        <h3>Tab Keuangan</h3>
+        <p>Mencatat uang masuk/keluar yang <b>bukan</b> dari penjualan/pembelian barang:</p>
+        <ul>
+          <li><b>Pendapatan Lain-lain</b> — bunga bank, donasi, penjualan aset, dsb.</li>
+          <li><b>Beban Lain-lain</b> — listrik, air, sewa, gaji, transport, dsb.</li>
+          <li><b>Setoran Modal</b> — uang pemilik yang dimasukkan ke usaha.</li>
+          <li><b>Prive</b> — uang usaha yang diambil pemilik pribadi.</li>
+          <li><b>Utang Baru</b> — pinjaman masuk (kas +, utang +).</li>
+          <li><b>Bayar Utang</b> — pelunasan (kas −, utang −).</li>
+        </ul>
 
-      <h3>Tab Keuangan</h3>
-      <p>Mencatat uang masuk/keluar yang <b>bukan</b> dari penjualan/pembelian barang:</p>
-      <ul>
-        <li><b>Pendapatan Lain-lain</b> — bunga bank, donasi, penjualan aset, dsb.</li>
-        <li><b>Beban Lain-lain</b> — listrik, air, sewa, gaji, transport, dsb.</li>
-        <li><b>Setoran Modal</b> — uang pemilik yang dimasukkan ke usaha.</li>
-        <li><b>Prive</b> — uang usaha yang diambil pemilik pribadi.</li>
-        <li><b>Utang Baru</b> — pinjaman masuk (kas +, utang +).</li>
-        <li><b>Bayar Utang</b> — pelunasan (kas −, utang −).</li>
-      </ul>
+        <h3>Tab Laporan</h3>
+        <p>Pilih rentang bulan, klik <b>Tampilkan</b>:</p>
+        <ul>
+          <li><b>Laba Rugi</b> — Penjualan − HPP (FIFO) = Laba Kotor, lalu + Pendapatan Lain − Beban Lain = Laba Bersih.</li>
+          <li><b>Neraca</b> — Aset (kas + persediaan FIFO) vs Utang vs Ekuitas.</li>
+          <li><b>Perubahan Ekuitas</b> — Ekuitas Awal + Laba − Prive = Ekuitas Akhir.</li>
+          <li><b>Grafik</b> — Penjualan, HPP+Beban, Laba Bersih per bulan.</li>
+        </ul>
 
-      <h3>Tab Laporan</h3>
-      <p>Pilih rentang bulan, klik <b>Tampilkan</b>:</p>
-      <ul>
-        <li><b>Laba Rugi</b> — Penjualan − HPP (FIFO) = Laba Kotor, lalu + Pendapatan Lain − Beban Lain = Laba Bersih.</li>
-        <li><b>Neraca</b> — Aset (kas + persediaan FIFO) vs Utang vs Ekuitas.</li>
-        <li><b>Perubahan Ekuitas</b> — Ekuitas Awal + Laba − Prive = Ekuitas Akhir.</li>
-        <li><b>Grafik</b> — Penjualan, HPP+Beban, Laba Bersih per bulan.</li>
-      </ul>
+        <h3>Arti tombol di tabel Stok</h3>
+        <table>
+          <tr><th>Tombol</th><th>Fungsi</th></tr>
+          <tr><td><b>+</b></td><td>Pembelian — tambah stok</td></tr>
+          <tr><td><b>−</b></td><td>Penjualan — kurangi stok</td></tr>
+          <tr><td><b>✎</b></td><td>Pintasan ke tab Edit Barang</td></tr>
+          <tr><td><b>×</b></td><td>Hapus barang</td></tr>
+        </table>
 
-      <h3>Arti tombol di tabel Stok</h3>
-      <table>
-        <tr><th>Tombol</th><th>Fungsi</th></tr>
-        <tr><td><b>+</b></td><td>Pembelian — tambah stok</td></tr>
-        <tr><td><b>−</b></td><td>Penjualan — kurangi stok</td></tr>
-        <tr><td><b>✎</b></td><td>Pintasan ke tab Edit Barang</td></tr>
-        <tr><td><b>×</b></td><td>Hapus barang</td></tr>
-      </table>
+        <h3>Arti warna</h3>
+        <ul>
+          <li><span class="badge zero">kosong</span> — stok 0</li>
+          <li><span class="badge low">menipis</span> — stok ≤ minimum</li>
+          <li><span class="badge ok">aman</span> — stok di atas minimum</li>
+          <li><span class="badge soon">expired dekat</span> — ≤ 30 hari</li>
+          <li><span class="badge exp">expired</span> — sudah lewat</li>
+        </ul>
 
-      <h3>Arti warna</h3>
-      <ul>
-        <li><span class="badge zero">kosong</span> — stok 0</li>
-        <li><span class="badge low">menipis</span> — stok ≤ minimum</li>
-        <li><span class="badge ok">aman</span> — stok di atas minimum</li>
-        <li><span class="badge soon">expired dekat</span> — ≤ 30 hari</li>
-        <li><span class="badge exp">expired</span> — sudah lewat</li>
-      </ul>
-
-      <h3>Duplikat barang</h3>
-      <p>Barang dengan nama sama tidak bisa didaftarkan dua kali. Kalau Anda ketik nama yang sudah ada saat Pembelian, sistem mengarahkan ke pembelian barang tersebut. Untuk nama mirip, tambahkan pembeda:</p>
-      <ul>
-        <li><code>Indomie Goreng — Supplier A</code></li>
-        <li><code>Indomie Goreng — Supplier B</code></li>
-      </ul>
-
-      <div class="note">
-        <b>Penting:</b> Data tersimpan di <b>Google Sheets</b>, bukan di browser. Aman meskipun browser ditutup, cache dihapus, atau ganti perangkat.
+        <div class="note">
+          <b>Penting:</b> Data tersimpan di <b>Google Sheets</b>, bukan di browser. Aman meskipun browser ditutup, cache dihapus, atau ganti perangkat.
+        </div>
       </div>
-    </div>
-  </section>
-
-</main>
+    </section>
+  </main>
+</div>
 
 <div id="toast"></div>
 
 <script>
 /* =========================================================
-   GANTI DENGAN URL WEB APP APPS SCRIPT (berakhiran /exec)
+   KONFIGURASI LOGIN & API
    ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
+const ACCOUNTS = {
+  manajer: { password: "manajer123", role: "manajer" },
+  karyawan: { password: "karyawan123", role: "karyawan" }
+};
+
+// GANTI DENGAN URL WEB APP APPS SCRIPT (berakhiran /exec)
+const API_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
 
 const K_KASIR = "kdmpkapas_kasir";
 const K_SUPPLIER = "kdmpkapas_supplier";
@@ -569,6 +615,59 @@ const rpFull = n => {
 const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const dateFromStr = s => new Date(String(s).replace(" ", "T"));
 const pad2 = n => String(n).padStart(2, "0");
+
+/* ---------- AUTHENTICATION ---------- */
+function checkAuth() {
+  const auth = localStorage.getItem("kdmp_auth");
+  if (auth) {
+    const user = JSON.parse(auth);
+    showApp(user);
+  } else {
+    $("loginScreen").style.display = "flex";
+    $("appContent").style.display = "none";
+  }
+}
+
+function handleLogin() {
+  const u = $("loginUsername").value.trim().toLowerCase();
+  const p = $("loginPassword").value;
+  if (ACCOUNTS[u] && ACCOUNTS[u].password === p) {
+    const user = { username: u, role: ACCOUNTS[u].role };
+    localStorage.setItem("kdmp_auth", JSON.stringify(user));
+    $("loginError").style.display = "none";
+    showApp(user);
+  } else {
+    $("loginError").style.display = "block";
+  }
+}
+
+function showApp(user) {
+  $("loginScreen").style.display = "none";
+  $("appContent").style.display = "block";
+  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'})`;
+  
+  // Sembunyikan tab manajer jika login sebagai karyawan
+  document.querySelectorAll("nav.tabs button").forEach(btn => {
+    if (btn.dataset.role === "manajer" && user.role !== "manajer") {
+      btn.style.display = "none";
+    } else {
+      btn.style.display = "block";
+    }
+  });
+
+  switchTab("stok");
+  
+  applyBeliMode();
+  updateKategoriOptions();
+  loadNames();
+  initPeriod();
+  load().then(() => renderLaporan());
+}
+
+function logout() {
+  localStorage.removeItem("kdmp_auth");
+  location.reload();
+}
 
 /* ---------- TOAST & STATUS ---------- */
 function toast(msg, type = "") {
@@ -611,10 +710,16 @@ function val(id) { return String($(id).value || "").trim(); }
 
 /* ---------- TAB ---------- */
 function switchTab(name) {
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  if (auth.role !== "manajer" && ["edit", "laporan", "riwayat"].includes(name)) {
+    toast("Akses ditolak. Fitur ini khusus Manajer.", "err");
+    return;
+  }
   document.querySelectorAll("nav.tabs button").forEach(b =>
     b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".view").forEach(v =>
     v.classList.toggle("active", v.id === "view-" + name));
+    
   if (name === "riwayat") loadHistory();
   if (name === "laporan") renderLaporan();
   if (name === "keuangan") renderKeuangan();
@@ -762,11 +867,11 @@ async function submitEdit() {
     nama: $("eNama").value.trim(),
     kategori: $("eKategori").value,
     satuan: $("eSatuan").value,
-    stok: item.stok, // Tetap gunakan stok lama
-    min: item.min, // Tetap gunakan min lama
-    harga: item.harga, // Tetap gunakan harga beli lama
-    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), // Hanya ini yang berubah
-    expired: item.expired, // Tetap gunakan expired lama
+    stok: item.stok, 
+    min: item.min, 
+    harga: item.harga, 
+    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
+    expired: item.expired, 
     note: kasir
   };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
@@ -1427,11 +1532,7 @@ $("tbody").addEventListener("click", e => {
 });
 
 /* ==================== START ==================== */
-applyBeliMode();
-updateKategoriOptions();
-loadNames();
-initPeriod();
-load().then(() => renderLaporan());
+checkAuth();
 setInterval(load, 60000);
 </script>
 </body>
