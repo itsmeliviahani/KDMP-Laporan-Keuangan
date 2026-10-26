@@ -327,30 +327,6 @@
             <option value="set">set</option><option value="rim">rim</option>
           </select>
         </div>
-        <div class="field">
-          <label>Stok minimum</label>
-          <input type="number" id="eMin" min="0">
-        </div>
-        <div class="field">
-          <label>Harga beli (Rp)</label>
-          <input type="number" id="eHarga" min="0">
-        </div>
-        <div class="field">
-          <label>Harga jual (Rp)</label>
-          <input type="number" id="eHargaJual" min="0">
-        </div>
-        <div class="field">
-          <label>Expired</label>
-          <input type="date" id="eExpired">
-        </div>
-        <div class="field full">
-          <label>Nama Kasir <span class="opt">(yang mengedit)</span></label>
-          <input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name">
-        </div>
-        <div class="field full">
-          <small>Stok saat ini: <b id="eStokInfo">-</b></small>
-        </div>
-      </div>
       <div class="actions-row">
         <button id="btnSaveEdit">💾 Simpan Perubahan</button>
       </div>
@@ -762,11 +738,6 @@ function clearEditForm() {
   $("eNama").value = "";
   $("eKategori").value = "Makanan";
   $("eSatuan").value = "pcs";
-  $("eMin").value = 0;
-  $("eHarga").value = 0;
-  $("eHargaJual").value = 0;
-  $("eExpired").value = "";
-  $("eStokInfo").textContent = "-";
 }
 function loadEditForm(id) {
   const item = items.find(i => i.id === id);
@@ -775,11 +746,6 @@ function loadEditForm(id) {
   $("eNama").value = item.nama;
   $("eKategori").value = item.kategori || "Lainnya";
   $("eSatuan").value = item.satuan || "pcs";
-  $("eMin").value = item.min;
-  $("eHarga").value = item.harga;
-  $("eHargaJual").value = item.harga_jual;
-  $("eExpired").value = item.expired || "";
-  $("eStokInfo").textContent = `${item.stok} ${item.satuan}`;
 }
 $("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
 
@@ -793,10 +759,10 @@ async function submitEdit() {
     kategori: $("eKategori").value,
     satuan: $("eSatuan").value,
     stok: item.stok,
-    min: Math.max(0, parseInt($("eMin").value, 10) || 0),
-    harga: Math.max(0, parseInt($("eHarga").value, 10) || 0),
-    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0),
-    expired: $("eExpired").value || "",
+    min: item.min,
+    harga: item.harga,
+    harga_jual: item.harga_jual,
+    expired: item.expired,
     note: kasir
   };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
