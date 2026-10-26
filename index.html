@@ -10,15 +10,20 @@
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     background:#fff;color:#222;font-size:14px;line-height:1.5}
   
-  /* --- LOGIN SCREEN --- */
+  /* --- LOGIN & REGISTER SCREEN --- */
   .login-screen{position:fixed;inset:0;background:#f5f5f5;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
   .login-card{background:#fff;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.1);width:100%;max-width:400px;border-top:5px solid #c62828}
+  .login-card h2{margin:0; color:#c62828; font-size:22px; text-align:center;}
+  .login-card p.sub{margin:5px 0 20px; color:#666; font-size:13px; text-align:center;}
   .login-card .field{margin-bottom:15px}
   .login-card .field label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:5px}
   .login-card .field input{width:100%;padding:10px;border:1px solid #ddd;border-radius:7px;font-size:13.5px;font-family:inherit}
   .login-card button{width:100%;padding:12px;font-size:14px;border-radius:7px;background:#c62828;color:#fff;border:none;font-weight:600;cursor:pointer;margin-top:10px}
   .login-card button:hover{background:#b71c1c}
   .login-card button:disabled{background:#e57373;cursor:not-allowed}
+  .login-card .toggle-link{text-align:center; margin-top:15px; font-size:12.5px;}
+  .login-card .toggle-link a{color:#c62828; text-decoration:none; font-weight:600; cursor:pointer;}
+  .login-card .toggle-link a:hover{text-decoration:underline;}
 
   /* --- MAIN APP --- */
   header{background:#c62828;color:#fff;padding:14px 18px;
@@ -147,30 +152,55 @@
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
+<!-- ============ LOGIN & REGISTER SCREEN ============ -->
 <div id="loginScreen" class="login-screen" style="display:none;">
-  <div class="login-card">
-    <div style="text-align:center; margin-bottom:20px;">
-      <h2 style="margin:0; color:#c62828; font-size:22px;">KDMP Kapas</h2>
-      <p style="margin:5px 0 0; color:#666; font-size:13px;">Silakan masuk ke sistem</p>
-    </div>
+  
+  <!-- FORM LOGIN -->
+  <div class="login-card" id="formLogin">
+    <h2>KDMP Kapas</h2>
+    <p class="sub">Silakan masuk ke sistem</p>
+    
     <div class="field">
-      <label>Username</label>
-      <input type="text" id="loginUsername" placeholder="Masukkan username" autocomplete="username">
+      <label>Username / Email</label>
+      <input type="text" id="loginUsername" placeholder="Masukkan email" autocomplete="username">
     </div>
     <div class="field">
       <label>Password</label>
       <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
     </div>
-    <div id="loginError" style="display:none; color:#c62828; font-size:12px; margin-top:5px;">Username atau password salah.</div>
+    <div id="loginError" style="display:none; color:#c62828; font-size:12px; margin-top:5px; margin-bottom:10px; text-align:center;"></div>
+    
     <button id="btnLogin" onclick="handleLogin()">Masuk</button>
     
-    <div style="margin-top:20px; font-size:11px; color:#888; text-align:center; line-height:1.5;">
-      <b>Akun Default (dapat diubah di Google Sheets):</b><br>
-      Manajer: <code>manajer</code> / <code>manajer123</code><br>
-      Karyawan: <code>karyawan</code> / <code>karyawan123</code>
+    <div class="toggle-link">
+      Belum punya akun? <a onclick="toggleAuth('register')">Daftar di sini</a>
     </div>
   </div>
+
+  <!-- FORM REGISTER -->
+  <div class="login-card" id="formRegister" style="display:none;">
+    <h2>Buat Akun Baru</h2>
+    <p class="sub">Daftar menggunakan Email dan Tanggal Lahir</p>
+    
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="contoh: budi@gmail.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password (Tanggal Lahir)</label>
+      <input type="text" id="regPassword" placeholder="Format: YYYY/MM/DD (cth: 1995/12/31)" autocomplete="new-password">
+      <small style="color:#777; margin-top:3px; display:block; font-size:11px;">Gunakan format Tahun/Bulan/Tanggal.</small>
+    </div>
+    <div id="regError" style="display:none; color:#c62828; font-size:12px; margin-top:5px; margin-bottom:10px; text-align:center;"></div>
+    <div id="regSuccess" style="display:none; color:#2e7d32; font-size:12px; margin-top:5px; margin-bottom:10px; text-align:center;"></div>
+    
+    <button id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
+    
+    <div class="toggle-link">
+      Sudah punya akun? <a onclick="toggleAuth('login')">Masuk di sini</a>
+    </div>
+  </div>
+
 </div>
 
 <!-- ============ MAIN APP ============ -->
@@ -650,7 +680,7 @@ async function api(payload = null, method = "GET", query = "") {
   return res.json();
 }
 
-/* ---------- AUTHENTICATION ---------- */
+/* ---------- AUTHENTICATION (LOGIN & REGISTER) ---------- */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) {
@@ -659,7 +689,21 @@ function checkAuth() {
   } else {
     $("loginScreen").style.display = "flex";
     $("appContent").style.display = "none";
+    toggleAuth('login');
   }
+}
+
+function toggleAuth(mode) {
+  if (mode === 'register') {
+    $("formLogin").style.display = "none";
+    $("formRegister").style.display = "block";
+  } else {
+    $("formLogin").style.display = "block";
+    $("formRegister").style.display = "none";
+  }
+  $("loginError").style.display = "none";
+  $("regError").style.display = "none";
+  $("regSuccess").style.display = "none";
 }
 
 async function handleLogin() {
@@ -693,6 +737,56 @@ async function handleLogin() {
     errBox.textContent = "Gagal terhubung ke server. Periksa koneksi internet.";
   } finally {
     btn.textContent = "Masuk";
+    btn.disabled = false;
+  }
+}
+
+async function handleRegister() {
+  const email = $("regEmail").value.trim();
+  const password = $("regPassword").value.trim();
+  const btn = $("btnRegister");
+  const errBox = $("regError");
+  const successBox = $("regSuccess");
+
+  errBox.style.display = "none";
+  successBox.style.display = "none";
+
+  if (!email || !password) {
+    errBox.style.display = "block";
+    errBox.textContent = "Email dan Password wajib diisi.";
+    return;
+  }
+
+  // Validasi format tanggal YYYY/MM/DD
+  const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+  if (!dateRegex.test(password)) {
+    errBox.style.display = "block";
+    errBox.textContent = "Format password harus YYYY/MM/DD (contoh: 1990/12/31).";
+    return;
+  }
+
+  btn.textContent = "Memproses...";
+  btn.disabled = true;
+
+  try {
+    const res = await api({ action: "register", data: { email, password } }, "POST");
+    if (res.ok) {
+      successBox.style.display = "block";
+      successBox.textContent = res.message;
+      setTimeout(() => {
+        toggleAuth('login');
+        $("loginUsername").value = email;
+        $("loginPassword").value = "";
+      }, 2000);
+    } else {
+      errBox.style.display = "block";
+      errBox.textContent = res.message || "Gagal mendaftar.";
+    }
+  } catch (err) {
+    errBox.style.display = "block";
+    errBox.textContent = "Gagal terhubung ke server.";
+  } finally {
+    btn.textContent = "Daftar Sekarang";
     btn.disabled = false;
   }
 }
