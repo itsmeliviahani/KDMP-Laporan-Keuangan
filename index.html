@@ -165,7 +165,7 @@
 </head>
 <body>
 
-<!-- ============ LOGIN & REGISTER SCREEN ============ -->
+<!-- ============ LOGIN & REGISTER & RESET SCREEN ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
   
   <!-- FORM LOGIN -->
@@ -230,6 +230,35 @@
     </div>
     
     <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
+  </div>
+
+  <!-- FORM RESET PASSWORD -->
+  <div class="auth-card" id="formResetPassword" style="display:none;">
+    <div class="auth-header">
+      <h2>Ubah Password</h2>
+      <p>Masukkan password baru Anda</p>
+    </div>
+    
+    <div id="resetError" class="auth-msg error"></div>
+    <div id="resetSuccess" class="auth-msg success"></div>
+
+    <div class="auth-field">
+      <label>E-Mail</label>
+      <input type="email" id="resetEmail" placeholder="contoh: budi@gmail.com" readonly style="background:#f5f5f5; color:#666;">
+    </div>
+    <div class="auth-field">
+      <label>Password Baru (Tanggal Lahir)</label>
+      <div class="password-wrap">
+        <input type="password" id="resetPasswordInput" placeholder="Format: YYYY/MM/DD" autocomplete="new-password">
+        <span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span>
+      </div>
+    </div>
+    
+    <button class="auth-btn" id="btnReset" onclick="handleResetPassword()">Simpan Password Baru</button>
+    
+    <div class="toggle-link" style="text-align:center; margin-top:15px; font-size:13px;">
+      <a onclick="toggleAuth('login')" style="color:#c62828; text-decoration:none; font-weight:600; cursor:pointer;">Kembali ke Login</a>
+    </div>
   </div>
 
 </div>
@@ -711,7 +740,7 @@ async function api(payload = null, method = "GET", query = "") {
   return res.json();
 }
 
-/* ---------- AUTHENTICATION (LOGIN & REGISTER) ---------- */
+/* ---------- AUTHENTICATION (LOGIN, REGISTER, RESET) ---------- */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) {
@@ -725,16 +754,23 @@ function checkAuth() {
 }
 
 function toggleAuth(mode) {
+  $("formLogin").style.display = "none";
+  $("formRegister").style.display = "none";
+  $("formResetPassword").style.display = "none";
+
   if (mode === 'register') {
-    $("formLogin").style.display = "none";
     $("formRegister").style.display = "block";
+  } else if (mode === 'reset') {
+    $("formResetPassword").style.display = "block";
   } else {
     $("formLogin").style.display = "block";
-    $("formRegister").style.display = "none";
   }
-  $("loginError").classList.remove('error', 'success');
-  $("regError").classList.remove('error', 'success');
-  $("regSuccess").classList.remove('error', 'success');
+  
+  $("loginError").className = "auth-msg";
+  $("regError").className = "auth-msg";
+  $("regSuccess").className = "auth-msg";
+  $("resetError").className = "auth-msg";
+  $("resetSuccess").className = "auth-msg";
 }
 
 function togglePassword(inputId, iconEl) {
@@ -756,7 +792,7 @@ async function handleLogin() {
   
   if (!u || !p) {
     errBox.className = "auth-msg error";
-    errBox.textContent = "Email dan Password harus diisi.";
+    errBox.innerHTML = "Email dan Password harus diisi.";
     return;
   }
 
@@ -772,13 +808,63 @@ async function handleLogin() {
       showApp(user);
     } else {
       errBox.className = "auth-msg error";
-      errBox.textContent = res.message || "Email atau password salah.";
+      errBox.innerHTML = `${res.message || "Email atau password salah."} <br>
+        <a onclick="openResetForm('${esc(u)}')" style="cursor:pointer; color:#c62828; text-decoration:underline; font-size:12px; display:inline-block; margin-top:5px;">Lupa password? Ubah di sini</a>`;
     }
   } catch (err) {
     errBox.className = "auth-msg error";
-    errBox.textContent = "Gagal terhubung ke server. Periksa koneksi internet.";
+    errBox.textContent = "Gagal terhubung ke server.";
   } finally {
     btn.textContent = "Masuk";
+    btn.disabled = false;
+  }
+}
+
+function openResetForm(email) {
+  $("resetEmail").value = email;
+  $("resetPasswordInput").value = "";
+  toggleAuth('reset');
+}
+
+async function handleResetPassword() {
+  const email = $("resetEmail").value.trim();
+  const newPassword = $("resetPasswordInput").value.trim();
+  const btn = $("btnReset");
+  const errBox = $("resetError");
+  const successBox = $("resetSuccess");
+
+  errBox.className = "auth-msg";
+  successBox.className = "auth-msg";
+
+  const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+  if (!dateRegex.test(newPassword)) {
+    errBox.className = "auth-msg error";
+    errBox.textContent = "Format password harus YYYY/MM/DD (contoh: 1995/12/31).";
+    return;
+  }
+
+  btn.textContent = "Memproses...";
+  btn.disabled = true;
+
+  try {
+    const res = await api({ action: "reset_password", username: email, newPassword: newPassword }, "POST");
+    if (res.ok) {
+      successBox.className = "auth-msg success";
+      successBox.textContent = res.message;
+      setTimeout(() => {
+        toggleAuth('login');
+        $("loginUsername").value = email;
+        $("loginPassword").value = "";
+      }, 2000);
+    } else {
+      errBox.className = "auth-msg error";
+      errBox.textContent = res.message || "Gagal mereset password.";
+    }
+  } catch (err) {
+    errBox.className = "auth-msg error";
+    errBox.textContent = "Gagal terhubung ke server.";
+  } finally {
+    btn.textContent = "Simpan Password Baru";
     btn.disabled = false;
   }
 }
@@ -799,7 +885,6 @@ async function handleRegister() {
     return;
   }
 
-  // Validasi format tanggal YYYY/MM/DD
   const dateRegex = /^\d{4}\/\d{2}\/\d{2}$/;
   if (!dateRegex.test(password)) {
     errBox.className = "auth-msg error";
@@ -819,7 +904,6 @@ async function handleRegister() {
         toggleAuth('login');
         $("loginUsername").value = email;
         $("loginPassword").value = "";
-        successBox.className = "auth-msg";
       }, 2000);
     } else {
       errBox.className = "auth-msg error";
@@ -841,7 +925,6 @@ function showApp(user) {
   $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) 
     <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
   
-  // Sembunyikan tab manajer jika login sebagai karyawan
   document.querySelectorAll("nav.tabs button").forEach(btn => {
     if (btn.dataset.role === "manajer" && user.role !== "manajer") {
       btn.style.display = "none";
@@ -863,7 +946,7 @@ function logout() {
   location.reload();
 }
 
-/* ---------- GANTI PASSWORD MODAL ---------- */
+/* ---------- GANTI PASSWORD MODAL (Bagi yang sudah login) ---------- */
 function openChangePassword() {
   $("oldPassword").value = "";
   $("newPassword").value = "";
