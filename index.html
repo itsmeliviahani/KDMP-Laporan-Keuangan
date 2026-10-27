@@ -9,57 +9,37 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     background:#f8f9fa;color:#222;font-size:14px;line-height:1.5; display: flex; flex-direction: column; min-height: 100vh;}
-
   #appContent { display: flex; flex-direction: column; flex: 1; }
   main { flex: 1; }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 13px;
-    color: #6b7392;
-    border-top: 1px solid #e0e0e0;
-    background: #fff;
-    margin-top: auto;
-  }
-
+  footer { text-align: center; padding: 20px; font-size: 13px; color: #6b7392; border-top: 1px solid #e0e0e0; background: #fff; margin-top: auto; }
   .auth-screen{position:fixed;inset:0;background:#f8f9fa;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
   .auth-card{background:#fff;padding:40px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.08);width:100%;max-width:480px;border-top:6px solid #c62828}
-
   .auth-header{text-align:center; margin-bottom:30px;}
   .auth-header h2{margin:0; color:#c62828; font-size:26px; font-weight:700;}
   .auth-header p{margin:8px 0 0; color:#666; font-size:14px;}
   .auth-header a{color:#c62828; text-decoration:none; font-weight:600; cursor:pointer;}
   .auth-header a:hover{text-decoration:underline;}
-
   .auth-field{margin-bottom:20px;}
   .auth-field label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:8px}
   .auth-field input, .auth-field select{width:100%;padding:12px 15px;border:1px solid #ccc;border-radius:8px;font-size:14px;font-family:inherit;outline:none; transition:0.2s;}
   .auth-field input:focus, .auth-field select:focus{border-color:#c62828; box-shadow:0 0 0 3px rgba(198,40,40,0.1);}
-
   .password-wrap{position:relative;}
   .password-wrap input{padding-right:45px;}
   .toggle-eye{position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; font-size:16px; user-select:none;}
-
   .auth-btn{width:100%;padding:14px;font-size:15px;border-radius:8px;background:#c62828;color:#fff;border:none;font-weight:700;cursor:pointer;margin-top:10px; transition:0.2s;}
   .auth-btn:hover{background:#b71c1c;}
   .auth-btn:disabled{background:#e57373;cursor:not-allowed}
-
   .auth-msg{display:none; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; text-align:center; font-weight:600;}
   .auth-msg.error{display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2;}
   .auth-msg.success{display:block; background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;}
-
-  header{background:#c62828;color:#fff;padding:14px 18px;
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  header{background:#c62828;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   header h1{margin:0;font-size:17px;font-weight:600}
   header small{opacity:.85;font-size:12px}
   #status{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px}
   .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .user-actions a{color:#fff;text-decoration:underline;cursor:pointer;font-size:12px;margin-left:8px;}
   nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e0e0e0;overflow-x:auto}
-  nav.tabs button{background:none;border:none;padding:12px 14px;font-size:13px;
-    font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;
-    white-space:nowrap;font-family:inherit}
+  nav.tabs button{background:none;border:none;padding:12px 14px;font-size:13px;font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
   nav.tabs button:hover{color:#c62828;background:#fff5f5}
   nav.tabs button.active{color:#c62828;border-bottom-color:#c62828;background:#fff}
   main{max-width:1150px;margin:0 auto;padding:18px 14px 60px; width: 100%;}
@@ -68,8 +48,7 @@
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .panel-title{margin:0 0 12px;font-size:15px;color:#b71c1c}
   .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
-  input,select,button{font-family:inherit;font-size:13.5px;padding:9px 11px;
-    border:1px solid #ddd;border-radius:7px;background:#fff;color:#222}
+  input,select,button{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;color:#222}
   input:focus,select:focus{outline:2px solid #ef9a9a;border-color:#c62828}
   button{cursor:pointer;font-weight:600;border:1px solid #c62828;background:#c62828;color:#fff}
   button:hover{background:#b71c1c}
@@ -79,8 +58,7 @@
   #search{flex:1;min-width:180px}
   .table-wrap{overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px}
   table{width:100%;border-collapse:collapse;min-width:650px}
-  th{background:#ffebee;color:#b71c1c;text-align:left;padding:9px 10px;
-    font-size:11px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #e0e0e0;white-space:nowrap}
+  th{background:#ffebee;color:#b71c1c;text-align:left;padding:9px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #e0e0e0;white-space:nowrap}
   td{padding:9px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
   tr:last-child td{border-bottom:none}
   tr:hover{background:#fffafa}
@@ -109,30 +87,24 @@
   .field label .opt{color:#888;font-weight:400;font-size:11px}
   .field small{font-size:11px;color:#888}
   .actions-row{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
-  .preview{margin-top:12px;padding:10px 12px;border-radius:7px;background:#fff5f5;
-    border:1px solid #ffcdd2;font-size:12.5px;color:#8a1c1c}
+  .preview{margin-top:12px;padding:10px 12px;border-radius:7px;background:#fff5f5;border:1px solid #ffcdd2;font-size:12.5px;color:#8a1c1c}
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
-  #toast{position:fixed;bottom:16px;right:16px;background:#222;color:#fff;
-    padding:10px 14px;border-radius:7px;font-size:13px;display:none;max-width:340px;z-index:999}
+  #toast{position:fixed;bottom:16px;right:16px;background:#222;color:#fff;padding:10px 14px;border-radius:7px;font-size:13px;display:none;max-width:340px;z-index:999}
   #toast.ok{background:#2e7d32}
   #toast.err{background:#c62828}
   .empty{text-align:center;padding:30px;color:#888}
   .hist-list{display:flex;flex-direction:column;gap:6px}
-  .hist-item{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;
-    border:1px solid #eee;border-radius:7px;background:#fffafa}
+  .hist-item{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid #eee;border-radius:7px;background:#fffafa}
   .hist-item b{font-size:13px}
   .hist-item .meta{font-size:11.5px;color:#777}
   .hist-item .kasir{color:#b71c1c;font-weight:700}
   .mode-switch{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-  .mode-switch button{background:#fff;color:#c62828;border:1px solid #c62828;
-    padding:8px 14px;font-size:13px;border-radius:7px}
+  .mode-switch button{background:#fff;color:#c62828;border:1px solid #c62828;padding:8px 14px;font-size:13px;border-radius:7px}
   .mode-switch button.active{background:#c62828;color:#fff}
-
   .report-card{border:1px solid #e0e0e0;border-radius:10px;padding:16px;margin-bottom:16px}
   .report-card h3{margin:0 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #f0f0f0;padding-bottom:8px}
   .report-table{width:100%;border-collapse:collapse;font-size:13px}
-  .report-table th{background:transparent;color:#555;text-align:left;padding:6px 4px;
-    font-size:12px;border-bottom:1px solid #e0e0e0;text-transform:none;letter-spacing:0}
+  .report-table th{background:transparent;color:#555;text-align:left;padding:6px 4px;font-size:12px;border-bottom:1px solid #e0e0e0;text-transform:none;letter-spacing:0}
   .report-table td{padding:6px 4px;border-bottom:1px dashed #f0f0f0}
   .report-table td:last-child,.report-table th:last-child{text-align:right;font-variant-numeric:tabular-nums}
   .report-table tr.total td{font-weight:700;border-top:2px solid #c62828;border-bottom:none;color:#b71c1c}
@@ -140,7 +112,6 @@
   .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:800px){.report-grid{grid-template-columns:1fr}}
   .chart-wrap{position:relative;height:340px}
-
   .guide h3{margin:22px 0 8px;font-size:15px;color:#b71c1c}
   .guide h3:first-of-type{margin-top:0}
   .guide p, .guide li{font-size:13.5px;line-height:1.6;color:#333}
@@ -148,45 +119,29 @@
   .guide li{margin-bottom:4px}
   .guide b{color:#b71c1c}
   .guide code{background:#f5f5f5;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#c62828}
-  .guide .note{background:#fff8e1;border-left:3px solid #ef6c00;padding:10px 12px;
-    border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#7a4a00}
-  .guide table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
-  .guide th{background:#ffebee;color:#b71c1c;padding:8px 10px;text-align:left;font-size:12px;border:1px solid #e0e0e0}
-  .guide td{padding:8px 10px;border:1px solid #e0e0e0}
-
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);
-    display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
+  .guide .note{background:#fff8e1;border-left:3px solid #ef6c00;padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#7a4a00}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
   .modal-backdrop.show{display:flex}
-  .modal{background:#fff;border-radius:12px;padding:22px;max-width:400px;width:100%;
-    box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal{background:#fff;border-radius:12px;padding:22px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
   .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
-
   .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
   @media(max-width:900px){.pos-container{grid-template-columns:1fr}}
-
   .cart-table{min-width:100% !important; border-collapse: collapse !important;}
-  .cart-table th,.cart-table td{
-    padding:10px 12px;
-    font-size:13px;
-    border: 1px solid #000 !important;
-  }
+  .cart-table th,.cart-table td{padding:10px 12px;font-size:13px;border: 1px solid #000 !important;}
   .cart-table th{ background:#ffe4e4; }
-
   .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:0}
   .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600;font-size:14px}
   .summary-row.total{font-size:18px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:10px;margin-top:10px}
   .summary-input{width:120px !important;text-align:right;padding:5px 8px !important;}
   .pos-btn{background:#2e7d32;border-color:#2e7d32;width:100%;padding:15px;font-size:16px;margin-top:15px;}
   .pos-btn:hover{background:#1b5e20}
-
   .money-input-wrap{position:relative;display:inline-block;width:140px}
-  .money-input-wrap .prefix{position:absolute;left:10px;top:50%;transform:translateY(-50%);
-    color:#2e7d32;font-size:15px;font-weight:bold;pointer-events:none;z-index:1}
-  .money-input-wrap input.summary-input{padding-left:32px !important;width:100% !important;text-align:right;
-    font-size:16px;font-weight:bold;color:#2e7d32;-moz-appearance:textfield}
+  .money-input-wrap .prefix{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#2e7d32;font-size:15px;font-weight:bold;pointer-events:none;z-index:1}
+  .money-input-wrap input.summary-input{padding-left:32px !important;width:100% !important;text-align:right;font-size:16px;font-weight:bold;color:#2e7d32;-moz-appearance:textfield}
   .money-input-wrap input.summary-input::-webkit-outer-spin-button,
   .money-input-wrap input.summary-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-
+  .rekap-wrap{overflow-x:auto;}
+  .rekap-wrap table{min-width:900px;}
   @media(max-width:600px){
     header h1{font-size:15px}
     .grid{grid-template-columns:1fr}
@@ -200,7 +155,6 @@
 </head>
 <body>
 
-<!-- ============ LOGIN & REGISTER & RESET ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
   <div class="auth-card" id="formLogin">
     <div class="auth-header">
@@ -209,10 +163,7 @@
     </div>
     <div class="auth-field">
       <label>Masuk Sebagai</label>
-      <select id="loginRole">
-        <option value="manajer">Manajer</option>
-        <option value="karyawan">Karyawan</option>
-      </select>
+      <select id="loginRole"><option value="manajer">Manajer</option><option value="karyawan">Karyawan</option></select>
     </div>
     <div class="auth-field">
       <label>Username</label>
@@ -238,10 +189,7 @@
     <div id="regSuccess" class="auth-msg success"></div>
     <div class="auth-field">
       <label>Daftar Sebagai</label>
-      <select id="regRole">
-        <option value="karyawan">Karyawan</option>
-        <option value="manajer">Manajer</option>
-      </select>
+      <select id="regRole"><option value="karyawan">Karyawan</option><option value="manajer">Manajer</option></select>
     </div>
     <div class="auth-field">
       <label>Username</label>
@@ -266,7 +214,7 @@
     <div id="resetSuccess" class="auth-msg success"></div>
     <div class="auth-field">
       <label>Username</label>
-      <input type="text" id="resetEmail" placeholder="Masukkan username" readonly style="background:#f5f5f5; color:#666;">
+      <input type="text" id="resetEmail" readonly style="background:#f5f5f5; color:#666;">
     </div>
     <div class="auth-field">
       <label>Password Baru</label>
@@ -282,7 +230,6 @@
   </div>
 </div>
 
-<!-- ============ MAIN APP ============ -->
 <div id="appContent" style="display:none;">
   <header>
     <div>
@@ -301,6 +248,7 @@
     <button data-tab="beli" data-role="all">🛒 Pembelian</button>
     <button data-tab="jual" data-role="all">💰 Penjualan</button>
     <button data-tab="aset" data-role="manajer">🏢 Aset Tetap</button>
+    <button data-tab="stokdaerah" data-role="all">🏬 Stok On Hand</button>
     <button data-tab="edit" data-role="manajer">📋 Stock Opname</button>
     <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
     <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
@@ -362,7 +310,6 @@
             <label>Expired baru <span class="opt">(opsional)</span></label>
             <input type="date" id="bExpiredBaru">
           </div>
-
           <div class="field full" id="bNewWrap" style="display:none">
             <label>Nama barang <span class="req">*</span></label>
             <input type="text" id="bNama" placeholder="Indomie Goreng">
@@ -407,7 +354,6 @@
             <label>Jumlah <span class="req">*</span></label>
             <input type="number" id="bQtyNew" min="1" value="1">
           </div>
-
           <div class="field full">
             <label>Nama Supplier</label>
             <input type="text" id="bNote" placeholder="cth: Supplier A" autocomplete="organization">
@@ -439,15 +385,12 @@
               <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">➕ Tambah</button>
             </div>
           </div>
-
           <div class="table-wrap" style="min-height:200px; border:1px solid #000; padding:0;">
             <table class="cart-table">
               <thead>
                 <tr>
-                  <th>Nama Barang</th>
-                  <th style="text-align:right">Harga</th>
-                  <th style="text-align:center">Qty</th>
-                  <th style="text-align:right">Subtotal</th>
+                  <th>Nama Barang</th><th style="text-align:right">Harga</th>
+                  <th style="text-align:center">Qty</th><th style="text-align:right">Subtotal</th>
                   <th style="text-align:center">Hapus</th>
                 </tr>
               </thead>
@@ -457,14 +400,10 @@
             </table>
           </div>
         </div>
-
         <div>
           <div class="pos-summary">
             <h3 style="margin:0 0 15px; font-size:14px; color:#b71c1c; border-bottom:1px solid #ffcdd2; padding-bottom:10px;">Ringkasan Pembayaran</h3>
-            <div class="summary-row">
-              <span>Subtotal:</span>
-              <span id="posSubtotal">Rp 0</span>
-            </div>
+            <div class="summary-row"><span>Subtotal:</span><span id="posSubtotal">Rp 0</span></div>
             <div class="summary-row">
               <span>Diskon (Rp):</span>
               <div class="money-input-wrap">
@@ -472,10 +411,7 @@
                 <input type="text" id="posDiskon" class="summary-input" inputmode="numeric" autocomplete="off" value="0">
               </div>
             </div>
-            <div class="summary-row total">
-              <span>Total Bayar:</span>
-              <span id="posTotal">Rp 0</span>
-            </div>
+            <div class="summary-row total"><span>Total Bayar:</span><span id="posTotal">Rp 0</span></div>
             <div class="summary-row" style="margin-top:15px; align-items:center;">
               <span>Uang Tunai:</span>
               <div class="money-input-wrap">
@@ -483,10 +419,7 @@
                 <input type="text" id="posTunai" class="summary-input" inputmode="numeric" autocomplete="off" value="0">
               </div>
             </div>
-            <div class="summary-row">
-              <span>Kembalian:</span>
-              <span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span>
-            </div>
+            <div class="summary-row"><span>Kembalian:</span><span id="posKembali" style="color:#c62828; font-size:16px;">Rp 0</span></div>
             <div class="field full" style="margin-top:15px">
               <label>Nama Kasir</label>
               <input type="text" id="kNote" placeholder="Nama kasir/petugas">
@@ -500,48 +433,22 @@
     <!-- ASET TETAP -->
     <section id="view-aset" class="view">
       <h2 class="panel-title">🏢 Aset Tetap</h2>
-      <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Pencatatan aset tetap koperasi (kendaraan, elektronik, perabot, dll). <b>Jumlah</b> dan <b>harga</b> bersifat opsional.
-      </p>
-
+      <p class="sub" style="margin-bottom:14px;font-size:12.5px">Pencatatan aset tetap koperasi. <b>Jumlah</b> dan <b>harga</b> bersifat opsional.</p>
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah / Edit Aset</h3>
         <div class="grid">
-          <div class="field full">
-            <label>Nama Aset <span class="req">*</span></label>
-            <input type="text" id="aNama" placeholder="cth: Truk, AC, CCTV, Kursi, Brankas">
-          </div>
-          <div class="field">
-            <label>Kategori</label>
+          <div class="field full"><label>Nama Aset <span class="req">*</span></label><input type="text" id="aNama" placeholder="cth: Truk, AC, CCTV, Kursi"></div>
+          <div class="field"><label>Kategori</label>
             <select id="aKategori">
-              <option>Kendaraan</option>
-              <option>Elektronik</option>
-              <option>Perabot</option>
-              <option>Perlengkapan</option>
-              <option>Bangunan & Fasilitas</option>
-              <option>Lainnya</option>
+              <option>Kendaraan</option><option>Elektronik</option><option>Perabot</option>
+              <option>Perlengkapan</option><option>Bangunan & Fasilitas</option><option>Lainnya</option>
             </select>
           </div>
-          <div class="field">
-            <label>Jumlah <span class="opt">(opsional)</span></label>
-            <input type="number" id="aJumlah" min="0" value="1">
-          </div>
-          <div class="field">
-            <label>Harga Satuan (Rp) <span class="opt">(opsional)</span></label>
-            <input type="number" id="aHarga" min="0" value="0" placeholder="Boleh dikosongkan">
-          </div>
-          <div class="field">
-            <label>Tanggal Perolehan <span class="opt">(opsional)</span></label>
-            <input type="date" id="aTanggal">
-          </div>
-          <div class="field full">
-            <label>Keterangan <span class="opt">(opsional)</span></label>
-            <input type="text" id="aKeterangan" placeholder="Kondisi, lokasi, nomor polisi, dll.">
-          </div>
-          <div class="field full">
-            <label>Nama Pencatat</label>
-            <input type="text" id="aPencatat" autocomplete="name">
-          </div>
+          <div class="field"><label>Jumlah <span class="opt">(opsional)</span></label><input type="number" id="aJumlah" min="0" value="1"></div>
+          <div class="field"><label>Harga Satuan (Rp) <span class="opt">(opsional)</span></label><input type="number" id="aHarga" min="0" value="0"></div>
+          <div class="field"><label>Tanggal Perolehan <span class="opt">(opsional)</span></label><input type="date" id="aTanggal"></div>
+          <div class="field full"><label>Keterangan <span class="opt">(opsional)</span></label><input type="text" id="aKeterangan" placeholder="Kondisi, lokasi, dll."></div>
+          <div class="field full"><label>Nama Pencatat</label><input type="text" id="aPencatat" autocomplete="name"></div>
         </div>
         <input type="hidden" id="aEditId">
         <div class="actions-row">
@@ -549,31 +456,23 @@
           <button class="ghost" id="btnCancelAset" style="display:none;">Batal Edit</button>
         </div>
       </div>
-
       <div class="bar">
         <input type="text" id="searchAset" placeholder="Cari aset…" style="flex:1;min-width:180px;">
         <select id="filterAsetKategori">
           <option value="all">Semua Kategori</option>
-          <option>Kendaraan</option>
-          <option>Elektronik</option>
-          <option>Perabot</option>
-          <option>Perlengkapan</option>
-          <option>Bangunan & Fasilitas</option>
-          <option>Lainnya</option>
+          <option>Kendaraan</option><option>Elektronik</option><option>Perabot</option>
+          <option>Perlengkapan</option><option>Bangunan & Fasilitas</option><option>Lainnya</option>
         </select>
       </div>
-
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Nama</th>
-              <th>Kategori</th>
+              <th>Nama</th><th>Kategori</th>
               <th style="text-align:right">Jumlah</th>
               <th style="text-align:right">Harga Satuan</th>
               <th style="text-align:right">Total Nilai</th>
-              <th>Perolehan</th>
-              <th>Keterangan</th>
+              <th>Perolehan</th><th>Keterangan</th>
               <th style="text-align:right">Aksi</th>
             </tr>
           </thead>
@@ -582,12 +481,62 @@
       </div>
     </section>
 
-    <!-- STOCK OPNAME (sebelumnya Edit Barang) -->
-    <section id="view-edit" class="view">
-      <h2 class="panel-title">📋 Stock Opname</h2>
+    <!-- STOK ON HAND (STOK DAERAH) -->
+    <section id="view-stokdaerah" class="view">
+      <h2 class="panel-title">🏬 Stok On Hand (Daerah)</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Masukkan hasil hitung fisik. Selisih dengan stok sistem otomatis dicatat sebagai
-        <b>Beban Persediaan</b> (jika fisik lebih kecil) atau <b>Persediaan</b> (jika lebih besar).
+        Catat hasil perhitungan fisik dari <b>instansi daerah</b>. Data ini menjadi pembanding terhadap stok sistem (pusat) di laporan Rekap Barang. <b>Tidak mengubah stok sistem.</b>
+      </p>
+      <div class="form-card" style="margin-bottom:16px;">
+        <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Input Stok On Hand</h3>
+        <div class="grid">
+          <div class="field full">
+            <label>Pilih Barang <span class="req">*</span></label>
+            <select id="sdItemSelect"></select>
+          </div>
+          <div class="field">
+            <label>Stok Sistem (Pusat)</label>
+            <input type="text" id="sdStokSistem" readonly style="background:#f5f5f5;color:#666;font-weight:bold;">
+          </div>
+          <div class="field">
+            <label>Stok On Hand (Daerah) <span class="req">*</span></label>
+            <input type="number" id="sdJumlah" min="0" placeholder="Hasil hitung fisik daerah">
+          </div>
+          <div class="field full">
+            <label>Nama Pencatat</label>
+            <input type="text" id="sdPencatat" placeholder="Nama petugas daerah" autocomplete="name">
+          </div>
+          <div class="field full">
+            <label>Keterangan <span class="opt">(opsional)</span></label>
+            <input type="text" id="sdKeterangan" placeholder="cth: Hasil opname 27 Okt 2025">
+          </div>
+        </div>
+        <div class="preview" id="sdPreview">Pilih barang.</div>
+        <div class="actions-row">
+          <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">📥 Simpan Stok Daerah</button>
+        </div>
+      </div>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Daerah</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th><th>Barang</th>
+              <th style="text-align:right">Jumlah</th>
+              <th>Pencatat</th><th>Keterangan</th>
+              <th style="text-align:right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyStokDaerah"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- STOCK OPNAME -->
+    <section id="view-edit" class="view">
+      <h2 class="panel-title">📋 Stock Opname (Penyesuaian Akuntansi)</h2>
+      <p class="sub" style="margin-bottom:14px;font-size:12.5px">
+        Khusus penyesuaian <b>akuntansi</b> — akan mengubah stok sistem dan membuat jurnal penyesuaian. Untuk observasi fisik daerah, gunakan tab <b>Stok On Hand</b>.
       </p>
       <div class="form-card">
         <div class="grid">
@@ -603,20 +552,15 @@
             <label>Stock Akhir Persediaan (Fisik) <span class="req">*</span></label>
             <input type="number" id="eStokFisik" min="0" placeholder="Hasil hitung fisik">
           </div>
-          <div class="field full">
-            <label>Nama <span class="req">*</span></label>
-            <input type="text" id="eNama">
-          </div>
-          <div class="field">
-            <label>Kategori</label>
+          <div class="field full"><label>Nama <span class="req">*</span></label><input type="text" id="eNama"></div>
+          <div class="field"><label>Kategori</label>
             <select id="eKategori">
               <option>Makanan</option><option>Minuman</option><option>Snack</option>
               <option>Bumbu & Bahan</option><option>Kebutuhan Rumah</option>
               <option>Kebersihan</option><option>Lainnya</option>
             </select>
           </div>
-          <div class="field">
-            <label>Satuan</label>
+          <div class="field"><label>Satuan</label>
             <select id="eSatuan">
               <option value="pcs">pcs</option><option value="box">box</option>
               <option value="bungkus">bungkus</option><option value="botol">botol</option>
@@ -631,14 +575,8 @@
               <option value="set">set</option><option value="rim">rim</option>
             </select>
           </div>
-          <div class="field">
-            <label>Harga jual (Rp)</label>
-            <input type="number" id="eHargaJual" min="0">
-          </div>
-          <div class="field full">
-            <label>Nama Pencatat</label>
-            <input type="text" id="eKasir" placeholder="Nama yang menghitung" autocomplete="name">
-          </div>
+          <div class="field"><label>Harga jual (Rp)</label><input type="number" id="eHargaJual" min="0"></div>
+          <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir" placeholder="Nama yang menghitung" autocomplete="name"></div>
         </div>
         <div class="preview" id="ePreview">Pilih barang.</div>
         <div class="actions-row">
@@ -653,8 +591,7 @@
       <h2 class="panel-title">💵 Keuangan Lain</h2>
       <div class="form-card">
         <div class="grid">
-          <div class="field">
-            <label>Tipe <span class="req">*</span></label>
+          <div class="field"><label>Tipe <span class="req">*</span></label>
             <select id="kfTipe">
               <option value="pendapatan_lain">Pendapatan Lain-lain</option>
               <option value="beban_lain">Beban Lain-lain</option>
@@ -664,28 +601,13 @@
               <option value="bayar_utang">Bayar Utang</option>
             </select>
           </div>
-          <div class="field">
-            <label>Kategori</label>
-            <select id="kfKategori"></select>
-          </div>
-          <div class="field">
-            <label>Jumlah (Rp) <span class="req">*</span></label>
-            <input type="number" id="kfJumlah" min="0" value="0">
-          </div>
-          <div class="field full">
-            <label>Keterangan</label>
-            <input type="text" id="kfKeterangan" placeholder="Opsional">
-          </div>
-          <div class="field full">
-            <label>Nama Pencatat</label>
-            <input type="text" id="kfNama" placeholder="Nama" autocomplete="name">
-          </div>
+          <div class="field"><label>Kategori</label><select id="kfKategori"></select></div>
+          <div class="field"><label>Jumlah (Rp) <span class="req">*</span></label><input type="number" id="kfJumlah" min="0" value="0"></div>
+          <div class="field full"><label>Keterangan</label><input type="text" id="kfKeterangan" placeholder="Opsional"></div>
+          <div class="field full"><label>Nama Pencatat</label><input type="text" id="kfNama" placeholder="Nama" autocomplete="name"></div>
         </div>
-        <div class="actions-row">
-          <button id="btnKeuangan">✅ Simpan</button>
-        </div>
+        <div class="actions-row"><button id="btnKeuangan">✅ Simpan</button></div>
       </div>
-
       <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Daftar Keuangan</h3>
       <div class="bar">
         <select id="filterKeuangan">
@@ -744,7 +666,10 @@
 
       <div class="report-card">
         <h3>Rekap Barang (Persediaan)</h3>
-        <div style="overflow-x:auto;">
+        <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
+          Stok Akhir = Stok Awal + Pembelian − Penjualan. Selisih = Stok Akhir (Pusat) − Stok On Hand (Daerah). Nilai Selisih = Selisih × Harga Beli.
+        </p>
+        <div class="rekap-wrap">
           <table class="report-table" id="tableRekap">
             <thead>
               <tr>
@@ -752,8 +677,10 @@
                 <th style="text-align:right">Stok Awal</th>
                 <th style="text-align:right">Pembelian</th>
                 <th style="text-align:right">Penjualan</th>
-                <th style="text-align:right">Stock Opname</th>
-                <th style="text-align:right">Stok Akhir</th>
+                <th style="text-align:right">Stok Akhir (Pusat)</th>
+                <th style="text-align:right">Stok On Hand (Daerah)</th>
+                <th style="text-align:right">Selisih</th>
+                <th style="text-align:right">Nilai Selisih</th>
               </tr>
             </thead>
             <tbody id="tbodyRekap"></tbody>
@@ -763,9 +690,7 @@
 
       <div class="report-card">
         <h3>Grafik Laba Rugi Bulanan</h3>
-        <div class="chart-wrap">
-          <canvas id="chartLaba"></canvas>
-        </div>
+        <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
     </section>
 
@@ -790,67 +715,42 @@
     <!-- RIWAYAT UMUM -->
     <section id="view-riwayat" class="view">
       <h2 class="panel-title">🕒 Riwayat Umum</h2>
-      <div class="hist-list" id="histList">
-        <div class="empty">Memuat…</div>
-      </div>
+      <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
     </section>
 
     <!-- PANDUAN -->
     <section id="view-panduan" class="view">
       <h2 class="panel-title">📖 Panduan</h2>
       <div class="guide">
-        <h3>Akses Pengguna (Login)</h3>
+        <h3>Akses Pengguna</h3>
         <ul>
-          <li><b>Manajer</b> — akses penuh (termasuk Aset Tetap, Stock Opname, Laporan, Riwayat).</li>
-          <li><b>Karyawan</b> — Stok, Pembelian, Penjualan, Keuangan, Panduan.</li>
+          <li><b>Manajer</b> — akses penuh (Aset Tetap, Stock Opname, Laporan, Riwayat).</li>
+          <li><b>Karyawan</b> — Stok, Pembelian, Penjualan, Stok On Hand, Keuangan, Panduan.</li>
         </ul>
-
         <h3>Pembelian</h3>
         <ul>
-          <li><b>Stok Awal</b> — untuk barang baru yang belum terdaftar. Bisa juga dipakai sebagai pembelian pertama.</li>
+          <li><b>Stok Awal</b> — untuk barang baru yang belum terdaftar.</li>
           <li><b>Dibeli</b> — untuk menambah stok barang yang sudah terdaftar.</li>
         </ul>
-
-        <h3>Stock Opname</h3>
-        <p>Menu untuk mencatat hasil hitung fisik persediaan:</p>
-        <ol>
-          <li>Pilih barang, lihat <b>Stok Sistem</b> yang muncul.</li>
-          <li>Masukkan <b>Stock Akhir Persediaan</b> hasil hitung fisik.</li>
-          <li>Sistem otomatis menghitung selisih dan menampilkan jurnal penyesuaian.</li>
-          <li>Jika fisik < sistem → <b>Beban Persediaan (D)</b> / <b>Persediaan (K)</b>.</li>
-          <li>Jika fisik > sistem → <b>Persediaan (D)</b> / <b>Beban Persediaan (K)</b>.</li>
-        </ol>
-
-        <h3>Aset Tetap</h3>
-        <p>Mencatat aset koperasi (truk, AC, CCTV, kursi, brankas, dll). Jumlah dan harga opsional. Nilai aset tetap ditampilkan sebagai memo di Neraca (tidak menambah Total Aset).</p>
-
-        <h3>Beban Depresiasi</h3>
-        <p>Pada menu Keuangan → Beban Lain-lain, tersedia kategori <b>Beban Depresiasi</b> untuk mencatat penyusutan aset tetap secara manual.</p>
-
-        <div class="note">
-          <b>HPP Metode FIFO</b> — barang yang paling awal masuk dianggap paling awal terjual.
-        </div>
+        <h3>Stok On Hand (Daerah)</h3>
+        <p>Instansi daerah mencatat hasil hitung fisik. Data ini <b>tidak mengubah stok sistem</b>, tapi menjadi pembanding di Rekap Barang.</p>
+        <h3>Stock Opname (Penyesuaian Akuntansi)</h3>
+        <p>Untuk menyesuaikan stok sistem jika ada selisih yang perlu diakui secara akuntansi. Akan mengubah <b>Item.stok</b> dan mencatat jurnal Beban Persediaan / Persediaan.</p>
+        <h3>Rekap Barang</h3>
+        <p>Menampilkan pergerakan barang: <b>Stok Awal + Pembelian − Penjualan = Stok Akhir (Pusat)</b>, lalu dibandingkan dengan <b>Stok On Hand (Daerah)</b>. Selisih = Pusat − Daerah (jika positif: pusat lebih tinggi dari fisik = potensi kehilangan; jika negatif: fisik lebih tinggi).</p>
+        <div class="note"><b>HPP Metode FIFO</b> — barang yang paling awal masuk dianggap paling awal terjual.</div>
       </div>
     </section>
   </main>
 
-  <footer>
-    Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN
-  </footer>
+  <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
 </div>
 
-<!-- MODAL GANTI PASSWORD -->
 <div class="modal-backdrop" id="modalPassword">
   <div class="modal">
     <h3>Ganti Sandi</h3>
-    <div class="field" style="margin-bottom:10px">
-      <label>Password Lama</label>
-      <input type="password" id="oldPassword" placeholder="Masukkan password lama">
-    </div>
-    <div class="field" style="margin-bottom:15px">
-      <label>Password Baru</label>
-      <input type="password" id="newPassword" placeholder="Masukkan password baru">
-    </div>
+    <div class="field" style="margin-bottom:10px"><label>Password Lama</label><input type="password" id="oldPassword"></div>
+    <div class="field" style="margin-bottom:15px"><label>Password Baru</label><input type="password" id="newPassword"></div>
     <div class="actions-row" style="justify-content:flex-end; margin-top:0">
       <button class="ghost" onclick="closeModalPassword()">Batal</button>
       <button onclick="submitChangePassword()">Simpan Sandi</button>
@@ -871,6 +771,7 @@ let riwayat = [];
 let keuangan = [];
 let penjualan = [];
 let aset = [];
+let stokDaerah = [];
 let beliMode = "existing";
 let editingId = null;
 let chartInstance = null;
@@ -928,7 +829,6 @@ function checkAuth() {
     toggleAuth('login');
   }
 }
-
 function toggleAuth(mode) {
   $("formLogin").style.display = "none";
   $("formRegister").style.display = "none";
@@ -936,34 +836,20 @@ function toggleAuth(mode) {
   if (mode === 'register') $("formRegister").style.display = "block";
   else if (mode === 'reset') $("formResetPassword").style.display = "block";
   else $("formLogin").style.display = "block";
-  $("loginError").className = "auth-msg";
-  $("regError").className = "auth-msg";
-  $("regSuccess").className = "auth-msg";
-  $("resetError").className = "auth-msg";
-  $("resetSuccess").className = "auth-msg";
+  ["loginError","regError","regSuccess","resetError","resetSuccess"].forEach(id => { if ($(id)) $(id).className = "auth-msg"; });
 }
-
 function togglePassword(inputId, iconEl) {
   const input = $(inputId);
   if (input.type === "password") { input.type = "text"; iconEl.textContent = "🙈"; }
   else { input.type = "password"; iconEl.textContent = "👁️"; }
 }
-
 async function handleLogin() {
   const u = $("loginUsername").value.trim();
   const p = $("loginPassword").value;
   const btn = $("btnLogin");
   const errBox = $("loginError");
-
-  if (!u || !p) {
-    errBox.className = "auth-msg error";
-    errBox.innerHTML = "Username dan Password harus diisi.";
-    return;
-  }
-  errBox.className = "auth-msg";
-  btn.textContent = "Memproses...";
-  btn.disabled = true;
-
+  if (!u || !p) { errBox.className = "auth-msg error"; errBox.innerHTML = "Username dan Password harus diisi."; return; }
+  errBox.className = "auth-msg"; btn.textContent = "Memproses..."; btn.disabled = true;
   try {
     const res = await api({ action: "login", username: u, password: p }, "POST");
     if (res.ok) {
@@ -978,102 +864,55 @@ async function handleLogin() {
       errBox.innerHTML = `${res.message || "Gagal login."} ${linkHtml}`;
     }
   } catch (err) {
-    errBox.className = "auth-msg error";
-    errBox.textContent = "Gagal terhubung ke server.";
-  } finally {
-    btn.textContent = "Masuk";
-    btn.disabled = false;
-  }
+    errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server.";
+  } finally { btn.textContent = "Masuk"; btn.disabled = false; }
 }
-
-function openResetForm(email) {
-  $("resetEmail").value = email;
-  $("resetPasswordInput").value = "";
-  toggleAuth('reset');
-}
-
+function openResetForm(email) { $("resetEmail").value = email; $("resetPasswordInput").value = ""; toggleAuth('reset'); }
 async function handleResetPassword() {
   const email = $("resetEmail").value.trim();
   const newPassword = $("resetPasswordInput").value.trim();
   const btn = $("btnReset");
-  const errBox = $("resetError");
-  const successBox = $("resetSuccess");
+  const errBox = $("resetError"), successBox = $("resetSuccess");
   errBox.className = "auth-msg"; successBox.className = "auth-msg";
-
   if (!newPassword) { errBox.className = "auth-msg error"; errBox.textContent = "Password baru wajib diisi."; return; }
   btn.textContent = "Memproses..."; btn.disabled = true;
-
   try {
     const res = await api({ action: "reset_password", username: email, newPassword }, "POST");
     if (res.ok) {
-      successBox.className = "auth-msg success";
-      successBox.textContent = res.message;
-      setTimeout(() => {
-        toggleAuth('login');
-        $("loginUsername").value = email;
-        $("loginPassword").value = "";
-      }, 2000);
-    } else {
-      errBox.className = "auth-msg error";
-      errBox.textContent = res.message || "Gagal mereset password.";
-    }
-  } catch (err) {
-    errBox.className = "auth-msg error";
-    errBox.textContent = "Gagal terhubung ke server.";
-  } finally { btn.textContent = "Simpan Password Baru"; btn.disabled = false; }
+      successBox.className = "auth-msg success"; successBox.textContent = res.message;
+      setTimeout(() => { toggleAuth('login'); $("loginUsername").value = email; $("loginPassword").value = ""; }, 2000);
+    } else { errBox.className = "auth-msg error"; errBox.textContent = res.message || "Gagal mereset password."; }
+  } catch (err) { errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server."; }
+  finally { btn.textContent = "Simpan Password Baru"; btn.disabled = false; }
 }
-
 async function handleRegister() {
   const email = $("regEmail").value.trim();
   const password = $("regPassword").value.trim();
   const role = $("regRole").value;
   const btn = $("btnRegister");
-  const errBox = $("regError");
-  const successBox = $("regSuccess");
+  const errBox = $("regError"), successBox = $("regSuccess");
   errBox.className = "auth-msg"; successBox.className = "auth-msg";
-
   if (!email || !password) { errBox.className = "auth-msg error"; errBox.textContent = "Username dan Password wajib diisi."; return; }
   btn.textContent = "Memproses..."; btn.disabled = true;
-
   try {
     const res = await api({ action: "register", data: { email, password, role } }, "POST");
     if (res.ok) {
-      successBox.className = "auth-msg success";
-      successBox.textContent = res.message;
-      setTimeout(() => {
-        toggleAuth('login');
-        $("loginUsername").value = email;
-        $("loginPassword").value = "";
-      }, 2000);
-    } else {
-      errBox.className = "auth-msg error";
-      errBox.textContent = res.message || "Gagal mendaftar.";
-    }
-  } catch (err) {
-    errBox.className = "auth-msg error";
-    errBox.textContent = "Gagal terhubung ke server.";
-  } finally { btn.textContent = "Daftar Sekarang"; btn.disabled = false; }
+      successBox.className = "auth-msg success"; successBox.textContent = res.message;
+      setTimeout(() => { toggleAuth('login'); $("loginUsername").value = email; $("loginPassword").value = ""; }, 2000);
+    } else { errBox.className = "auth-msg error"; errBox.textContent = res.message || "Gagal mendaftar."; }
+  } catch (err) { errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server."; }
+  finally { btn.textContent = "Daftar Sekarang"; btn.disabled = false; }
 }
-
 function showApp(user) {
   $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
-
-  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'})
-    <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
-
+  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
   document.querySelectorAll("nav.tabs button").forEach(btn => {
     if (btn.dataset.role === "manajer" && user.role !== "manajer") btn.style.display = "none";
     else btn.style.display = "block";
   });
-
-  if (user.role === "karyawan") {
-    $("btnModeExisting").style.display = "none";
-    beliMode = "new";
-  } else {
-    $("btnModeExisting").style.display = "block";
-  }
-
+  if (user.role === "karyawan") { $("btnModeExisting").style.display = "none"; beliMode = "new"; }
+  else { $("btnModeExisting").style.display = "block"; }
   switchTab("stok");
   applyBeliMode();
   updateKategoriOptions();
@@ -1082,14 +921,8 @@ function showApp(user) {
   attachMoneyInputs();
   load().then(() => renderLaporan());
 }
-
 function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
-
-function openChangePassword() {
-  $("oldPassword").value = "";
-  $("newPassword").value = "";
-  $("modalPassword").classList.add("show");
-}
+function openChangePassword() { $("oldPassword").value = ""; $("newPassword").value = ""; $("modalPassword").classList.add("show"); }
 function closeModalPassword() { $("modalPassword").classList.remove("show"); }
 async function submitChangePassword() {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
@@ -1102,15 +935,10 @@ async function submitChangePassword() {
     else toast(res.message, "err");
   } catch (e) { toast("Gagal terhubung ke server.", "err"); }
 }
-
-/* ---------- TOAST ---------- */
 function toast(msg, type = "") {
   const el = $("toast");
-  el.textContent = msg;
-  el.className = type;
-  el.style.display = "block";
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.style.display = "none", 3000);
+  el.textContent = msg; el.className = type; el.style.display = "block";
+  clearTimeout(el._t); el._t = setTimeout(() => el.style.display = "none", 3000);
 }
 function setStatus(text, ok = true) {
   const el = $("status");
@@ -1124,11 +952,9 @@ function loadNames() {
   const kas = (localStorage.getItem(K_KASIR) || "").trim();
   if (sup) $("bNote").value = sup;
   if (kas) {
-    $("kNote").value = kas;
-    $("eKasir").value = kas;
-    $("kfNama").value = kas;
-    const aP = $("aPencatat");
-    if (aP) aP.value = kas;
+    $("kNote").value = kas; $("eKasir").value = kas; $("kfNama").value = kas;
+    if ($("aPencatat")) $("aPencatat").value = kas;
+    if ($("sdPencatat")) $("sdPencatat").value = kas;
   }
 }
 function saveSupplier(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_SUPPLIER, n); }
@@ -1139,56 +965,53 @@ function val(id) { return String($(id).value || "").trim(); }
 function switchTab(name) {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
   if (auth.role !== "manajer" && ["edit", "laporan", "riwayat", "penjualan", "aset"].includes(name)) {
-    toast("Akses ditolak. Fitur ini khusus Manajer.", "err");
-    return;
+    toast("Akses ditolak. Fitur ini khusus Manajer.", "err"); return;
   }
   document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
-
   if (name === "riwayat") loadHistory();
   if (name === "laporan") renderLaporan();
   if (name === "keuangan") renderKeuangan();
   if (name === "edit") populateEditView();
   if (name === "penjualan") loadPenjualan();
   if (name === "aset") renderAset();
+  if (name === "stokdaerah") { populateStokDaerahView(); renderStokDaerah(); }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-document.querySelectorAll("nav.tabs button").forEach(b => {
-  b.addEventListener("click", () => switchTab(b.dataset.tab));
-});
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
 /* ---------- LOAD ---------- */
 async function load() {
   try {
     setStatus("Memuat…");
-    const [dataItems, dataHist, dataKeu, dataAset] = await Promise.all([
+    const [dItems, dHist, dKeu, dAset, dSD] = await Promise.all([
       api(null, "GET", ""),
       api(null, "GET", "history=1&all=1"),
       api(null, "GET", "keuangan=1"),
-      api(null, "GET", "aset=1")
+      api(null, "GET", "aset=1"),
+      api(null, "GET", "stokdaerah=1")
     ]);
-    if (!dataItems.ok) throw new Error(dataItems.message || "Gagal memuat barang");
-    items = dataItems.items || [];
-    riwayat = dataHist.history || [];
-    keuangan = dataKeu.keuangan || [];
-    aset = dataAset.aset || [];
+    if (!dItems.ok) throw new Error(dItems.message || "Gagal memuat barang");
+    items = dItems.items || [];
+    riwayat = dHist.history || [];
+    keuangan = dKeu.keuangan || [];
+    aset = dAset.aset || [];
+    stokDaerah = dSD.stokdaerah || [];
     renderTable();
     fillSelects();
     populateEditView();
     renderAset();
+    populateStokDaerahView();
+    renderStokDaerah();
     setStatus("Terhubung ke Google Sheets");
   } catch (e) {
     setStatus("Gagal: " + e.message, false);
     toast("Gagal memuat data.", "err");
   }
 }
-
 async function loadPenjualan() {
-  try {
-    const res = await api(null, "GET", "penjualan=1");
-    penjualan = res.penjualan || [];
-    renderPenjualan();
-  } catch (e) { toast("Gagal memuat riwayat penjualan.", "err"); }
+  try { const res = await api(null, "GET", "penjualan=1"); penjualan = res.penjualan || []; renderPenjualan(); }
+  catch (e) { toast("Gagal memuat riwayat penjualan.", "err"); }
 }
 
 /* ---------- TABEL STOK ---------- */
@@ -1212,52 +1035,36 @@ function renderTable() {
   const f = $("filter").value;
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
   const isManajer = auth.role === "manajer";
-
   let list = items.filter(i => {
     if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
     if (f === "zero" && i.stok !== 0) return false;
     if (f === "exp") { const d = daysLeft(i.expired); if (!(d !== null && d < 0)) return false; }
     return true;
-  });
-  list.sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
+  }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
   const tb = $("tbody");
-  if (list.length === 0) {
-    tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>';
-    return;
-  }
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>'; return; }
   tb.innerHTML = list.map(i => {
     const d = daysLeft(i.expired);
     const zero = i.stok === 0;
     const exp = d !== null && d < 0;
     const cls = exp ? "exp" : "";
     const label = zero ? '<span class="badge zero">kosong</span>' : '<span class="sub">tersedia</span>';
-
     const btnRestock = isManajer ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : '';
     const btnEdit = isManajer ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : '';
     const btnDel = isManajer ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : '';
-
     return `<tr class="${cls}">
       <td><div class="name">${esc(i.nama)}</div><div class="sub">${label}</div></td>
       <td>${esc(i.kategori || "-")}</td>
       <td style="text-align:right"><span class="qty">${i.stok}</span> <span class="sub">${esc(i.satuan)}</span></td>
       <td style="text-align:right" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
       <td>${expiredBadge(i)}</td>
-      <td><div class="actions">
-        ${btnRestock}
-        <button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>
-        ${btnEdit}
-        ${btnDel}
-      </div></td>
+      <td><div class="actions">${btnRestock}<button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>${btnEdit}${btnDel}</div></td>
     </tr>`;
   }).join("");
 }
-
 function renderPenjualan() {
   const tb = $("tbodyPenjualan");
-  if (penjualan.length === 0) {
-    tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada riwayat penjualan.</div></td></tr>';
-    return;
-  }
+  if (penjualan.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada riwayat penjualan.</div></td></tr>'; return; }
   tb.innerHTML = penjualan.map(p => `
     <tr>
       <td class="sub">${esc(p.waktu)}</td>
@@ -1278,18 +1085,114 @@ function fillSelects() {
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prevB && items.some(i => i.id === prevB)) selB.value = prevB;
-
   const selK = $("kItem");
   const prevK = selK.value;
   selK.innerHTML = items.length
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prevK && items.some(i => i.id === prevK)) selK.value = prevK;
-
   updateBeliPreview();
 }
 
-/* ---------- STOCK OPNAME FORM ---------- */
+/* ---------- STOK DAERAH ---------- */
+function populateStokDaerahView() {
+  const sel = $("sdItemSelect");
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = items.length
+    ? items.map(i => `<option value="${i.id}">${esc(i.nama)}</option>`).join("")
+    : '<option value="">— Belum ada barang —</option>';
+  if (prev && items.some(i => i.id === prev)) sel.value = prev;
+  updateStokDaerahPreview();
+}
+
+function updateStokDaerahPreview() {
+  const box = $("sdPreview");
+  const item = items.find(i => i.id === $("sdItemSelect").value);
+  if (!item) { box.className = "preview"; box.textContent = "Belum ada barang."; return; }
+  $("sdStokSistem").value = `${item.stok} ${item.satuan}`;
+  const jumlah = parseInt($("sdJumlah").value, 10);
+  if (isNaN(jumlah) || jumlah < 0) {
+    box.className = "preview";
+    box.textContent = `Stok sistem: ${item.stok} ${item.satuan}. Masukkan jumlah on hand daerah.`;
+    return;
+  }
+  const selisih = item.stok - jumlah;
+  const nilai = Math.abs(selisih) * (Number(item.harga) || 0);
+  box.className = selisih === 0 ? "preview ok" : "preview";
+  if (selisih === 0) {
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} = Stok daerah <b>${jumlah}</b> ${esc(item.satuan)}. Sesuai.`;
+  } else if (selisih > 0) {
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Pusat <b>${item.stok}</b> &gt; Daerah <b>${jumlah}</b> ${esc(item.satuan)}. Selisih <b>+${selisih}</b> (potensi kehilangan <b>${rp(nilai)}</b>).`;
+  } else {
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Pusat <b>${item.stok}</b> &lt; Daerah <b>${jumlah}</b> ${esc(item.satuan)}. Selisih <b>${selisih}</b> (surplus <b>${rp(nilai)}</b>).`;
+  }
+}
+
+async function submitStokDaerah() {
+  const item = items.find(i => i.id === $("sdItemSelect").value);
+  if (!item) { toast("Pilih barang.", "err"); return; }
+  const jumlah = parseInt($("sdJumlah").value, 10);
+  if (isNaN(jumlah) || jumlah < 0) { toast("Jumlah harus angka ≥ 0.", "err"); return; }
+  const pencatat = val("sdPencatat");
+  const data = { nama: item.nama, jumlah, nama_pencatat: pencatat, keterangan: val("sdKeterangan") };
+  try {
+    setStatus("Menyimpan…");
+    const res = await api({ action: "add_stok_daerah", data }, "POST");
+    if (!res.ok) throw new Error(res.message);
+    saveKasir(pencatat);
+    toast(res.message, "ok");
+    $("sdJumlah").value = "";
+    $("sdKeterangan").value = "";
+    setStatus("Terhubung ke Google Sheets");
+    await load();
+  } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
+}
+
+function renderStokDaerah() {
+  const tb = $("tbodyStokDaerah");
+  if (!tb) return;
+  const list = [...stokDaerah].sort((a, b) => b.waktu.localeCompare(a.waktu)).slice(0, 100);
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada catatan stok daerah.</div></td></tr>'; return; }
+  tb.innerHTML = list.map(sd => `
+    <tr>
+      <td class="sub">${esc(sd.waktu)}</td>
+      <td><b>${esc(sd.nama)}</b></td>
+      <td style="text-align:right"><span class="qty">${sd.jumlah}</span></td>
+      <td class="sub">${esc(sd.nama_pencatat || "-")}</td>
+      <td class="sub">${esc(sd.keterangan || "-")}</td>
+      <td><div class="actions"><button class="small ghost" data-sdel="${sd.id}" title="Hapus">×</button></div></td>
+    </tr>
+  `).join("");
+  tb.querySelectorAll("[data-sdel]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Hapus catatan stok daerah ini?")) return;
+      try {
+        const res = await api({ action: "delete_stok_daerah", id: btn.dataset.sdel }, "POST");
+        if (!res.ok) throw new Error(res.message);
+        toast("Dihapus.", "ok"); await load();
+      } catch (e) { toast(e.message, "err"); }
+    });
+  });
+}
+
+function getLatestStokDaerah(nama, endDate) {
+  const end = endDate instanceof Date ? endDate : new Date(endDate + "T23:59:59");
+  let latest = null;
+  for (const sd of stokDaerah) {
+    if (norm(sd.nama) !== norm(nama)) continue;
+    const d = dateFromStr(sd.waktu);
+    if (isNaN(d.getTime()) || d > end) continue;
+    if (!latest || d > dateFromStr(latest.waktu)) latest = sd;
+  }
+  return latest ? latest.jumlah : null;
+}
+
+$("sdItemSelect").addEventListener("change", updateStokDaerahPreview);
+$("sdJumlah").addEventListener("input", updateStokDaerahPreview);
+$("btnSaveStokDaerah").addEventListener("click", submitStokDaerah);
+
+/* ---------- STOCK OPNAME ---------- */
 function populateEditView() {
   const sel = $("editItemSelect");
   const prev = sel.value;
@@ -1300,19 +1203,12 @@ function populateEditView() {
   if (sel.value) loadEditForm(sel.value);
   else clearEditForm();
 }
-
 function clearEditForm() {
   editingId = null;
-  $("eNama").value = "";
-  $("eKategori").value = "Makanan";
-  $("eSatuan").value = "pcs";
-  $("eHargaJual").value = 0;
-  $("eStokSistem").value = "";
-  $("eStokFisik").value = "";
-  $("ePreview").className = "preview";
-  $("ePreview").textContent = "Pilih barang.";
+  $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; $("eHargaJual").value = 0;
+  $("eStokSistem").value = ""; $("eStokFisik").value = "";
+  $("ePreview").className = "preview"; $("ePreview").textContent = "Pilih barang.";
 }
-
 function loadEditForm(id) {
   const item = items.find(i => i.id === id);
   if (!item) { clearEditForm(); return; }
@@ -1325,65 +1221,47 @@ function loadEditForm(id) {
   $("eStokFisik").value = item.stok;
   updateOpnamePreview();
 }
-
 function updateOpnamePreview() {
   const box = $("ePreview");
   const item = items.find(i => i.id === editingId);
   if (!item) { box.className = "preview"; box.textContent = "Pilih barang."; return; }
   const fisik = parseInt($("eStokFisik").value, 10);
-  if (isNaN(fisik) || fisik < 0) {
-    box.className = "preview";
-    box.textContent = "Isi stock akhir persediaan hasil hitung fisik.";
-    return;
-  }
+  if (isNaN(fisik) || fisik < 0) { box.className = "preview"; box.textContent = "Isi stock akhir persediaan hasil hitung fisik."; return; }
   const selisih = fisik - item.stok;
   const hargaBeli = Number(item.harga) || 0;
   const nilai = Math.abs(selisih) * hargaBeli;
-
   if (selisih === 0) {
     box.className = "preview ok";
     box.innerHTML = `<b>${esc(item.nama)}</b> · Stok fisik = stok sistem (<b>${fisik} ${esc(item.satuan)}</b>). Tidak ada penyesuaian.`;
   } else if (selisih < 0) {
     box.className = "preview";
-    box.innerHTML = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} → fisik <b>${fisik}</b> ${esc(item.satuan)} (kurang <b>${Math.abs(selisih)}</b>).<br>
-      Jurnal: <b>Beban Persediaan (D) ${rp(nilai)}</b> / <b>Persediaan (K) ${rp(nilai)}</b>`;
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} → fisik <b>${fisik}</b> (kurang <b>${Math.abs(selisih)}</b>).<br>Jurnal: <b>Beban Persediaan (D) ${rp(nilai)}</b> / <b>Persediaan (K) ${rp(nilai)}</b>`;
   } else {
     box.className = "preview ok";
-    box.innerHTML = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} → fisik <b>${fisik}</b> ${esc(item.satuan)} (lebih <b>${selisih}</b>).<br>
-      Jurnal: <b>Persediaan (D) ${rp(nilai)}</b> / <b>Beban Persediaan (K) ${rp(nilai)}</b>`;
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} → fisik <b>${fisik}</b> (lebih <b>${selisih}</b>).<br>Jurnal: <b>Persediaan (D) ${rp(nilai)}</b> / <b>Beban Persediaan (K) ${rp(nilai)}</b>`;
   }
 }
 $("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
 $("eStokFisik").addEventListener("input", updateOpnamePreview);
 
-/* Edit data (tanpa ubah stok) */
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
   if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   const kasir = val("eKasir");
-  const data = {
-    nama: $("eNama").value.trim(),
-    kategori: $("eKategori").value,
-    satuan: $("eSatuan").value,
-    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0),
-    note: kasir
-  };
+  const data = { nama: $("eNama").value.trim(), kategori: $("eKategori").value, satuan: $("eSatuan").value, harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), note: kasir };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
   try {
     setStatus("Menyimpan…");
     const res = await api({ action: "update", id: editingId, data }, "POST");
     if (!res.ok && res.duplicate) { toast(res.message, "err"); setStatus("Terhubung ke Google Sheets"); return; }
     if (!res.ok) throw new Error(res.message);
-    saveKasir(kasir);
-    toast("Perubahan data tersimpan.", "ok");
-    setStatus("Terhubung ke Google Sheets");
+    saveKasir(kasir); toast("Perubahan data tersimpan.", "ok"); setStatus("Terhubung ke Google Sheets");
     await load();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
 $("btnSaveEdit").addEventListener("click", submitEdit);
 
-/* Proses Stock Opname (ubah stok via penyesuaian) */
 async function submitOpname() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
@@ -1397,13 +1275,9 @@ async function submitOpname() {
     if (!res.ok) throw new Error(res.message);
     if (res.selisih === 0) toast("Stok fisik = stok sistem. Tidak ada penyesuaian.", "ok");
     else toast(`Stock opname: selisih ${res.selisih}. ${res.jurnal}`, "ok");
-    saveKasir(nama);
-    setStatus("Terhubung ke Google Sheets");
+    saveKasir(nama); setStatus("Terhubung ke Google Sheets");
     await load();
-  } catch (e) {
-    setStatus("Gagal", false);
-    toast(e.message, "err");
-  }
+  } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
 $("btnOpname").addEventListener("click", submitOpname);
 
@@ -1416,8 +1290,7 @@ async function deleteItem(id) {
   try {
     const res = await api({ action: "delete", id, kasir: auth.username || "" }, "POST");
     if (!res.ok) throw new Error(res.message);
-    toast("Barang dihapus.", "ok");
-    await load();
+    toast("Barang dihapus.", "ok"); await load();
   } catch (e) { toast(e.message, "err"); }
 }
 
@@ -1431,12 +1304,8 @@ document.querySelectorAll(".mode-switch button").forEach(btn => {
 });
 function applyBeliMode() {
   const isNew = beliMode === "new";
-  ["bExistingWrap","bQtyExistingWrap","bHargaBaruWrap","bExpiredBaruWrap"].forEach(id => {
-    $(id).style.display = isNew ? "none" : "flex";
-  });
-  ["bNewWrap","bKategoriWrap","bSatuanWrap","bHargaWrap","bHargaJualWrap","bExpiredWrap","bQtyNewWrap"].forEach(id => {
-    $(id).style.display = isNew ? "flex" : "none";
-  });
+  ["bExistingWrap","bQtyExistingWrap","bHargaBaruWrap","bExpiredBaruWrap"].forEach(id => { $(id).style.display = isNew ? "none" : "flex"; });
+  ["bNewWrap","bKategoriWrap","bSatuanWrap","bHargaWrap","bHargaJualWrap","bExpiredWrap","bQtyNewWrap"].forEach(id => { $(id).style.display = isNew ? "flex" : "none"; });
   updateBeliPreview();
 }
 function updateBeliPreview() {
@@ -1450,10 +1319,7 @@ function updateBeliPreview() {
     if (qty > 0 && nama !== "(belum diisi)") {
       box.className = "preview ok";
       box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
-    } else {
-      box.className = "preview";
-      box.textContent = "Isi nama dan jumlah.";
-    }
+    } else { box.className = "preview"; box.textContent = "Isi nama dan jumlah."; }
   } else {
     const item = items.find(i => i.id === $("bExisting").value);
     const qty = parseInt($("bQtyExisting").value, 10) || 0;
@@ -1471,21 +1337,16 @@ function updateBeliPreview() {
     box.innerHTML = `<b>${esc(item.nama)}</b> × ${qty} = <b>${rp(totalBeli)}</b> · stok ${item.stok} → <b>${sisa}</b> ${esc(item.satuan)}.${extrasHtml}`;
   }
 }
-
 async function submitBeli() {
   const supplier = val("bNote");
   if (beliMode === "new") {
     const qty = parseInt($("bQtyNew").value, 10) || 0;
     if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
     const data = {
-      nama: $("bNama").value.trim(),
-      kategori: $("bKategori").value,
-      satuan: $("bSatuan").value,
-      stok: qty,
-      harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
+      nama: $("bNama").value.trim(), kategori: $("bKategori").value, satuan: $("bSatuan").value,
+      stok: qty, harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
       harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0),
-      expired: $("bExpired").value || "",
-      note: supplier
+      expired: $("bExpired").value || "", note: supplier
     };
     if (!data.nama) { toast("Nama wajib diisi.", "err"); return; }
     const dup = items.find(i => norm(i.nama) === norm(data.nama));
@@ -1494,10 +1355,7 @@ async function submitBeli() {
       if (go) {
         beliMode = "existing";
         document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-        applyBeliMode();
-        $("bExisting").value = dup.id;
-        $("bQtyExisting").value = qty;
-        updateBeliPreview();
+        applyBeliMode(); $("bExisting").value = dup.id; $("bQtyExisting").value = qty; updateBeliPreview();
       }
       return;
     }
@@ -1509,19 +1367,13 @@ async function submitBeli() {
         if (go) {
           beliMode = "existing";
           document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-          applyBeliMode();
-          $("bExisting").value = res.existingId;
-          $("bQtyExisting").value = qty;
+          applyBeliMode(); $("bExisting").value = res.existingId; $("bQtyExisting").value = qty;
         }
-        setStatus("Terhubung ke Google Sheets");
-        return;
+        setStatus("Terhubung ke Google Sheets"); return;
       }
       if (!res.ok) throw new Error(res.message || "Gagal");
-      saveSupplier(supplier);
-      toast(`+${qty} ${data.satuan} ${data.nama}`, "ok");
-      resetBeliNew();
-      setStatus("Terhubung ke Google Sheets");
-      await load();
+      saveSupplier(supplier); toast(`+${qty} ${data.satuan} ${data.nama}`, "ok");
+      resetBeliNew(); setStatus("Terhubung ke Google Sheets"); await load();
     } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
   } else {
     const id = $("bExisting").value;
@@ -1538,24 +1390,15 @@ async function submitBeli() {
       setStatus("Menyimpan…");
       const res = await api(payload, "POST");
       if (!res.ok) throw new Error(res.message);
-      saveSupplier(supplier);
-      toast(`+${qty} ${item.satuan} ${item.nama}`, "ok");
-      $("bQtyExisting").value = 1;
-      $("bHargaBaru").value = "";
-      $("bExpiredBaru").value = "";
-      setStatus("Terhubung ke Google Sheets");
-      await load();
+      saveSupplier(supplier); toast(`+${qty} ${item.satuan} ${item.nama}`, "ok");
+      $("bQtyExisting").value = 1; $("bHargaBaru").value = ""; $("bExpiredBaru").value = "";
+      setStatus("Terhubung ke Google Sheets"); await load();
     } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
   }
 }
 function resetBeliNew() {
-  $("bNama").value = "";
-  $("bKategori").value = "Makanan";
-  $("bSatuan").value = "pcs";
-  $("bHarga").value = 0;
-  $("bHargaJual").value = 0;
-  $("bExpired").value = "";
-  $("bQtyNew").value = 1;
+  $("bNama").value = ""; $("bKategori").value = "Makanan"; $("bSatuan").value = "pcs";
+  $("bHarga").value = 0; $("bHargaJual").value = 0; $("bExpired").value = ""; $("bQtyNew").value = 1;
   updateBeliPreview();
 }
 
@@ -1564,55 +1407,29 @@ function addToCart() {
   const id = $("kItem").value;
   const qty = parseInt($("kQty").value, 10) || 0;
   const item = items.find(i => i.id === id);
-
   if (!item) { toast("Pilih barang.", "err"); return; }
   if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
-
   const existing = cart.find(c => c.id === id);
   const currentQty = existing ? existing.qty : 0;
-
-  if (currentQty + qty > item.stok) {
-    toast(`Stok tidak cukup. Sisa ${item.stok} ${item.satuan}.`, "err");
-    return;
-  }
-  if (existing) {
-    existing.qty += qty;
-    existing.subtotal = existing.qty * item.harga_jual;
-  } else {
-    cart.push({
-      id: item.id, nama: item.nama,
-      harga: item.harga_jual || 0, qty,
-      subtotal: qty * (item.harga_jual || 0),
-      satuan: item.satuan
-    });
-  }
-  $("kQty").value = 1;
-  renderCart();
+  if (currentQty + qty > item.stok) { toast(`Stok tidak cukup. Sisa ${item.stok} ${item.satuan}.`, "err"); return; }
+  if (existing) { existing.qty += qty; existing.subtotal = existing.qty * item.harga_jual; }
+  else { cart.push({ id: item.id, nama: item.nama, harga: item.harga_jual || 0, qty, subtotal: qty * (item.harga_jual || 0), satuan: item.satuan }); }
+  $("kQty").value = 1; renderCart();
 }
-
 function renderCart() {
   const tb = $("cartBody");
-  if (cart.length === 0) {
-    tb.innerHTML = '<tr><td colspan="5" class="empty" style="border:none">Keranjang masih kosong.</td></tr>';
-    calculateTotal();
-    return;
-  }
+  if (cart.length === 0) { tb.innerHTML = '<tr><td colspan="5" class="empty" style="border:none">Keranjang masih kosong.</td></tr>'; calculateTotal(); return; }
   tb.innerHTML = cart.map((c, index) => `
     <tr>
       <td><div class="name">${esc(c.nama)}</div></td>
       <td style="text-align:right">${rp(c.harga)}</td>
-      <td style="text-align:center">
-        <input type="number" min="1" value="${c.qty}" style="width:60px; padding:4px; text-align:center; border:1px solid #ccc; border-radius:4px;" onchange="updateCartQty(${index}, this.value)">
-      </td>
+      <td style="text-align:center"><input type="number" min="1" value="${c.qty}" style="width:60px; padding:4px; text-align:center; border:1px solid #ccc; border-radius:4px;" onchange="updateCartQty(${index}, this.value)"></td>
       <td style="text-align:right; font-weight:bold">${rp(c.subtotal)}</td>
-      <td style="text-align:center">
-        <button class="small ghost" style="color:#c62828; border-color:#c62828;" onclick="removeFromCart(${index})">×</button>
-      </td>
+      <td style="text-align:center"><button class="small ghost" style="color:#c62828; border-color:#c62828;" onclick="removeFromCart(${index})">×</button></td>
     </tr>
   `).join("");
   calculateTotal();
 }
-
 function updateCartQty(index, newQty) {
   const item = items.find(i => i.id === cart[index].id);
   newQty = parseInt(newQty, 10) || 1;
@@ -1622,25 +1439,18 @@ function updateCartQty(index, newQty) {
   renderCart();
 }
 function removeFromCart(index) { cart.splice(index, 1); renderCart(); }
-
 function calculateTotal() {
   const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
   const diskon = getMoneyValue("posDiskon");
   const total = Math.max(0, subtotal - diskon);
   const tunai = getMoneyValue("posTunai");
   const kembali = Math.max(0, tunai - total);
-
   $("posSubtotal").textContent = rp(subtotal);
   $("posTotal").textContent = rp(total);
   $("posKembali").textContent = rp(kembali);
-  if (tunai > 0 && tunai < total) {
-    $("posKembali").style.color = "#c62828";
-    $("posKembali").textContent = "Uang kurang!";
-  } else {
-    $("posKembali").style.color = "#2e7d32";
-  }
+  if (tunai > 0 && tunai < total) { $("posKembali").style.color = "#c62828"; $("posKembali").textContent = "Uang kurang!"; }
+  else { $("posKembali").style.color = "#2e7d32"; }
 }
-
 async function submitCheckout() {
   if (cart.length === 0) { toast("Keranjang kosong.", "err"); return; }
   const subtotal = cart.reduce((sum, c) => sum + c.subtotal, 0);
@@ -1650,21 +1460,15 @@ async function submitCheckout() {
   const kasir = val("kNote");
   if (tunai < total) { toast("Uang tunai kurang dari total bayar.", "err"); return; }
   if (!kasir) { toast("Nama Kasir wajib diisi.", "err"); return; }
-
   const btn = $("btnCheckout");
-  btn.textContent = "Memproses...";
-  btn.disabled = true;
-
+  btn.textContent = "Memproses..."; btn.disabled = true;
   try {
     const res = await api({ action: "checkout", items: cart, kasir, diskon, tunai, total }, "POST");
     if (res.ok) {
       toast("Transaksi berhasil disimpan!", "ok");
-      cart = [];
-      renderCart();
-      $("posDiskon").value = "0";
-      $("posTunai").value = "0";
-      saveKasir(kasir);
-      await load();
+      cart = []; renderCart();
+      $("posDiskon").value = "0"; $("posTunai").value = "0";
+      saveKasir(kasir); await load();
     } else toast(res.message, "err");
   } catch (e) { toast("Gagal memproses pembayaran.", "err"); }
   finally { btn.textContent = "💳 Proses Pembayaran"; btn.disabled = false; }
@@ -1681,26 +1485,17 @@ const KATEGORI = {
   utang: ["Bank", "Supplier", "Koperasi", "Pihak Ketiga", "Lainnya"],
   bayar_utang: ["Bank", "Supplier", "Koperasi", "Pihak Ketiga", "Lainnya"]
 };
-const TIPE_LABEL = {
-  pendapatan_lain: "Pendapatan Lain", beban_lain: "Beban Lain",
-  modal: "Modal", prive: "Prive", utang: "Utang Baru", bayar_utang: "Bayar Utang"
-};
-const TIPE_BADGE = {
-  pendapatan_lain: "in", beban_lain: "out", modal: "in",
-  prive: "out", utang: "in", bayar_utang: "out"
-};
-
+const TIPE_LABEL = { pendapatan_lain: "Pendapatan Lain", beban_lain: "Beban Lain", modal: "Modal", prive: "Prive", utang: "Utang Baru", bayar_utang: "Bayar Utang" };
+const TIPE_BADGE = { pendapatan_lain: "in", beban_lain: "out", modal: "in", prive: "out", utang: "in", bayar_utang: "out" };
 function updateKategoriOptions() {
   const tipe = $("kfTipe").value;
   const opts = KATEGORI[tipe] || ["Lainnya"];
   $("kfKategori").innerHTML = opts.map(o => `<option>${esc(o)}</option>`).join("");
 }
 $("kfTipe").addEventListener("change", updateKategoriOptions);
-
 async function submitKeuangan() {
   const data = {
-    tipe: $("kfTipe").value,
-    kategori: $("kfKategori").value,
+    tipe: $("kfTipe").value, kategori: $("kfKategori").value,
     keterangan: $("kfKeterangan").value.trim(),
     jumlah: Math.abs(parseInt($("kfJumlah").value, 10) || 0),
     nama: $("kfNama").value.trim()
@@ -1710,20 +1505,15 @@ async function submitKeuangan() {
     setStatus("Menyimpan…");
     const res = await api({ action: "add_keuangan", data }, "POST");
     if (!res.ok) throw new Error(res.message);
-    saveKasir(data.nama);
-    toast("Tersimpan.", "ok");
-    $("kfJumlah").value = 0;
-    $("kfKeterangan").value = "";
+    saveKasir(data.nama); toast("Tersimpan.", "ok");
+    $("kfJumlah").value = 0; $("kfKeterangan").value = "";
     setStatus("Terhubung ke Google Sheets");
-    await load();
-    renderKeuangan();
+    await load(); renderKeuangan();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
-
 function renderKeuangan() {
   const f = $("filterKeuangan").value;
-  const list = keuangan.filter(k => f === "all" || k.tipe === f)
-    .sort((a, b) => b.waktu.localeCompare(a.waktu));
+  const list = keuangan.filter(k => f === "all" || k.tipe === f).sort((a, b) => b.waktu.localeCompare(a.waktu));
   const tb = $("tbodyKeuangan");
   if (list.length === 0) { tb.innerHTML = '<tr><td colspan="7"><div class="empty">Belum ada catatan.</div></td></tr>'; return; }
   tb.innerHTML = list.map(k => {
@@ -1747,8 +1537,7 @@ function renderKeuangan() {
       try {
         const res = await api({ action: "delete_keuangan", id: btn.dataset.kdel }, "POST");
         if (!res.ok) throw new Error(res.message);
-        toast("Dihapus.", "ok");
-        await load(); renderKeuangan();
+        toast("Dihapus.", "ok"); await load(); renderKeuangan();
       } catch (e) { toast(e.message, "err"); }
     });
   });
@@ -1766,11 +1555,7 @@ function renderAset() {
     if (f !== "all" && a.kategori !== f) return false;
     return true;
   }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
-
-  if (list.length === 0) {
-    tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada aset tetap.</div></td></tr>';
-    return;
-  }
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada aset tetap.</div></td></tr>'; return; }
   tb.innerHTML = list.map(a => `
     <tr>
       <td><div class="name">${esc(a.nama)}</div></td>
@@ -1781,22 +1566,19 @@ function renderAset() {
       <td class="sub">${esc(a.tanggal_perolehan || "-")}</td>
       <td class="sub">${esc(a.keterangan || "-")}</td>
       <td><div class="actions">
-        <button class="small ghost" data-aact="edit" data-id="${a.id}" title="Edit">✎</button>
-        <button class="small ghost" data-aact="del" data-id="${a.id}" title="Hapus">×</button>
+        <button class="small ghost" data-aact="edit" data-id="${a.id}">✎</button>
+        <button class="small ghost" data-aact="del" data-id="${a.id}">×</button>
       </div></td>
     </tr>
   `).join("");
 }
-
 async function submitAset() {
   const id = $("aEditId").value;
   const data = {
-    nama: $("aNama").value.trim(),
-    kategori: $("aKategori").value,
+    nama: $("aNama").value.trim(), kategori: $("aKategori").value,
     jumlah: Math.max(0, parseInt($("aJumlah").value, 10) || 0),
     harga: Math.max(0, parseInt($("aHarga").value, 10) || 0),
-    tanggal_perolehan: $("aTanggal").value || "",
-    keterangan: $("aKeterangan").value.trim(),
+    tanggal_perolehan: $("aTanggal").value || "", keterangan: $("aKeterangan").value.trim(),
     nama_pencatat: $("aPencatat").value.trim()
   };
   if (!data.nama) { toast("Nama aset wajib diisi.", "err"); return; }
@@ -1804,51 +1586,31 @@ async function submitAset() {
     const payload = id ? { action: "update_aset", id, data } : { action: "add_aset", data };
     const res = await api(payload, "POST");
     if (!res.ok) throw new Error(res.message);
-    toast(res.message, "ok");
-    saveKasir(data.nama_pencatat);
-    resetFormAset();
-    await load();
+    toast(res.message, "ok"); saveKasir(data.nama_pencatat); resetFormAset(); await load();
   } catch (e) { toast(e.message, "err"); }
 }
-
 function editAset(id) {
   const a = aset.find(x => x.id === id);
   if (!a) return;
-  $("aEditId").value = a.id;
-  $("aNama").value = a.nama;
-  $("aKategori").value = a.kategori || "Lainnya";
-  $("aJumlah").value = a.jumlah;
-  $("aHarga").value = a.harga;
-  $("aTanggal").value = a.tanggal_perolehan;
-  $("aKeterangan").value = a.keterangan;
-  $("aPencatat").value = a.nama_pencatat;
-  $("btnSaveAset").textContent = "💾 Update Aset";
-  $("btnCancelAset").style.display = "inline-block";
+  $("aEditId").value = a.id; $("aNama").value = a.nama; $("aKategori").value = a.kategori || "Lainnya";
+  $("aJumlah").value = a.jumlah; $("aHarga").value = a.harga; $("aTanggal").value = a.tanggal_perolehan;
+  $("aKeterangan").value = a.keterangan; $("aPencatat").value = a.nama_pencatat;
+  $("btnSaveAset").textContent = "💾 Update Aset"; $("btnCancelAset").style.display = "inline-block";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
 function resetFormAset() {
-  $("aEditId").value = "";
-  $("aNama").value = "";
-  $("aKategori").value = "Kendaraan";
-  $("aJumlah").value = 1;
-  $("aHarga").value = 0;
-  $("aTanggal").value = "";
-  $("aKeterangan").value = "";
-  $("btnSaveAset").textContent = "💾 Simpan Aset";
-  $("btnCancelAset").style.display = "none";
+  $("aEditId").value = ""; $("aNama").value = ""; $("aKategori").value = "Kendaraan";
+  $("aJumlah").value = 1; $("aHarga").value = 0; $("aTanggal").value = ""; $("aKeterangan").value = "";
+  $("btnSaveAset").textContent = "💾 Simpan Aset"; $("btnCancelAset").style.display = "none";
 }
-
 async function deleteAset(id) {
   if (!confirm("Hapus aset ini?")) return;
   try {
     const res = await api({ action: "delete_aset", id }, "POST");
     if (!res.ok) throw new Error(res.message);
-    toast("Aset dihapus.", "ok");
-    await load();
+    toast("Aset dihapus.", "ok"); await load();
   } catch (e) { toast(e.message, "err"); }
 }
-
 $("btnSaveAset").addEventListener("click", submitAset);
 $("btnCancelAset").addEventListener("click", resetFormAset);
 $("searchAset").addEventListener("input", renderAset);
@@ -1878,12 +1640,7 @@ function loadHistory() {
     const jumlahTeks = h.jumlah ? `${tanda}${h.jumlah} ${esc(h.satuan || "")}` : "";
     const totalTeks = h.total ? ` · <b>${rp(h.total)}</b>` : "";
     const catatanHtml = h.catatan ? ` · ${formatCatatan(h.catatan, h.tipe)}` : "";
-    return `<div class="hist-item">
-      <div style="flex:1">
-        <b>${esc(h.nama)}</b>
-        <div class="meta">${esc(h.tipe)}${jumlahTeks ? " · " + jumlahTeks : ""}${totalTeks} · ${esc(h.waktu)}${catatanHtml}</div>
-      </div>
-    </div>`;
+    return `<div class="hist-item"><div style="flex:1"><b>${esc(h.nama)}</b><div class="meta">${esc(h.tipe)}${jumlahTeks ? " · " + jumlahTeks : ""}${totalTeks} · ${esc(h.waktu)}${catatanHtml}</div></div></div>`;
   }).join("");
 }
 
@@ -1894,11 +1651,9 @@ function computeFifoHpp(startDate, endDate) {
   const sorted = [...riwayat].sort((a, b) => dateFromStr(a.waktu) - dateFromStr(b.waktu));
   const queues = {};
   let revenue = 0, hpp = 0, fallbackQty = 0;
-
   for (const ev of sorted) {
     const waktu = dateFromStr(ev.waktu);
     if (isNaN(waktu.getTime()) || waktu > end) continue;
-
     if (ev.tipe === "baru" || ev.tipe === "masuk") {
       if (!queues[ev.nama]) queues[ev.nama] = [];
       if (ev.jumlah > 0 && ev.harga_satuan > 0) queues[ev.nama].push({ qty: ev.jumlah, harga: ev.harga_satuan });
@@ -1908,11 +1663,8 @@ function computeFifoHpp(startDate, endDate) {
       let hppSale = 0;
       const q = queues[ev.nama] || [];
       while (remaining > 0 && q.length > 0) {
-        const b = q[0];
-        const take = Math.min(remaining, b.qty);
-        hppSale += take * b.harga;
-        b.qty -= take;
-        remaining -= take;
+        const b = q[0]; const take = Math.min(remaining, b.qty);
+        hppSale += take * b.harga; b.qty -= take; remaining -= take;
         if (b.qty <= 0) q.shift();
       }
       if (remaining > 0) {
@@ -1923,15 +1675,12 @@ function computeFifoHpp(startDate, endDate) {
       }
       if (inPeriod) { revenue += ev.jumlah * (ev.harga_satuan || 0); hpp += hppSale; }
     } else if (ev.tipe === "opname") {
-      // opname affects stock but not revenue/hpp directly
       if (ev.jumlah < 0) {
         let remaining = Math.abs(ev.jumlah);
         const q = queues[ev.nama] || [];
         while (remaining > 0 && q.length > 0) {
-          const b = q[0];
-          const take = Math.min(remaining, b.qty);
-          b.qty -= take;
-          remaining -= take;
+          const b = q[0]; const take = Math.min(remaining, b.qty);
+          b.qty -= take; remaining -= take;
           if (b.qty <= 0) q.shift();
         }
       } else if (ev.jumlah > 0) {
@@ -1942,12 +1691,10 @@ function computeFifoHpp(startDate, endDate) {
   }
   return { revenue, hpp, labaKotor: revenue - hpp, fallbackQty };
 }
-
 function computeFifoPersediaan(endDate) {
   const end = new Date(endDate + "T23:59:59");
   const sorted = [...riwayat].sort((a, b) => dateFromStr(a.waktu) - dateFromStr(b.waktu));
   const queues = {};
-
   for (const ev of sorted) {
     const waktu = dateFromStr(ev.waktu);
     if (isNaN(waktu.getTime()) || waktu > end) continue;
@@ -1958,10 +1705,8 @@ function computeFifoPersediaan(endDate) {
       let remaining = ev.jumlah;
       const q = queues[ev.nama] || [];
       while (remaining > 0 && q.length > 0) {
-        const b = q[0];
-        const take = Math.min(remaining, b.qty);
-        b.qty -= take;
-        remaining -= take;
+        const b = q[0]; const take = Math.min(remaining, b.qty);
+        b.qty -= take; remaining -= take;
         if (b.qty <= 0) q.shift();
       }
     } else if (ev.tipe === "opname") {
@@ -1969,10 +1714,8 @@ function computeFifoPersediaan(endDate) {
         let remaining = Math.abs(ev.jumlah);
         const q = queues[ev.nama] || [];
         while (remaining > 0 && q.length > 0) {
-          const b = q[0];
-          const take = Math.min(remaining, b.qty);
-          b.qty -= take;
-          remaining -= take;
+          const b = q[0]; const take = Math.min(remaining, b.qty);
+          b.qty -= take; remaining -= take;
           if (b.qty <= 0) q.shift();
         }
       } else if (ev.jumlah > 0) {
@@ -1981,7 +1724,6 @@ function computeFifoPersediaan(endDate) {
       }
     }
   }
-
   let total = 0;
   for (const nama in queues) for (const b of queues[nama]) total += b.qty * b.harga;
   for (const item of items) {
@@ -1991,7 +1733,6 @@ function computeFifoPersediaan(endDate) {
   }
   return total;
 }
-
 function computeOpnameValue(startDate, endDate) {
   const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
@@ -2004,7 +1745,6 @@ function computeOpnameValue(startDate, endDate) {
   }
   return net;
 }
-
 function computeAsetTotal(endDate) {
   const end = new Date(endDate + "T23:59:59");
   return aset.filter(a => {
@@ -2014,37 +1754,47 @@ function computeAsetTotal(endDate) {
   }).reduce((s, a) => s + (a.jumlah || 0) * (a.harga || 0), 0);
 }
 
+/* ---------- REKAP BARANG ---------- */
 function computeRekapBarang(startDate, endDate) {
-  const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
   const sorted = [...riwayat].sort((a, b) => dateFromStr(a.waktu) - dateFromStr(b.waktu));
   const map = {};
 
   for (const ev of sorted) {
     const waktu = dateFromStr(ev.waktu);
-    if (isNaN(waktu.getTime())) continue;
+    if (isNaN(waktu.getTime()) || waktu > end) continue;
     const nama = ev.nama;
-    if (!map[nama]) map[nama] = { nama, opening: 0, beli: 0, jual: 0, opname: 0 };
+    if (!map[nama]) map[nama] = { nama, stokAwal: 0, pembelian: 0, penjualan: 0 };
 
-    if (waktu < start) {
-      if (ev.tipe === "baru" || ev.tipe === "masuk") map[nama].opening += ev.jumlah;
-      else if (ev.tipe === "keluar") map[nama].opening -= ev.jumlah;
-      else if (ev.tipe === "opname") map[nama].opening += ev.jumlah;
-    } else if (waktu <= end) {
-      if (ev.tipe === "masuk" || ev.tipe === "baru") map[nama].beli += ev.jumlah;
-      else if (ev.tipe === "keluar") map[nama].jual += ev.jumlah;
-      else if (ev.tipe === "opname") map[nama].opname += ev.jumlah;
-    }
+    // Pemisahan sesuai permintaan:
+    //   tipe "baru"  → Stok Awal (dari mode "Stok Awal" di Pembelian)
+    //   tipe "masuk" → Pembelian (dari mode "Dibeli")
+    //   tipe "keluar"→ Penjualan
+    //   tipe "opname"→ diabaikan dari Stok Akhir (tetap tercatat di riwayat untuk audit)
+    if (ev.tipe === "baru") map[nama].stokAwal += ev.jumlah;
+    else if (ev.tipe === "masuk") map[nama].pembelian += ev.jumlah;
+    else if (ev.tipe === "keluar") map[nama].penjualan += ev.jumlah;
   }
 
-  return Object.values(map).map(m => ({
-    nama: m.nama,
-    opening: m.opening,
-    beli: m.beli,
-    jual: m.jual,
-    opname: m.opname,
-    akhir: m.opening + m.beli - m.jual + m.opname
-  })).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
+  return Object.values(map).map(m => {
+    // FORMULA: Stok Akhir = Stok Awal + Pembelian - Penjualan
+    const stokAkhir = m.stokAwal + m.pembelian - m.penjualan;
+    const item = items.find(i => norm(i.nama) === norm(m.nama));
+    const hargaBeli = item ? (Number(item.harga) || 0) : 0;
+    const onHand = getLatestStokDaerah(m.nama, end);
+    const selisih = onHand === null ? null : (stokAkhir - onHand);
+    const nilaiSelisih = selisih === null ? null : selisih * hargaBeli;
+    return {
+      nama: m.nama,
+      stokAwal: m.stokAwal,
+      pembelian: m.pembelian,
+      penjualan: m.penjualan,
+      stokAkhir,
+      onHand,
+      selisih,
+      nilaiSelisih
+    };
+  }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
 }
 
 /* ---------- LAPORAN ---------- */
@@ -2057,14 +1807,10 @@ function monthRangeOf(monthStr) {
   const [y, m] = monthStr.split("-").map(Number);
   return { y, m, start: `${y}-${pad2(m)}-01`, end: `${y}-${pad2(m)}-${lastDayOfMonth(y, m)}` };
 }
-
 function computeLaporan(startDate, endDate) {
   const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
-  const keuIn = keuangan.filter(k => {
-    const d = dateFromStr(k.waktu);
-    return d >= start && d <= end;
-  });
+  const keuIn = keuangan.filter(k => { const d = dateFromStr(k.waktu); return d >= start && d <= end; });
   const fifo = computeFifoHpp(startDate, endDate);
   const pendapatanPenjualan = fifo.revenue;
   const hpp = fifo.hpp;
@@ -2076,21 +1822,13 @@ function computeLaporan(startDate, endDate) {
   const bebanPersediaan = computeOpnameValue(startDate, endDate);
   const totalPendapatan = pendapatanPenjualan + pendapatanLain;
   const labaBersih = labaKotor + pendapatanLain - bebanLain - bebanPersediaan;
-
-  return {
-    pendapatanPenjualan, hpp, labaKotor,
-    pendapatanLain, bebanLain, bebanPersediaan,
-    totalPendapatan, labaBersih,
-    modal, prive, fallbackQty: fifo.fallbackQty
-  };
+  return { pendapatanPenjualan, hpp, labaKotor, pendapatanLain, bebanLain, bebanPersediaan, totalPendapatan, labaBersih, modal, prive, fallbackQty: fifo.fallbackQty };
 }
-
 function computeNeraca(endDate) {
   const end = new Date(endDate + "T23:59:59");
   const toDate = (waktu) => dateFromStr(waktu) <= end;
   const riwayatUp = riwayat.filter(r => toDate(r.waktu));
   const keuUp = keuangan.filter(k => toDate(k.waktu));
-
   const totalPenjualan = riwayatUp.filter(r => r.tipe === "keluar").reduce((s, r) => s + (Number(r.total) || 0), 0);
   const totalPembelian = riwayatUp.filter(r => r.tipe === "masuk").reduce((s, r) => s + (Number(r.total) || 0), 0);
   const pendLain = keuUp.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
@@ -2099,15 +1837,12 @@ function computeNeraca(endDate) {
   const prive = keuUp.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
   const utangBaru = keuUp.filter(k => k.tipe === "utang").reduce((s, k) => s + k.jumlah, 0);
   const bayarUtang = keuUp.filter(k => k.tipe === "bayar_utang").reduce((s, k) => s + k.jumlah, 0);
-
-  const kas = (totalPenjualan + pendLain + modal + utangBaru)
-            - (totalPembelian + bebLain + prive + bayarUtang);
+  const kas = (totalPenjualan + pendLain + modal + utangBaru) - (totalPembelian + bebLain + prive + bayarUtang);
   const persediaan = computeFifoPersediaan(endDate);
   const totalAset = kas + persediaan;
   const utang = utangBaru - bayarUtang;
   const ekuitas = totalAset - utang;
   const asetTetapNilai = computeAsetTotal(endDate);
-
   return { kas, persediaan, totalAset, utang, ekuitas, asetTetapNilai };
 }
 
@@ -2151,10 +1886,7 @@ function renderLaporan() {
     <tr><td>Utang</td><td>${rpFull(neraca.utang)}</td></tr>
     <tr><td>Ekuitas</td><td>${rpFull(neraca.ekuitas)}</td></tr>
     <tr class="total"><td>Total Kewajiban & Ekuitas</td><td>${rpFull(neraca.utang + neraca.ekuitas)}</td></tr>
-    ${neraca.asetTetapNilai > 0 ? `
-      <tr><td colspan="2" style="padding-top:14px;font-size:11.5px;color:#888"><i>Memo (tidak termasuk Total Aset):</i></td></tr>
-      <tr><td>Nilai Aset Tetap</td><td>${rpFull(neraca.asetTetapNilai)}</td></tr>
-    ` : ""}
+    ${neraca.asetTetapNilai > 0 ? `<tr><td colspan="2" style="padding-top:14px;font-size:11.5px;color:#888"><i>Memo (tidak termasuk Total Aset):</i></td></tr><tr><td>Nilai Aset Tetap</td><td>${rpFull(neraca.asetTetapNilai)}</td></tr>` : ""}
   `;
 
   $("tableEkuitas").innerHTML = `
@@ -2166,29 +1898,32 @@ function renderLaporan() {
     <tr class="total"><td>Ekuitas Akhir</td><td>${rpFull(ekuitasAkhir)}</td></tr>
   `;
 
-  // Rekap Barang
+  // Rekap Barang (dengan Stok On Hand Daerah)
   const rekap = computeRekapBarang(startR.start, endR.end);
   $("tbodyRekap").innerHTML = rekap.length === 0
-    ? '<tr><td colspan="6"><div class="empty">Tidak ada pergerakan barang pada periode ini.</div></td></tr>'
-    : rekap.map(r => `
-      <tr>
-        <td>${esc(r.nama)}</td>
-        <td style="text-align:right">${r.opening}</td>
-        <td style="text-align:right">${r.beli}</td>
-        <td style="text-align:right">${r.jual}</td>
-        <td style="text-align:right" class="${r.opname < 0 ? 'money-neg' : r.opname > 0 ? 'money-pos' : ''}">${r.opname > 0 ? '+' : ''}${r.opname}</td>
-        <td style="text-align:right"><b>${r.akhir}</b></td>
-      </tr>
-    `).join("");
+    ? '<tr><td colspan="8"><div class="empty">Tidak ada pergerakan barang pada periode ini.</div></td></tr>'
+    : rekap.map(r => {
+        const selisihClass = r.selisih === null ? '' : (r.selisih > 0 ? 'money-neg' : r.selisih < 0 ? 'money-pos' : '');
+        const nilaiClass = r.nilaiSelisih === null ? '' : (r.nilaiSelisih > 0 ? 'money-neg' : r.nilaiSelisih < 0 ? 'money-pos' : '');
+        return `
+          <tr>
+            <td>${esc(r.nama)}</td>
+            <td style="text-align:right">${r.stokAwal}</td>
+            <td style="text-align:right">${r.pembelian}</td>
+            <td style="text-align:right">${r.penjualan}</td>
+            <td style="text-align:right"><b>${r.stokAkhir}</b></td>
+            <td style="text-align:right">${r.onHand === null ? '<span class="sub">—</span>' : r.onHand}</td>
+            <td style="text-align:right" class="${selisihClass}">${r.selisih === null ? '<span class="sub">—</span>' : (r.selisih > 0 ? '+' : '') + r.selisih}</td>
+            <td style="text-align:right" class="${nilaiClass}">${r.nilaiSelisih === null ? '<span class="sub">—</span>' : rp(r.nilaiSelisih)}</td>
+          </tr>
+        `;
+      }).join("");
 
   // Chart
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
   const endD = new Date(endR.y, endR.m - 1, 1);
-  while (cur <= endD) {
-    months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 });
-    cur.setMonth(cur.getMonth() + 1);
-  }
+  while (cur <= endD) { months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 }); cur.setMonth(cur.getMonth() + 1); }
   const labels = [], dataPendapatan = [], dataBeban = [], dataLaba = [];
   months.forEach(({ y, m }) => {
     const s = `${y}-${pad2(m)}-01`;
@@ -2199,7 +1934,6 @@ function renderLaporan() {
     dataBeban.push(l.hpp + l.bebanLain);
     dataLaba.push(l.labaBersih);
   });
-
   if (chartInstance) chartInstance.destroy();
   const ctx = $("chartLaba").getContext("2d");
   chartInstance = new Chart(ctx, {
@@ -2209,9 +1943,7 @@ function renderLaporan() {
       datasets: [
         { label: "Penjualan", data: dataPendapatan, backgroundColor: "#4caf50" },
         { label: "HPP + Beban", data: dataBeban, backgroundColor: "#ef5350" },
-        { label: "Laba Bersih", data: dataLaba, type: "line",
-          borderColor: "#c62828", backgroundColor: "#c62828",
-          borderWidth: 2, tension: 0.2, pointRadius: 4, fill: false }
+        { label: "Laba Bersih", data: dataLaba, type: "line", borderColor: "#c62828", backgroundColor: "#c62828", borderWidth: 2, tension: 0.2, pointRadius: 4, fill: false }
       ]
     },
     options: {
@@ -2229,16 +1961,12 @@ document.querySelectorAll("[data-quick]").forEach(btn => {
     const endM = now.getFullYear() + "-" + pad2(now.getMonth() + 1);
     const startD = new Date(now.getFullYear(), now.getMonth() - (n - 1), 1);
     const startM = startD.getFullYear() + "-" + pad2(startD.getMonth() + 1);
-    $("periodStart").value = startM;
-    $("periodEnd").value = endM;
-    renderLaporan();
+    $("periodStart").value = startM; $("periodEnd").value = endM; renderLaporan();
   });
 });
-
 function initPeriod() {
   const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
+  const y = now.getFullYear(), m = now.getMonth() + 1;
   $("periodEnd").value = `${y}-${pad2(m)}`;
   const start = new Date(y, m - 7, 1);
   $("periodStart").value = `${start.getFullYear()}-${pad2(start.getMonth() + 1)}`;
@@ -2249,7 +1977,6 @@ $("btnTampilkan").addEventListener("click", renderLaporan);
 $("search").addEventListener("input", renderTable);
 $("filter").addEventListener("change", renderTable);
 $("btnReload").addEventListener("click", load);
-
 $("bExisting").addEventListener("change", updateBeliPreview);
 $("bQtyExisting").addEventListener("input", updateBeliPreview);
 $("bHargaBaru").addEventListener("input", updateBeliPreview);
@@ -2261,47 +1988,31 @@ $("bHarga").addEventListener("input", updateBeliPreview);
 $("bHargaJual").addEventListener("input", updateBeliPreview);
 $("btnBeli").addEventListener("click", submitBeli);
 $("btnKeuangan").addEventListener("click", submitKeuangan);
-
 $("posDiskon").addEventListener("input", calculateTotal);
 $("posTunai").addEventListener("input", calculateTotal);
-
 $("tbody").addEventListener("click", e => {
   const btn = e.target.closest("button[data-act]");
   if (!btn) return;
   const id = btn.dataset.id;
   const act = btn.dataset.act;
   if (act === "edit") {
-    switchTab("edit");
-    $("editItemSelect").value = id;
-    loadEditForm(id);
-    return;
+    switchTab("edit"); $("editItemSelect").value = id; loadEditForm(id); return;
   }
   if (act === "del") { deleteItem(id); return; }
   if (act === "in") {
     beliMode = "existing";
     document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-    applyBeliMode();
-    $("bExisting").value = id;
-    $("bQtyExisting").value = 1;
-    updateBeliPreview();
-    switchTab("beli");
-    $("bQtyExisting").focus();
-    $("bQtyExisting").select();
+    applyBeliMode(); $("bExisting").value = id; $("bQtyExisting").value = 1; updateBeliPreview();
+    switchTab("beli"); $("bQtyExisting").focus(); $("bQtyExisting").select();
   }
   if (act === "out") {
-    switchTab("jual");
-    $("kItem").value = id;
-    $("kQty").value = 1;
-    $("kQty").focus();
-    $("kQty").select();
+    switchTab("jual"); $("kItem").value = id; $("kQty").value = 1; $("kQty").focus(); $("kQty").select();
   }
 });
 
 /* ---------- START ---------- */
 checkAuth();
-setInterval(() => {
-  if (localStorage.getItem("kdmp_auth")) load();
-}, 60000);
+setInterval(() => { if (localStorage.getItem("kdmp_auth")) load(); }, 60000);
 </script>
 </body>
 </html>
