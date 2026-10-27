@@ -351,8 +351,8 @@
             <input type="date" id="bExpired">
           </div>
           <div class="field" id="bQtyNewWrap" style="display:none">
-            <label>Jumlah <span class="req">*</span></label>
-            <input type="number" id="bQtyNew" min="1" value="1">
+            <label>Jumlah <span class="opt">(boleh 0 untuk registrasi)</span></label>
+            <input type="number" id="bQtyNew" min="0" value="0" placeholder="Boleh 0">
           </div>
           <div class="field full">
             <label>Nama Supplier</label>
@@ -481,7 +481,7 @@
       </div>
     </section>
 
-    <!-- STOK ON HAND (STOK DAERAH) -->
+    <!-- STOK ON HAND -->
     <section id="view-stokdaerah" class="view">
       <h2 class="panel-title">🏬 Stok On Hand (Daerah)</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
@@ -729,7 +729,7 @@
         </ul>
         <h3>Pembelian</h3>
         <ul>
-          <li><b>Stok Awal</b> — untuk barang baru yang belum terdaftar.</li>
+          <li><b>Stok Awal</b> — register barang baru. Jumlah boleh 0 untuk registrasi awal.</li>
           <li><b>Dibeli</b> — untuk menambah stok barang yang sudah terdaftar.</li>
         </ul>
         <h3>Stok On Hand (Daerah)</h3>
@@ -737,7 +737,7 @@
         <h3>Stock Opname (Penyesuaian Akuntansi)</h3>
         <p>Untuk menyesuaikan stok sistem jika ada selisih yang perlu diakui secara akuntansi. Akan mengubah <b>Item.stok</b> dan mencatat jurnal Beban Persediaan / Persediaan.</p>
         <h3>Rekap Barang</h3>
-        <p>Menampilkan pergerakan barang: <b>Stok Awal + Pembelian − Penjualan = Stok Akhir (Pusat)</b>, lalu dibandingkan dengan <b>Stok On Hand (Daerah)</b>. Selisih = Pusat − Daerah (jika positif: pusat lebih tinggi dari fisik = potensi kehilangan; jika negatif: fisik lebih tinggi).</p>
+        <p>Menampilkan pergerakan barang: <b>Stok Awal + Pembelian − Penjualan = Stok Akhir (Pusat)</b>, lalu dibandingkan dengan <b>Stok On Hand (Daerah)</b>.</p>
         <div class="note"><b>HPP Metode FIFO</b> — barang yang paling awal masuk dianggap paling awal terjual.</div>
       </div>
     </section>
@@ -1105,7 +1105,6 @@ function populateStokDaerahView() {
   if (prev && items.some(i => i.id === prev)) sel.value = prev;
   updateStokDaerahPreview();
 }
-
 function updateStokDaerahPreview() {
   const box = $("sdPreview");
   const item = items.find(i => i.id === $("sdItemSelect").value);
@@ -1128,7 +1127,6 @@ function updateStokDaerahPreview() {
     box.innerHTML = `<b>${esc(item.nama)}</b> · Pusat <b>${item.stok}</b> &lt; Daerah <b>${jumlah}</b> ${esc(item.satuan)}. Selisih <b>${selisih}</b> (surplus <b>${rp(nilai)}</b>).`;
   }
 }
-
 async function submitStokDaerah() {
   const item = items.find(i => i.id === $("sdItemSelect").value);
   if (!item) { toast("Pilih barang.", "err"); return; }
@@ -1140,15 +1138,11 @@ async function submitStokDaerah() {
     setStatus("Menyimpan…");
     const res = await api({ action: "add_stok_daerah", data }, "POST");
     if (!res.ok) throw new Error(res.message);
-    saveKasir(pencatat);
-    toast(res.message, "ok");
-    $("sdJumlah").value = "";
-    $("sdKeterangan").value = "";
-    setStatus("Terhubung ke Google Sheets");
-    await load();
+    saveKasir(pencatat); toast(res.message, "ok");
+    $("sdJumlah").value = ""; $("sdKeterangan").value = "";
+    setStatus("Terhubung ke Google Sheets"); await load();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
-
 function renderStokDaerah() {
   const tb = $("tbodyStokDaerah");
   if (!tb) return;
@@ -1175,19 +1169,6 @@ function renderStokDaerah() {
     });
   });
 }
-
-function getLatestStokDaerah(nama, endDate) {
-  const end = endDate instanceof Date ? endDate : new Date(endDate + "T23:59:59");
-  let latest = null;
-  for (const sd of stokDaerah) {
-    if (norm(sd.nama) !== norm(nama)) continue;
-    const d = dateFromStr(sd.waktu);
-    if (isNaN(d.getTime()) || d > end) continue;
-    if (!latest || d > dateFromStr(latest.waktu)) latest = sd;
-  }
-  return latest ? latest.jumlah : null;
-}
-
 $("sdItemSelect").addEventListener("change", updateStokDaerahPreview);
 $("sdJumlah").addEventListener("input", updateStokDaerahPreview);
 $("btnSaveStokDaerah").addEventListener("click", submitStokDaerah);
@@ -1256,7 +1237,7 @@ async function submitEdit() {
     const res = await api({ action: "update", id: editingId, data }, "POST");
     if (!res.ok && res.duplicate) { toast(res.message, "err"); setStatus("Terhubung ke Google Sheets"); return; }
     if (!res.ok) throw new Error(res.message);
-    saveKasir(kasir); toast("Perubahan data tersimpan.", "ok"); setStatus("Terhubung ke Google Sheets");
+    saveKasir(kasir); toast(res.message || "Perubahan data tersimpan.", "ok"); setStatus("Terhubung ke Google Sheets");
     await load();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
@@ -1286,11 +1267,11 @@ async function deleteItem(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
-  if (!confirm(`Hapus barang "${item.nama}"?`)) return;
+  if (!confirm(`Hapus barang "${item.nama}" beserta SELURUH riwayat, penjualan, dan stok daerahnya?`)) return;
   try {
     const res = await api({ action: "delete", id, kasir: auth.username || "" }, "POST");
     if (!res.ok) throw new Error(res.message);
-    toast("Barang dihapus.", "ok"); await load();
+    toast(res.message, "ok"); await load();
   } catch (e) { toast(e.message, "err"); }
 }
 
@@ -1312,14 +1293,23 @@ function updateBeliPreview() {
   const box = $("bPreview");
   const isNew = beliMode === "new";
   if (isNew) {
-    const qty = parseInt($("bQtyNew").value, 10) || 0;
+    const qtyRaw = $("bQtyNew").value.trim();
+    const qty = qtyRaw === "" ? 0 : (parseInt(qtyRaw, 10) || 0);
     const nama = $("bNama").value.trim() || "(belum diisi)";
     const satuan = $("bSatuan").value;
     const hb = parseInt($("bHarga").value, 10) || 0;
-    if (qty > 0 && nama !== "(belum diisi)") {
+
+    if (nama !== "(belum diisi)") {
       box.className = "preview ok";
-      box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
-    } else { box.className = "preview"; box.textContent = "Isi nama dan jumlah."; }
+      if (qty === 0) {
+        box.innerHTML = `<b>${esc(nama)}</b> · <i>Registrasi barang</i> (stok awal 0). Bisa ditambah lewat mode "Dibeli" nanti.`;
+      } else {
+        box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
+      }
+    } else {
+      box.className = "preview";
+      box.textContent = "Isi nama barang (jumlah boleh 0 untuk registrasi).";
+    }
   } else {
     const item = items.find(i => i.id === $("bExisting").value);
     const qty = parseInt($("bQtyExisting").value, 10) || 0;
@@ -1340,22 +1330,23 @@ function updateBeliPreview() {
 async function submitBeli() {
   const supplier = val("bNote");
   if (beliMode === "new") {
-    const qty = parseInt($("bQtyNew").value, 10) || 0;
-    if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
+    const qtyRaw = $("bQtyNew").value.trim();
+    const qty = qtyRaw === "" ? 0 : (parseInt(qtyRaw, 10) || 0);
+    if (qty < 0) { toast("Jumlah tidak boleh negatif.", "err"); return; }
     const data = {
       nama: $("bNama").value.trim(), kategori: $("bKategori").value, satuan: $("bSatuan").value,
       stok: qty, harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
       harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0),
       expired: $("bExpired").value || "", note: supplier
     };
-    if (!data.nama) { toast("Nama wajib diisi.", "err"); return; }
+    if (!data.nama) { toast("Nama wajib diisi.", "err"); $("bNama").focus(); return; }
     const dup = items.find(i => norm(i.nama) === norm(data.nama));
     if (dup) {
       const go = confirm(`"${dup.nama}" sudah ada (stok ${dup.stok}). Tambah stok saja?`);
       if (go) {
         beliMode = "existing";
         document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-        applyBeliMode(); $("bExisting").value = dup.id; $("bQtyExisting").value = qty; updateBeliPreview();
+        applyBeliMode(); $("bExisting").value = dup.id; $("bQtyExisting").value = qty > 0 ? qty : 1; updateBeliPreview();
       }
       return;
     }
@@ -1367,12 +1358,13 @@ async function submitBeli() {
         if (go) {
           beliMode = "existing";
           document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-          applyBeliMode(); $("bExisting").value = res.existingId; $("bQtyExisting").value = qty;
+          applyBeliMode(); $("bExisting").value = res.existingId; $("bQtyExisting").value = qty > 0 ? qty : 1;
         }
         setStatus("Terhubung ke Google Sheets"); return;
       }
       if (!res.ok) throw new Error(res.message || "Gagal");
-      saveSupplier(supplier); toast(`+${qty} ${data.satuan} ${data.nama}`, "ok");
+      saveSupplier(supplier);
+      toast(qty === 0 ? `Barang "${data.nama}" berhasil diregistrasi.` : `+${qty} ${data.satuan} ${data.nama}`, "ok");
       resetBeliNew(); setStatus("Terhubung ke Google Sheets"); await load();
     } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
   } else {
@@ -1398,7 +1390,7 @@ async function submitBeli() {
 }
 function resetBeliNew() {
   $("bNama").value = ""; $("bKategori").value = "Makanan"; $("bSatuan").value = "pcs";
-  $("bHarga").value = 0; $("bHargaJual").value = 0; $("bExpired").value = ""; $("bQtyNew").value = 1;
+  $("bHarga").value = 0; $("bHargaJual").value = 0; $("bExpired").value = ""; $("bQtyNew").value = 0;
   updateBeliPreview();
 }
 
@@ -1754,47 +1746,38 @@ function computeAsetTotal(endDate) {
   }).reduce((s, a) => s + (a.jumlah || 0) * (a.harga || 0), 0);
 }
 
-/* ---------- REKAP BARANG ---------- */
-function computeRekapBarang(startDate, endDate) {
-  const end = new Date(endDate + "T23:59:59");
-  const sorted = [...riwayat].sort((a, b) => dateFromStr(a.waktu) - dateFromStr(b.waktu));
-  const map = {};
-
-  for (const ev of sorted) {
-    const waktu = dateFromStr(ev.waktu);
-    if (isNaN(waktu.getTime()) || waktu > end) continue;
-    const nama = ev.nama;
-    if (!map[nama]) map[nama] = { nama, stokAwal: 0, pembelian: 0, penjualan: 0 };
-
-    // Pemisahan sesuai permintaan:
-    //   tipe "baru"  → Stok Awal (dari mode "Stok Awal" di Pembelian)
-    //   tipe "masuk" → Pembelian (dari mode "Dibeli")
-    //   tipe "keluar"→ Penjualan
-    //   tipe "opname"→ diabaikan dari Stok Akhir (tetap tercatat di riwayat untuk audit)
-    if (ev.tipe === "baru") map[nama].stokAwal += ev.jumlah;
-    else if (ev.tipe === "masuk") map[nama].pembelian += ev.jumlah;
-    else if (ev.tipe === "keluar") map[nama].penjualan += ev.jumlah;
+/* ---------- REKAP BARANG (BACKEND) ---------- */
+async function renderRekapBarang(startDate, endDate) {
+  const tb = $("tbodyRekap");
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="8"><div class="empty">Memuat rekap…</div></td></tr>';
+  try {
+    const res = await api(null, "GET", `rekap=1&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`);
+    if (!res.ok) throw new Error(res.message || "Gagal memuat rekap");
+    const rekap = res.rekap || [];
+    if (rekap.length === 0) {
+      tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada barang terdaftar.</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = rekap.map(r => {
+      const selisihClass = r.selisih === null ? '' : (r.selisih > 0 ? 'money-neg' : r.selisih < 0 ? 'money-pos' : '');
+      const nilaiClass = r.nilaiSelisih === null ? '' : (r.nilaiSelisih > 0 ? 'money-neg' : r.nilaiSelisih < 0 ? 'money-pos' : '');
+      return `
+        <tr>
+          <td>${esc(r.nama)}</td>
+          <td style="text-align:right">${r.stokAwal}</td>
+          <td style="text-align:right">${r.pembelian}</td>
+          <td style="text-align:right">${r.penjualan}</td>
+          <td style="text-align:right"><b>${r.stokAkhir}</b></td>
+          <td style="text-align:right">${r.onHand === null ? '<span class="sub">—</span>' : r.onHand}</td>
+          <td style="text-align:right" class="${selisihClass}">${r.selisih === null ? '<span class="sub">—</span>' : (r.selisih > 0 ? '+' : '') + r.selisih}</td>
+          <td style="text-align:right" class="${nilaiClass}">${r.nilaiSelisih === null ? '<span class="sub">—</span>' : rp(r.nilaiSelisih)}</td>
+        </tr>
+      `;
+    }).join("");
+  } catch (e) {
+    tb.innerHTML = `<tr><td colspan="8"><div class="empty">Gagal memuat rekap: ${esc(e.message)}</div></td></tr>`;
   }
-
-  return Object.values(map).map(m => {
-    // FORMULA: Stok Akhir = Stok Awal + Pembelian - Penjualan
-    const stokAkhir = m.stokAwal + m.pembelian - m.penjualan;
-    const item = items.find(i => norm(i.nama) === norm(m.nama));
-    const hargaBeli = item ? (Number(item.harga) || 0) : 0;
-    const onHand = getLatestStokDaerah(m.nama, end);
-    const selisih = onHand === null ? null : (stokAkhir - onHand);
-    const nilaiSelisih = selisih === null ? null : selisih * hargaBeli;
-    return {
-      nama: m.nama,
-      stokAwal: m.stokAwal,
-      pembelian: m.pembelian,
-      penjualan: m.penjualan,
-      stokAkhir,
-      onHand,
-      selisih,
-      nilaiSelisih
-    };
-  }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
 }
 
 /* ---------- LAPORAN ---------- */
@@ -1898,26 +1881,8 @@ function renderLaporan() {
     <tr class="total"><td>Ekuitas Akhir</td><td>${rpFull(ekuitasAkhir)}</td></tr>
   `;
 
-  // Rekap Barang (dengan Stok On Hand Daerah)
-  const rekap = computeRekapBarang(startR.start, endR.end);
-  $("tbodyRekap").innerHTML = rekap.length === 0
-    ? '<tr><td colspan="8"><div class="empty">Tidak ada pergerakan barang pada periode ini.</div></td></tr>'
-    : rekap.map(r => {
-        const selisihClass = r.selisih === null ? '' : (r.selisih > 0 ? 'money-neg' : r.selisih < 0 ? 'money-pos' : '');
-        const nilaiClass = r.nilaiSelisih === null ? '' : (r.nilaiSelisih > 0 ? 'money-neg' : r.nilaiSelisih < 0 ? 'money-pos' : '');
-        return `
-          <tr>
-            <td>${esc(r.nama)}</td>
-            <td style="text-align:right">${r.stokAwal}</td>
-            <td style="text-align:right">${r.pembelian}</td>
-            <td style="text-align:right">${r.penjualan}</td>
-            <td style="text-align:right"><b>${r.stokAkhir}</b></td>
-            <td style="text-align:right">${r.onHand === null ? '<span class="sub">—</span>' : r.onHand}</td>
-            <td style="text-align:right" class="${selisihClass}">${r.selisih === null ? '<span class="sub">—</span>' : (r.selisih > 0 ? '+' : '') + r.selisih}</td>
-            <td style="text-align:right" class="${nilaiClass}">${r.nilaiSelisih === null ? '<span class="sub">—</span>' : rp(r.nilaiSelisih)}</td>
-          </tr>
-        `;
-      }).join("");
+  // Rekap Barang — ASYNC via backend
+  renderRekapBarang(startR.start, endR.end);
 
   // Chart
   const months = [];
