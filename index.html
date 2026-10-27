@@ -12,10 +12,22 @@
   #appContent { display: flex; flex-direction: column; flex: 1; }
   main { flex: 1; }
   footer { text-align: center; padding: 20px; font-size: 13px; color: #6b7392; border-top: 1px solid #e0e0e0; background: #fff; margin-top: auto; }
-    .auth-screen{
+
+  /* --- ANIMASI BACKGROUND LOGIN --- */
+  @keyframes bgSlideUp {
+    0% { background-position: center 100%; }
+    100% { background-position: center center; }
+  }
+  @keyframes slideUpFade {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  /* --- LOGIN SCREEN --- */
+  .auth-screen{
     position:fixed;
     inset:0;
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('bg-koperasi.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('bg-koperasi.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -24,48 +36,124 @@
     justify-content:center;
     z-index:1000;
     padding:20px;
+    animation: bgSlideUp 1.5s ease-out forwards;
   }
-       .auth-card{
-    /* Warna putih 85% (lebih pekat agar teks terbaca jelas, tidak menyilaukan) */
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    
-    /* Ukuran kotak dibuat lebih kecil dan ramping */
-    padding: 32px 30px;
-    border-radius: 20px; /* Sudut lebih membulat, modern */
+
+  /* --- HALAMAN AWAL (LANDING) --- */
+  .auth-landing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    max-width: 380px; /* Dikecilkan dari sebelumnya 480px */
-    
-    /* Bayangan lembut, hapus garis merah tebal di atas */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.6); 
+    height: 100%;
+    text-align: center;
+    color: #fff;
+    animation: slideUpFade 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
-    .auth-header{text-align:center; margin-bottom:24px;}
+  .landing-content {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    max-width: 600px;
+    width: 90%;
+  }
+  .auth-landing h1 {
+    font-size: 32px;
+    margin: 0 0 10px 0;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .auth-landing p {
+    font-size: 16px;
+    margin: 0 0 30px 0;
+    color: #ddd;
+  }
+  .landing-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .landing-buttons button {
+    padding: 15px 30px;
+    font-size: 16px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s;
+    min-width: 200px;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: #c62828;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4);
+  }
+  .btn-primary:hover {
+    background: #b71c1c;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(198, 40, 40, 0.6);
+  }
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 2px solid #fff !important;
+  }
+  .btn-secondary:hover {
+    background: #fff;
+    color: #333;
+    transform: translateY(-3px);
+  }
+
+  /* --- KOTAK FORM (PUTIH SOLID) --- */
+  .auth-card{
+    background: #ffffff !important; /* Putih pekat, tidak transparan */
+    padding: 32px 30px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-top: 6px solid #c62828;
+    animation: slideUpFade 0.5s ease-out forwards;
+  }
+
+  .auth-header{text-align:center; margin-bottom:24px;}
   .auth-header h2{margin:0; color:#b71c1c; font-size:22px; font-weight:800; letter-spacing: -0.5px;}
   .auth-header p{margin:6px 0 0; color:#555; font-size:13px;}
   .auth-header a{color:#c62828; text-decoration:none; font-weight:700; cursor:pointer;}
   .auth-header a:hover{text-decoration:underline;}
-    .auth-field{margin-bottom:16px;}
+
+  .auth-field{margin-bottom:16px;}
   .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
   
   .auth-field input, .auth-field select{
     width:100%;
-    padding:10px 14px; /* Dibuat lebih tipis, tidak terlalu tinggi */
+    padding:10px 14px;
     border:1px solid #ddd;
     border-radius:8px;
     font-size:14px;
     font-family:inherit;
     outline:none; 
     transition:0.2s;
-    background: #ffffff; /* Input tetap putih solid agar mudah diketik */
+    background: #ffffff;
     color: #333;
   }
   .auth-field input:focus, .auth-field select:focus{
     border-color:#c62828; 
     box-shadow:0 0 0 3px rgba(198,40,40,0.15);
   }
-   .auth-btn{
+
+  .password-wrap{position:relative;}
+  .password-wrap input{padding-right:45px !important;}
+  .toggle-eye{position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; font-size:18px; user-select:none;}
+
+  .auth-btn{
     width:100%;
     padding:12px;
     font-size:15px;
@@ -81,9 +169,12 @@
   }
   .auth-btn:hover{background:#b71c1c; transform: translateY(-1px);}
   .auth-btn:disabled{background:#e57373;cursor:not-allowed; transform:none;}
+  
   .auth-msg{display:none; padding:10px; border-radius:6px; font-size:13px; margin-bottom:15px; text-align:center; font-weight:600;}
   .auth-msg.error{display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2;}
   .auth-msg.success{display:block; background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;}
+
+  /* --- MAIN APP --- */
   header{background:#c62828;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   header h1{margin:0;font-size:17px;font-weight:600}
   header small{opacity:.85;font-size:12px}
@@ -216,8 +307,26 @@
 </head>
 <body>
 
+<!-- ============ LOGIN & LANDING SCREEN ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
-  <div class="auth-card" id="formLogin">
+  
+  <!-- HALAMAN AWAL (LANDING) -->
+  <div id="authLanding" class="auth-landing">
+    <div class="landing-content">
+      <h1>Koperasi Desa Merah Putih Kapas</h1>
+      <p>Sistem Informasi Stok & Laporan Terpadu</p>
+      <div class="landing-buttons">
+        <button class="btn-primary" onclick="showAuthForm('login')">Masuk</button>
+        <button class="btn-secondary" onclick="showAuthForm('register')">Daftar Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM LOGIN -->
+  <div class="auth-card" id="formLogin" style="display:none;">
+    <div style="text-align:left; margin-bottom:15px;">
+      <a onclick="showLanding()" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali</a>
+    </div>
     <div class="auth-header">
       <h2>Login KDMP Kapas</h2>
       <p>Belum punya akun? <a onclick="toggleAuth('register')">Daftar di sini</a></p>
@@ -241,7 +350,11 @@
     <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
   </div>
 
+  <!-- FORM REGISTER -->
   <div class="auth-card" id="formRegister" style="display:none;">
+    <div style="text-align:left; margin-bottom:15px;">
+      <a onclick="showLanding()" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali</a>
+    </div>
     <div class="auth-header">
       <h2>Daftar Akun Baru</h2>
       <p>Sudah punya akun? <a onclick="toggleAuth('login')">Masuk di sini</a></p>
@@ -266,7 +379,11 @@
     <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
   </div>
 
+  <!-- FORM RESET PASSWORD -->
   <div class="auth-card" id="formResetPassword" style="display:none;">
+    <div style="text-align:left; margin-bottom:15px;">
+      <a onclick="toggleAuth('login')" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali ke Login</a>
+    </div>
     <div class="auth-header">
       <h2>Ubah Password</h2>
       <p>Masukkan password baru Anda</p>
@@ -285,12 +402,10 @@
       </div>
     </div>
     <button class="auth-btn" id="btnReset" onclick="handleResetPassword()">Simpan Password Baru</button>
-    <div class="toggle-link" style="text-align:center; margin-top:15px; font-size:13px;">
-      <a onclick="toggleAuth('login')" style="color:#c62828; text-decoration:none; font-weight:600; cursor:pointer;">Kembali ke Login</a>
-    </div>
   </div>
 </div>
 
+<!-- ============ MAIN APP ============ -->
 <div id="appContent" style="display:none;">
   <header>
     <div>
@@ -318,6 +433,7 @@
   </nav>
 
   <main>
+    <!-- STOK -->
     <section id="view-stok" class="view active">
       <div class="bar">
         <input type="text" id="search" placeholder="Cari barang…">
@@ -344,6 +460,7 @@
       </div>
     </section>
 
+    <!-- PEMBELIAN -->
     <section id="view-beli" class="view">
       <h2 class="panel-title">🛒 Pembelian</h2>
       <div class="mode-switch">
@@ -424,6 +541,7 @@
       </div>
     </section>
 
+    <!-- PENJUALAN -->
     <section id="view-jual" class="view">
       <h2 class="panel-title">💰 Penjualan</h2>
       <div class="pos-container">
@@ -487,6 +605,7 @@
       </div>
     </section>
 
+    <!-- ASET TETAP -->
     <section id="view-aset" class="view">
       <h2 class="panel-title">🏢 Aset Tetap</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">Pencatatan aset tetap koperasi. <b>Jumlah</b> dan <b>harga</b> bersifat opsional.</p>
@@ -537,6 +656,7 @@
       </div>
     </section>
 
+    <!-- STOK FISIK -->
     <section id="view-stokdaerah" class="view">
       <h2 class="panel-title">🏬 Stok Fisik (Akhir & On Hand)</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
@@ -618,6 +738,7 @@
       </div>
     </section>
 
+    <!-- EDIT BARANG -->
     <section id="view-edit" class="view">
       <h2 class="panel-title">✎ Edit Barang</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
@@ -661,6 +782,7 @@
       </div>
     </section>
 
+    <!-- KEUANGAN -->
     <section id="view-keuangan" class="view">
       <h2 class="panel-title">💵 Keuangan Lain</h2>
       <div class="form-card">
@@ -708,20 +830,11 @@
       </div>
     </section>
 
+    <!-- LAPORAN -->
     <section id="view-laporan" class="view">
       <h2 class="panel-title">📊 Laporan Keuangan</h2>
-      <div class="bar">
-        <label style="font-size:12px;font-weight:600">Dari</label>
-        <input type="month" id="periodStart" style="width:auto">
-        <label style="font-size:12px;font-weight:600">sampai</label>
-        <input type="month" id="periodEnd" style="width:auto">
-        <button id="btnTampilkan">Tampilkan</button>
-        <button class="ghost small" data-quick="3">3 bln</button>
-        <button class="ghost small" data-quick="6">6 bln</button>
-        <button class="ghost small" data-quick="12">12 bln</button>
-      </div>
-
-      <!-- ===== GRAFIK PENJUALAN (PALING ATAS, PERIODE SENDIRI) ===== -->
+      
+      <!-- GRAFIK PENJUALAN (PALING ATAS) -->
       <div class="report-card">
         <h3>📈 Grafik Penjualan</h3>
         <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
@@ -748,13 +861,24 @@
         <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
       </div>
 
-      <!-- ===== GRAFIK LABA RUGI ===== -->
+      <!-- GRAFIK LABA RUGI -->
       <div class="report-card">
         <h3>Grafik Laba Rugi Bulanan</h3>
         <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
 
-      <!-- ===== LAPORAN UTAMA ===== -->
+      <!-- FILTER PERIODE LAPORAN UTAMA -->
+      <div class="bar" style="margin-top:20px; background:#fff; padding:10px; border-radius:8px; border:1px solid #ddd;">
+        <label style="font-size:12px;font-weight:600">Periode Laporan:</label>
+        <input type="month" id="periodStart" style="width:auto">
+        <label style="font-size:12px;font-weight:600">s.d.</label>
+        <input type="month" id="periodEnd" style="width:auto">
+        <button id="btnTampilkan">Tampilkan Laporan</button>
+        <button class="ghost small" data-quick="3">3 bln</button>
+        <button class="ghost small" data-quick="6">6 bln</button>
+        <button class="ghost small" data-quick="12">12 bln</button>
+      </div>
+
       <div class="report-grid">
         <div class="report-card">
           <h3>Laporan Laba Rugi</h3>
@@ -797,6 +921,7 @@
       </div>
     </section>
 
+    <!-- RIWAYAT PENJUALAN -->
     <section id="view-penjualan" class="view">
       <h2 class="panel-title">📈 Riwayat Penjualan</h2>
       <div class="table-wrap">
@@ -814,6 +939,7 @@
       </div>
     </section>
 
+    <!-- RIWAYAT UMUM -->
     <section id="view-riwayat" class="view">
       <h2 class="panel-title">🕒 Riwayat Umum</h2>
       <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
@@ -826,9 +952,9 @@
 <div class="modal-backdrop" id="modalPassword">
   <div class="modal">
     <h3>Ganti Sandi</h3>
-    <div class="field"><label>Password Lama</label><input type="password" id="oldPassword"></div>
-    <div class="field"><label>Password Baru</label><input type="password" id="newPassword"></div>
-    <div class="actions-row" style="justify-content:flex-end; margin-top:16px">
+    <div class="field" style="margin-bottom:10px"><label>Password Lama</label><input type="password" id="oldPassword"></div>
+    <div class="field" style="margin-bottom:15px"><label>Password Baru</label><input type="password" id="newPassword"></div>
+    <div class="actions-row" style="justify-content:flex-end; margin-top:0">
       <button class="ghost" onclick="closeModalPassword()">Batal</button>
       <button onclick="submitChangePassword()">Simpan Sandi</button>
     </div>
@@ -895,29 +1021,51 @@ async function api(payload = null, method = "GET", query = "") {
   return res.json();
 }
 
+/* ============ AUTH LOGIC ============ */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
-  if (auth) showApp(JSON.parse(auth));
-  else {
+  if (auth) {
+    showApp(JSON.parse(auth));
+  } else {
     $("loginScreen").style.display = "flex";
     $("appContent").style.display = "none";
-    toggleAuth('login');
+    showLanding();
   }
 }
-function toggleAuth(mode) {
+
+function showLanding() {
+  $("authLanding").style.display = "flex";
   $("formLogin").style.display = "none";
   $("formRegister").style.display = "none";
   $("formResetPassword").style.display = "none";
+}
+
+function showAuthForm(mode) {
+  $("authLanding").style.display = "none";
+  toggleAuth(mode);
+}
+
+function toggleAuth(mode) {
+  $("authLanding").style.display = "none";
+  $("formLogin").style.display = "none";
+  $("formRegister").style.display = "none";
+  $("formResetPassword").style.display = "none";
+
   if (mode === 'register') $("formRegister").style.display = "block";
   else if (mode === 'reset') $("formResetPassword").style.display = "block";
   else $("formLogin").style.display = "block";
-  ["loginError","regError","regSuccess","resetError","resetSuccess"].forEach(id => { if ($(id)) $(id).className = "auth-msg"; });
+  
+  ["loginError","regError","regSuccess","resetError","resetSuccess"].forEach(id => { 
+    if ($(id)) $(id).className = "auth-msg"; 
+  });
 }
+
 function togglePassword(inputId, iconEl) {
   const input = $(inputId);
   if (input.type === "password") { input.type = "text"; iconEl.textContent = "🙈"; }
   else { input.type = "password"; iconEl.textContent = "👁️"; }
 }
+
 async function handleLogin() {
   const u = $("loginUsername").value.trim();
   const p = $("loginPassword").value;
@@ -942,7 +1090,9 @@ async function handleLogin() {
     errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server.";
   } finally { btn.textContent = "Masuk"; btn.disabled = false; }
 }
+
 function openResetForm(email) { $("resetEmail").value = email; $("resetPasswordInput").value = ""; toggleAuth('reset'); }
+
 async function handleResetPassword() {
   const email = $("resetEmail").value.trim();
   const newPassword = $("resetPasswordInput").value.trim();
@@ -960,6 +1110,7 @@ async function handleResetPassword() {
   } catch (err) { errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server."; }
   finally { btn.textContent = "Simpan Password Baru"; btn.disabled = false; }
 }
+
 async function handleRegister() {
   const email = $("regEmail").value.trim();
   const password = $("regPassword").value.trim();
@@ -978,6 +1129,7 @@ async function handleRegister() {
   } catch (err) { errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server."; }
   finally { btn.textContent = "Daftar Sekarang"; btn.disabled = false; }
 }
+
 function showApp(user) {
   $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
@@ -998,6 +1150,7 @@ function showApp(user) {
   attachMoneyInputs();
   load().then(() => renderLaporan());
 }
+
 function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
 function openChangePassword() { $("oldPassword").value = ""; $("newPassword").value = ""; $("modalPassword").classList.add("show"); }
 function closeModalPassword() { $("modalPassword").classList.remove("show"); }
@@ -1012,6 +1165,7 @@ async function submitChangePassword() {
     else toast(res.message, "err");
   } catch (e) { toast("Gagal terhubung ke server.", "err"); }
 }
+
 function toast(msg, type = "") {
   const el = $("toast");
   el.textContent = msg; el.className = type; el.style.display = "block";
@@ -1980,7 +2134,7 @@ function renderLaporan() {
 
   renderRekapBarang(startR.start, endR.end);
 
-  // Chart Laba Rugi (pakai periode utama)
+  // Chart Laba Rugi
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
   const endD = new Date(endR.y, endR.m - 1, 1);
