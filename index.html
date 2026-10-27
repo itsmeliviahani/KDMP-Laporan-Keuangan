@@ -114,18 +114,11 @@
   .chart-wrap{position:relative;height:340px}
   .chart-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
   .chart-filters select{min-width:180px}
-  .guide h3{margin:22px 0 8px;font-size:15px;color:#b71c1c}
-  .guide h3:first-of-type{margin-top:0}
-  .guide p, .guide li{font-size:13.5px;line-height:1.6;color:#333}
-  .guide ol, .guide ul{padding-left:20px;margin:8px 0}
-  .guide li{margin-bottom:4px}
-  .guide b{color:#b71c1c}
-  .guide code{background:#f5f5f5;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#c62828}
-  .guide .note{background:#fff8e1;border-left:3px solid #ef6c00;padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin:10px 0;color:#7a4a00}
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
   .modal-backdrop.show{display:flex}
-  .modal{background:#fff;border-radius:12px;padding:22px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal{background:#fff;border-radius:12px;padding:22px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
   .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
+  .modal .field{margin-bottom:12px;}
   .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
   @media(max-width:900px){.pos-container{grid-template-columns:1fr}}
   .cart-table{min-width:100% !important; border-collapse: collapse !important;}
@@ -149,6 +142,15 @@
   .koreksi-box span{flex:1;}
   .koreksi-box b{color:#b71c1c;}
   .koreksi-box small{color:#7a4a00;font-size:11.5px;display:block;margin-top:4px;}
+  .searchable-select{position:relative;}
+  .searchable-select input[type=text]{width:100%;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;font-size:13.5px;font-family:inherit;color:#222;transition:0.2s;}
+  .searchable-select input[type=text]:focus{outline:2px solid #ef9a9a;border-color:#c62828}
+  .ss-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:7px;margin-top:4px;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:50;display:none;}
+  .ss-dropdown.show{display:block;}
+  .ss-item{padding:9px 12px;cursor:pointer;font-size:13.5px;border-bottom:1px solid #f5f5f5;transition:0.1s;}
+  .ss-item:last-child{border-bottom:none;}
+  .ss-item:hover,.ss-item.highlight{background:#ffebee;color:#c62828;font-weight:600;}
+  .ss-empty{padding:12px;color:#888;text-align:center;font-size:12.5px;}
   @media(max-width:600px){
     header h1{font-size:15px}
     .grid{grid-template-columns:1fr}
@@ -261,7 +263,6 @@
     <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
     <button data-tab="penjualan" data-role="manajer">📈 Riwayat Penjualan</button>
     <button data-tab="riwayat" data-role="manajer">🕒 Riwayat Umum</button>
-    <button data-tab="panduan" data-role="all">📖 Panduan</button>
   </nav>
 
   <main>
@@ -484,7 +485,6 @@
       </div>
     </section>
 
-    <!-- STOK FISIK (Stok Akhir + On Hand) -->
     <section id="view-stokdaerah" class="view">
       <h2 class="panel-title">🏬 Stok Fisik (Akhir & On Hand)</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
@@ -495,7 +495,11 @@
         <div class="grid">
           <div class="field full">
             <label>Pilih Barang <span class="req">*</span></label>
-            <select id="sdItemSelect"></select>
+            <div class="searchable-select">
+              <input type="text" id="sdItemSearch" placeholder="Ketik nama barang untuk mencari…" autocomplete="off">
+              <input type="hidden" id="sdItemSelect">
+              <div class="ss-dropdown" id="sdItemDropdown"></div>
+            </div>
           </div>
           <div class="field">
             <label>Stok Sistem (saat ini)</label>
@@ -665,6 +669,40 @@
         <button class="ghost small" data-quick="12">12 bln</button>
       </div>
 
+      <!-- ===== GRAFIK PENJUALAN (PALING ATAS, PERIODE SENDIRI) ===== -->
+      <div class="report-card">
+        <h3>📈 Grafik Penjualan</h3>
+        <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
+          Pilih periode, item, dan metrik. Grafik ini punya periode sendiri — tidak ikut berubah saat periode laporan utama diubah.
+        </p>
+        <div class="chart-filters">
+          <label style="font-size:12px;font-weight:600">Dari</label>
+          <input type="month" id="chartPeriodStart" style="width:auto">
+          <label style="font-size:12px;font-weight:600">sampai</label>
+          <input type="month" id="chartPeriodEnd" style="width:auto">
+          <button class="ghost small" data-chart-quick="3">3 bln</button>
+          <button class="ghost small" data-chart-quick="6">6 bln</button>
+          <button class="ghost small" data-chart-quick="12">12 bln</button>
+        </div>
+        <div class="chart-filters" style="margin-top:8px;">
+          <select id="chartItemFilter">
+            <option value="all">📊 Seluruh Item</option>
+          </select>
+          <select id="chartMetric">
+            <option value="qty">Jumlah (Qty)</option>
+            <option value="revenue">Nilai (Rp)</option>
+          </select>
+        </div>
+        <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
+      </div>
+
+      <!-- ===== GRAFIK LABA RUGI ===== -->
+      <div class="report-card">
+        <h3>Grafik Laba Rugi Bulanan</h3>
+        <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
+      </div>
+
+      <!-- ===== LAPORAN UTAMA ===== -->
       <div class="report-grid">
         <div class="report-card">
           <h3>Laporan Laba Rugi</h3>
@@ -684,7 +722,7 @@
       <div class="report-card">
         <h3>Rekap Barang (Persediaan)</h3>
         <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
-          <b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>. Jika Stok Akhir belum diinput, Penjualan = total transaksi penjualan tercatat. Selisih = Stok Akhir − Stok On Hand.
+          <b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>. Jika Stok Akhir belum diinput (tanda *), Penjualan diambil dari total transaksi penjualan tercatat. Selisih = Stok Akhir − Stok On Hand.
         </p>
         <div class="rekap-wrap">
           <table class="report-table" id="tableRekap">
@@ -704,25 +742,6 @@
             <tbody id="tbodyRekap"></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="report-card">
-        <h3>📈 Grafik Penjualan</h3>
-        <div class="chart-filters">
-          <select id="chartItemFilter">
-            <option value="all">📊 Seluruh Item</option>
-          </select>
-          <select id="chartMetric">
-            <option value="qty">Jumlah (Qty)</option>
-            <option value="revenue">Nilai (Rp)</option>
-          </select>
-        </div>
-        <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
-      </div>
-
-      <div class="report-card">
-        <h3>Grafik Laba Rugi Bulanan</h3>
-        <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
     </section>
 
@@ -747,46 +766,6 @@
       <h2 class="panel-title">🕒 Riwayat Umum</h2>
       <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
     </section>
-
-    <section id="view-panduan" class="view">
-      <h2 class="panel-title">📖 Panduan</h2>
-      <div class="guide">
-        <h3>Akses Pengguna</h3>
-        <ul>
-          <li><b>Manajer</b> — akses penuh (Aset Tetap, Edit Barang, Laporan, Riwayat, koreksi stok).</li>
-          <li><b>Karyawan</b> — Stok, Pembelian, Penjualan, Stok Fisik, Keuangan, Panduan.</li>
-        </ul>
-
-        <h3>Pembelian</h3>
-        <ul>
-          <li><b>Stok Awal</b> — register barang baru. Jumlah boleh 0 untuk registrasi awal.</li>
-          <li><b>Dibeli</b> — menambah stok barang yang sudah terdaftar.</li>
-        </ul>
-
-        <h3>Stok Fisik (Akhir & On Hand)</h3>
-        <p>Dua field input fisik, keduanya opsional, minimal satu diisi:</p>
-        <ul>
-          <li><b>Stok Akhir (Pusat)</b> — angka dari laporan instansi pusat. Dipakai di formula Rekap:
-            <code>Penjualan = Stok Awal + Pembelian − Stok Akhir</code></li>
-          <li><b>Stok On Hand (Daerah)</b> — hasil hitung fisik daerah. Untuk pembanding di Rekap:
-            <code>Selisih = Stok Akhir − Stok On Hand</code></li>
-        </ul>
-        <p>Jika <b>Sinkronkan stok sistem</b> dicentang (dan Stok Akhir diisi): Item.stok akan diubah = Stok Akhir, dengan jurnal penyesuaian otomatis (Beban Persediaan / Persediaan).</p>
-
-        <h3>Rekap Barang</h3>
-        <p><b>Penjualan</b> dihitung otomatis:</p>
-        <ul>
-          <li>Jika Stok Akhir diinput → <code>Penjualan = Stok Awal + Pembelian − Stok Akhir</code></li>
-          <li>Jika Stok Akhir belum diinput → <code>Penjualan = total transaksi penjualan tercatat</code></li>
-        </ul>
-        <p>Jadi transaksi POS tetap masuk ke Penjualan. Kalau ada selisih antara sistem vs fisik, akan tampil di kolom <b>Selisih</b>.</p>
-
-        <h3>Grafik Penjualan</h3>
-        <p>Pilih <b>item</b> (atau seluruh item) dan <b>metrik</b> (Qty / Rp) untuk melihat tren penjualan bulanan.</p>
-
-        <div class="note"><b>HPP Metode FIFO</b> — barang yang paling awal masuk dianggap paling awal terjual.</div>
-      </div>
-    </section>
   </main>
 
   <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
@@ -795,9 +774,9 @@
 <div class="modal-backdrop" id="modalPassword">
   <div class="modal">
     <h3>Ganti Sandi</h3>
-    <div class="field" style="margin-bottom:10px"><label>Password Lama</label><input type="password" id="oldPassword"></div>
-    <div class="field" style="margin-bottom:15px"><label>Password Baru</label><input type="password" id="newPassword"></div>
-    <div class="actions-row" style="justify-content:flex-end; margin-top:0">
+    <div class="field"><label>Password Lama</label><input type="password" id="oldPassword"></div>
+    <div class="field"><label>Password Baru</label><input type="password" id="newPassword"></div>
+    <div class="actions-row" style="justify-content:flex-end; margin-top:16px">
       <button class="ghost" onclick="closeModalPassword()">Batal</button>
       <button onclick="submitChangePassword()">Simpan Sandi</button>
     </div>
@@ -1140,31 +1119,52 @@ function fillSelects() {
 }
 
 function populateStokFisikView() {
-  const sel = $("sdItemSelect");
-  if (!sel) return;
-  const prev = sel.value;
-  sel.innerHTML = items.length
-    ? items.map(i => `<option value="${i.id}">${esc(i.nama)}</option>`).join("")
-    : '<option value="">— Belum ada barang —</option>';
-  if (prev && items.some(i => i.id === prev)) sel.value = prev;
+  const searchEl = $("sdItemSearch");
+  const hiddenEl = $("sdItemSelect");
+  if (!searchEl || !hiddenEl) return;
+  const prevId = hiddenEl.value;
+  if (prevId) {
+    const prevItem = items.find(i => i.id === prevId);
+    if (prevItem) { searchEl.value = prevItem.nama; hiddenEl.value = prevItem.id; }
+    else { searchEl.value = ""; hiddenEl.value = ""; }
+  }
   updateStokFisikPreview();
+}
+function renderStokFisikDropdown(filterText) {
+  const dropdown = $("sdItemDropdown");
+  if (!dropdown) return;
+  const q = String(filterText || "").toLowerCase().trim();
+  const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
+  if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
+  if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
+  dropdown.innerHTML = filtered.slice(0, 100).map(i => `
+    <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
+      ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
+    </div>
+  `).join("");
+  dropdown.classList.add("show");
+  dropdown.querySelectorAll(".ss-item").forEach(el => {
+    el.addEventListener("mousedown", e => {
+      e.preventDefault();
+      $("sdItemSelect").value = el.dataset.id;
+      $("sdItemSearch").value = el.dataset.nama;
+      dropdown.classList.remove("show");
+      updateStokFisikPreview();
+    });
+  });
 }
 function updateStokFisikPreview() {
   const box = $("sdPreview");
   const item = items.find(i => i.id === $("sdItemSelect").value);
-  if (!item) { box.className = "preview"; box.textContent = "Belum ada barang."; return; }
+  if (!item) { box.className = "preview"; box.textContent = "Ketik dan pilih barang terlebih dahulu."; return; }
   $("sdStokSistem").value = `${item.stok} ${item.satuan}`;
-
   const stokAkhirRaw = $("sdStokAkhir").value.trim();
   const onHandRaw = $("sdStokOnHand").value.trim();
   const stokAkhirVal = stokAkhirRaw === "" ? null : parseInt(stokAkhirRaw, 10);
   const onHandVal = onHandRaw === "" ? null : parseInt(onHandRaw, 10);
-
   const koreksi = $("sdKoreksi") && $("sdKoreksi").checked;
   const koreksiWrap = $("sdKoreksiWrap");
-  if (koreksiWrap) {
-    koreksiWrap.style.display = (stokAkhirVal !== null && !isNaN(stokAkhirVal)) ? "flex" : "none";
-  }
+  if (koreksiWrap) koreksiWrap.style.display = (stokAkhirVal !== null && !isNaN(stokAkhirVal)) ? "flex" : "none";
 
   let parts = [];
   if (stokAkhirVal !== null && !isNaN(stokAkhirVal) && stokAkhirVal >= 0) {
@@ -1173,7 +1173,6 @@ function updateStokFisikPreview() {
     if (diff === 0) parts.push(`✅ Stok Akhir = Stok Sistem (${stokAkhirVal} ${esc(item.satuan)}).`);
     else if (diff < 0) parts.push(`⚠️ Stok Akhir < Sistem (kurang <b>${Math.abs(diff)}</b> · ${rp(nilai)})`);
     else parts.push(`ℹ️ Stok Akhir > Sistem (lebih <b>${diff}</b> · ${rp(nilai)})`);
-
     if (koreksi) {
       const jurnal = diff > 0
         ? `<b>Persediaan (D) ${rp(nilai)}</b> / <b>Beban Persediaan (K) ${rp(nilai)}</b>`
@@ -1183,7 +1182,6 @@ function updateStokFisikPreview() {
       parts.push(`Jurnal koreksi: ${jurnal}`);
     }
   }
-
   if (onHandVal !== null && !isNaN(onHandVal) && onHandVal >= 0) {
     parts.push(`On Hand Daerah: <b>${onHandVal}</b> ${esc(item.satuan)}`);
     if (stokAkhirVal !== null && !isNaN(stokAkhirVal)) {
@@ -1191,40 +1189,25 @@ function updateStokFisikPreview() {
       parts.push(`Selisih Akhir − OnHand: <b>${selisih > 0 ? '+' : ''}${selisih}</b>`);
     }
   }
-
-  if (parts.length === 0) {
-    box.className = "preview";
-    box.textContent = "Isi minimal salah satu: Stok Akhir atau Stok On Hand.";
-  } else {
+  if (parts.length === 0) { box.className = "preview"; box.textContent = "Isi minimal salah satu: Stok Akhir atau Stok On Hand."; }
+  else {
     box.className = "preview ok";
     box.innerHTML = `<b>${esc(item.nama)}</b> · Sistem: ${item.stok} ${esc(item.satuan)}<br>${parts.join("<br>")}`;
   }
 }
 async function submitStokFisik() {
   const item = items.find(i => i.id === $("sdItemSelect").value);
-  if (!item) { toast("Pilih barang.", "err"); return; }
+  if (!item) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const stokAkhirRaw = $("sdStokAkhir").value.trim();
   const onHandRaw = $("sdStokOnHand").value.trim();
   const stokAkhirVal = stokAkhirRaw === "" ? null : parseInt(stokAkhirRaw, 10);
   const onHandVal = onHandRaw === "" ? null : parseInt(onHandRaw, 10);
-
-  if (stokAkhirVal === null && onHandVal === null) {
-    toast("Minimal isi Stok Akhir atau Stok On Hand.", "err");
-    return;
-  }
+  if (stokAkhirVal === null && onHandVal === null) { toast("Minimal isi Stok Akhir atau Stok On Hand.", "err"); return; }
   if (stokAkhirVal !== null && (isNaN(stokAkhirVal) || stokAkhirVal < 0)) { toast("Stok Akhir harus ≥ 0.", "err"); return; }
   if (onHandVal !== null && (isNaN(onHandVal) || onHandVal < 0)) { toast("Stok On Hand harus ≥ 0.", "err"); return; }
-
   const pencatat = val("sdPencatat");
   const koreksi = $("sdKoreksi") && $("sdKoreksi").checked && stokAkhirVal !== null;
-  const data = {
-    nama: item.nama,
-    stokAkhir: stokAkhirVal,
-    stokOnHand: onHandVal,
-    nama_pencatat: pencatat,
-    keterangan: val("sdKeterangan"),
-    koreksi
-  };
+  const data = { nama: item.nama, stokAkhir: stokAkhirVal, stokOnHand: onHandVal, nama_pencatat: pencatat, keterangan: val("sdKeterangan"), koreksi };
   try {
     setStatus("Menyimpan…");
     const res = await api({ action: "add_stok_fisik", data }, "POST");
@@ -1234,12 +1217,8 @@ async function submitStokFisik() {
       const ki = res.koreksiInfo;
       if (ki.selisih === 0) toast("Stok sistem = stok fisik. Tidak ada penyesuaian.", "ok");
       else toast(`Koreksi stok: selisih ${ki.selisih}. ${ki.jurnal}`, "ok");
-    } else {
-      toast(res.message, "ok");
-    }
-    $("sdStokAkhir").value = "";
-    $("sdStokOnHand").value = "";
-    $("sdKeterangan").value = "";
+    } else { toast(res.message, "ok"); }
+    $("sdStokAkhir").value = ""; $("sdStokOnHand").value = ""; $("sdKeterangan").value = "";
     if ($("sdKoreksi")) $("sdKoreksi").checked = false;
     setStatus("Terhubung ke Google Sheets");
     await load();
@@ -1297,7 +1276,22 @@ function renderStokDaerah() {
     });
   });
 }
-$("sdItemSelect").addEventListener("change", updateStokFisikPreview);
+$("sdItemSearch").addEventListener("input", e => { $("sdItemSelect").value = ""; renderStokFisikDropdown(e.target.value); });
+$("sdItemSearch").addEventListener("focus", e => renderStokFisikDropdown(e.target.value));
+$("sdItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("sdItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
+$("sdItemSearch").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const dropdown = $("sdItemDropdown");
+    const first = dropdown.querySelector(".ss-item");
+    if (first) {
+      $("sdItemSelect").value = first.dataset.id;
+      $("sdItemSearch").value = first.dataset.nama;
+      dropdown.classList.remove("show");
+      updateStokFisikPreview();
+    }
+  }
+});
 $("sdStokAkhir").addEventListener("input", updateStokFisikPreview);
 $("sdStokOnHand").addEventListener("input", updateStokFisikPreview);
 $("sdKoreksi").addEventListener("change", updateStokFisikPreview);
@@ -1328,19 +1322,12 @@ function loadEditForm(id) {
   $("eHargaJual").value = item.harga_jual || 0;
 }
 $("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
-
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
   if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   const kasir = val("eKasir");
-  const data = {
-    nama: $("eNama").value.trim(),
-    kategori: $("eKategori").value,
-    satuan: $("eSatuan").value,
-    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0),
-    note: kasir
-  };
+  const data = { nama: $("eNama").value.trim(), kategori: $("eKategori").value, satuan: $("eSatuan").value, harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), note: kasir };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
   try {
     setStatus("Menyimpan…");
@@ -1391,10 +1378,7 @@ function updateBeliPreview() {
       box.className = "preview ok";
       if (qty === 0) box.innerHTML = `<b>${esc(nama)}</b> · <i>Registrasi barang</i> (stok awal 0).`;
       else box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
-    } else {
-      box.className = "preview";
-      box.textContent = "Isi nama barang (jumlah boleh 0 untuk registrasi).";
-    }
+    } else { box.className = "preview"; box.textContent = "Isi nama barang (jumlah boleh 0 untuk registrasi)."; }
   } else {
     const item = items.find(i => i.id === $("bExisting").value);
     const qty = parseInt($("bQtyExisting").value, 10) || 0;
@@ -1418,12 +1402,7 @@ async function submitBeli() {
     const qtyRaw = $("bQtyNew").value.trim();
     const qty = qtyRaw === "" ? 0 : (parseInt(qtyRaw, 10) || 0);
     if (qty < 0) { toast("Jumlah tidak boleh negatif.", "err"); return; }
-    const data = {
-      nama: $("bNama").value.trim(), kategori: $("bKategori").value, satuan: $("bSatuan").value,
-      stok: qty, harga: Math.max(0, parseInt($("bHarga").value, 10) || 0),
-      harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0),
-      expired: $("bExpired").value || "", note: supplier
-    };
+    const data = { nama: $("bNama").value.trim(), kategori: $("bKategori").value, satuan: $("bSatuan").value, stok: qty, harga: Math.max(0, parseInt($("bHarga").value, 10) || 0), harga_jual: Math.max(0, parseInt($("bHargaJual").value, 10) || 0), expired: $("bExpired").value || "", note: supplier };
     if (!data.nama) { toast("Nama wajib diisi.", "err"); $("bNama").focus(); return; }
     const dup = items.find(i => norm(i.nama) === norm(data.nama));
     if (dup) {
@@ -1569,12 +1548,7 @@ function updateKategoriOptions() {
 }
 $("kfTipe").addEventListener("change", updateKategoriOptions);
 async function submitKeuangan() {
-  const data = {
-    tipe: $("kfTipe").value, kategori: $("kfKategori").value,
-    keterangan: $("kfKeterangan").value.trim(),
-    jumlah: Math.abs(parseInt($("kfJumlah").value, 10) || 0),
-    nama: $("kfNama").value.trim()
-  };
+  const data = { tipe: $("kfTipe").value, kategori: $("kfKategori").value, keterangan: $("kfKeterangan").value.trim(), jumlah: Math.abs(parseInt($("kfJumlah").value, 10) || 0), nama: $("kfNama").value.trim() };
   if (data.jumlah <= 0) { toast("Jumlah harus > 0.", "err"); $("kfJumlah").focus(); return; }
   try {
     setStatus("Menyimpan…");
@@ -1648,13 +1622,7 @@ function renderAset() {
 }
 async function submitAset() {
   const id = $("aEditId").value;
-  const data = {
-    nama: $("aNama").value.trim(), kategori: $("aKategori").value,
-    jumlah: Math.max(0, parseInt($("aJumlah").value, 10) || 0),
-    harga: Math.max(0, parseInt($("aHarga").value, 10) || 0),
-    tanggal_perolehan: $("aTanggal").value || "", keterangan: $("aKeterangan").value.trim(),
-    nama_pencatat: $("aPencatat").value.trim()
-  };
+  const data = { nama: $("aNama").value.trim(), kategori: $("aKategori").value, jumlah: Math.max(0, parseInt($("aJumlah").value, 10) || 0), harga: Math.max(0, parseInt($("aHarga").value, 10) || 0), tanggal_perolehan: $("aTanggal").value || "", keterangan: $("aKeterangan").value.trim(), nama_pencatat: $("aPencatat").value.trim() };
   if (!data.nama) { toast("Nama aset wajib diisi.", "err"); return; }
   try {
     const payload = id ? { action: "update_aset", id, data } : { action: "add_aset", data };
@@ -1834,10 +1802,7 @@ async function renderRekapBarang(startDate, endDate) {
     const res = await api(null, "GET", `rekap=1&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`);
     if (!res.ok) throw new Error(res.message || "Gagal memuat rekap");
     const rekap = res.rekap || [];
-    if (rekap.length === 0) {
-      tb.innerHTML = '<tr><td colspan="9"><div class="empty">Belum ada barang terdaftar.</div></td></tr>';
-      return;
-    }
+    if (rekap.length === 0) { tb.innerHTML = '<tr><td colspan="9"><div class="empty">Belum ada barang terdaftar.</div></td></tr>'; return; }
     tb.innerHTML = rekap.map(r => {
       const selisihClass = r.selisih === null ? '' : (r.selisih > 0 ? 'money-neg' : r.selisih < 0 ? 'money-pos' : '');
       const nilaiClass = r.nilaiSelisih === null ? '' : (r.nilaiSelisih > 0 ? 'money-neg' : r.nilaiSelisih < 0 ? 'money-pos' : '');
@@ -1918,7 +1883,6 @@ function renderLaporan() {
   const endR = monthRangeOf(endMonth);
   const lr = computeLaporan(startR.start, endR.end);
   const neraca = computeNeraca(endR.end);
-
   const dayBefore = new Date(startR.start + "T00:00:00");
   dayBefore.setDate(dayBefore.getDate() - 1);
   const ekuitasAwalDate = dayBefore.toISOString().slice(0, 10);
@@ -1963,8 +1927,8 @@ function renderLaporan() {
   `;
 
   renderRekapBarang(startR.start, endR.end);
-  renderChartPenjualan();
 
+  // Chart Laba Rugi (pakai periode utama)
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
   const endD = new Date(endR.y, endR.m - 1, 1);
@@ -1997,6 +1961,8 @@ function renderLaporan() {
       scales: { y: { beginAtZero: true, ticks: { callback: v => "Rp " + Number(v).toLocaleString("id-ID") } } }
     }
   });
+
+  renderChartPenjualan();
 }
 
 function fillChartItemDropdown() {
@@ -2009,8 +1975,8 @@ function fillChartItemDropdown() {
 }
 
 function renderChartPenjualan() {
-  const startM = $("periodStart").value;
-  const endM = $("periodEnd").value;
+  const startM = $("chartPeriodStart")?.value || $("periodStart").value;
+  const endM = $("chartPeriodEnd")?.value || $("periodEnd").value;
   if (!startM || !endM) return;
   const startR = monthRangeOf(startM);
   const endR = monthRangeOf(endM);
@@ -2020,10 +1986,7 @@ function renderChartPenjualan() {
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
   const endD = new Date(endR.y, endR.m - 1, 1);
-  while (cur <= endD) {
-    months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 });
-    cur.setMonth(cur.getMonth() + 1);
-  }
+  while (cur <= endD) { months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 }); cur.setMonth(cur.getMonth() + 1); }
 
   const labels = months.map(({y,m}) => fmtMonthLabel(y,m));
   const data = months.map(({y,m}) => {
@@ -2058,12 +2021,7 @@ function renderChartPenjualan() {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: "bottom" } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: v => metric === "revenue" ? "Rp " + Number(v).toLocaleString("id-ID") : Number(v).toLocaleString("id-ID")
-          }
-        }
+        y: { beginAtZero: true, ticks: { callback: v => metric === "revenue" ? "Rp " + Number(v).toLocaleString("id-ID") : Number(v).toLocaleString("id-ID") } }
       }
     }
   });
@@ -2071,6 +2029,20 @@ function renderChartPenjualan() {
 
 $("chartItemFilter").addEventListener("change", renderChartPenjualan);
 $("chartMetric").addEventListener("change", renderChartPenjualan);
+$("chartPeriodStart").addEventListener("change", renderChartPenjualan);
+$("chartPeriodEnd").addEventListener("change", renderChartPenjualan);
+document.querySelectorAll("[data-chart-quick]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const n = parseInt(btn.dataset.chartQuick, 10) || 6;
+    const now = new Date();
+    const endM = now.getFullYear() + "-" + pad2(now.getMonth() + 1);
+    const startD = new Date(now.getFullYear(), now.getMonth() - (n - 1), 1);
+    const startM = startD.getFullYear() + "-" + pad2(startD.getMonth() + 1);
+    $("chartPeriodStart").value = startM;
+    $("chartPeriodEnd").value = endM;
+    renderChartPenjualan();
+  });
+});
 
 document.querySelectorAll("[data-quick]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -2082,12 +2054,15 @@ document.querySelectorAll("[data-quick]").forEach(btn => {
     $("periodStart").value = startM; $("periodEnd").value = endM; renderLaporan();
   });
 });
+
 function initPeriod() {
   const now = new Date();
   const y = now.getFullYear(), m = now.getMonth() + 1;
   $("periodEnd").value = `${y}-${pad2(m)}`;
   const start = new Date(y, m - 7, 1);
   $("periodStart").value = `${start.getFullYear()}-${pad2(start.getMonth() + 1)}`;
+  if ($("chartPeriodStart")) $("chartPeriodStart").value = $("periodStart").value;
+  if ($("chartPeriodEnd")) $("chartPeriodEnd").value = $("periodEnd").value;
 }
 $("btnTampilkan").addEventListener("click", renderLaporan);
 
@@ -2112,9 +2087,7 @@ $("tbody").addEventListener("click", e => {
   if (!btn) return;
   const id = btn.dataset.id;
   const act = btn.dataset.act;
-  if (act === "edit") {
-    switchTab("edit"); $("editItemSelect").value = id; loadEditForm(id); return;
-  }
+  if (act === "edit") { switchTab("edit"); $("editItemSelect").value = id; loadEditForm(id); return; }
   if (act === "del") { deleteItem(id); return; }
   if (act === "in") {
     beliMode = "existing";
