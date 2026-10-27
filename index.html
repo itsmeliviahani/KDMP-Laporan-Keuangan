@@ -8,9 +8,9 @@
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    background:#f8f9fa;color:#222;font-size:14px;line-height:1.5; display: flex; flex-direction: column; min-height: 100vh;}
+    background:#f0f4f8;color:#222;font-size:14px;line-height:1.5; display: flex; flex-direction: column; min-height: 100vh;}
   #appContent { display: flex; flex-direction: column; flex: 1; }
-  main { flex: 1; }
+  main { flex: 1; max-width: 1150px; margin: 0 auto; padding: 24px 18px 60px; width: 100%; }
   footer { text-align: center; padding: 20px; font-size: 13px; color: #6b7392; border-top: 1px solid #e0e0e0; background: #fff; margin-top: auto; }
 
   /* --- ANIMASI BACKGROUND LOGIN --- */
@@ -158,141 +158,178 @@
   .auth-msg.error{display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2;}
   .auth-msg.success{display:block; background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;}
 
-  /* --- MAIN APP --- */
-  header{background:#c62828;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-  header h1{margin:0;font-size:17px;font-weight:600}
+  /* --- MAIN APP HEADER --- */
+  header{
+    background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
+    color:#fff; padding:16px 24px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  header h1{margin:0;font-size:18px;font-weight:700;letter-spacing: -0.3px;}
   header small{opacity:.85;font-size:12px}
-  .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .topbar-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
   
-  main{max-width:1150px;margin:0 auto;padding:18px 14px 60px; width: 100%;}
   .view{display:none;animation:fade .2s}
   .view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  .panel-title{margin:0 0 12px;font-size:15px;color:#b71c1c}
+  
+  .panel-title{
+    margin:0 0 18px; font-size:18px; color:#b71c1c; font-weight: 800;
+    border-bottom: 2px solid #ffcdd2; padding-bottom: 10px;
+  }
   
   /* --- MENU GRID --- */
   .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
   }
   .menu-btn {
-    background: #fff; color: #c62828; border: 2px solid #c62828;
-    padding: 20px; font-size: 16px; font-weight: 700; border-radius: 10px;
-    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    background: #ffffff; 
+    color: #333; 
+    border: 1px solid #e0e0e0; 
+    border-left: 5px solid #c62828; 
+    padding: 20px; 
+    font-size: 15px; 
+    font-weight: 700; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    transition: 0.2s ease-in-out; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
     font-family: inherit;
+    text-align: left;
   }
-  .menu-btn:hover { background: #c62828; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(198, 40, 40, 0.2); }
-  .back-btn { margin-bottom: 15px; padding: 6px 12px; font-size: 13px; }
+  .menu-btn:hover { 
+    background: #fff5f5; 
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 15px rgba(198, 40, 40, 0.15); 
+    border-color: #ffcdd2;
+    border-left-color: #b71c1c;
+  }
+  .back-btn { margin-bottom: 16px; padding: 8px 14px; font-size: 13px; font-weight:700;}
 
-  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
-  input,select,button{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;color:#222}
-  input:focus,select:focus{outline:2px solid #ef9a9a;border-color:#c62828}
-  button{cursor:pointer;font-weight:600;border:1px solid #c62828;background:#c62828;color:#fff}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+  input,select,button{font-family:inherit;font-size:13.5px;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#222; transition: 0.2s;}
+  input:focus,select:focus{outline:none; border-color:#c62828; box-shadow:0 0 0 3px rgba(198,40,40,0.1);}
+  button{cursor:pointer;font-weight:600;border:1px solid #c62828;background:#c62828;color:#fff; border-radius:8px;}
   button:hover{background:#b71c1c}
   button.ghost{background:#fff;color:#c62828}
   button.ghost:hover{background:#ffebee}
-  button.small{padding:5px 9px;font-size:12px}
-  #search{flex:1;min-width:180px}
-  .table-wrap{overflow-x:auto;border:1px solid #e0e0e0;border-radius:8px}
+  button.small{padding:6px 10px;font-size:12px}
+  #search{flex:1;min-width:200px}
+  
+  .table-wrap{overflow-x:auto;border:1px solid #e0e0e0;border-radius:10px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
   table{width:100%;border-collapse:collapse;min-width:650px}
-  th{background:#ffebee;color:#b71c1c;text-align:left;padding:9px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid #e0e0e0;white-space:nowrap}
-  td{padding:9px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+  th{background:#fff5f5;color:#b71c1c;text-align:left;padding:12px 14px;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #ffcdd2;white-space:nowrap}
+  td{padding:12px 14px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
   tr:last-child td{border-bottom:none}
-  tr:hover{background:#fffafa}
-  tr.exp{background:#ffebee}
-  .name{font-weight:600}
-  .sub{font-size:11px;color:#777}
-  .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+  tr:hover{background:#fafbfc}
+  tr.exp{background:#fff3f3}
+  
+  .name{font-weight:700; color: #222;}
+  .sub{font-size:11.5px;color:#777}
+  .badge{display:inline-block;padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700}
   .badge.ok{background:#e8f5e9;color:#2e7d32}
   .badge.soon{background:#fff8e1;color:#ef6c00}
   .badge.exp{background:#ffebee;color:#c62828}
   .badge.zero{background:#eeeeee;color:#666}
   .badge.in{background:#e8f5e9;color:#2e7d32}
   .badge.out{background:#ffebee;color:#c62828}
+  
   .qty{font-weight:700;font-variant-numeric:tabular-nums}
   .price{font-variant-numeric:tabular-nums;font-size:12.5px}
   .money-pos{color:#2e7d32;font-weight:700;font-variant-numeric:tabular-nums}
   .money-neg{color:#c62828;font-weight:700;font-variant-numeric:tabular-nums}
-  .actions{display:flex;gap:4px;justify-content:flex-end}
-  .actions button{width:28px;height:28px;padding:0;font-size:13px;line-height:1}
-  .form-card{border:1px solid #e0e0e0;border-radius:10px;padding:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
-  .field{display:flex;flex-direction:column;gap:5px}
+  .actions{display:flex;gap:6px;justify-content:flex-end}
+  .actions button{width:30px;height:30px;padding:0;font-size:14px;line-height:1; border-radius: 6px;}
+  
+  .form-card{border:1px solid #e0e0e0;border-radius:10px;padding:24px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+  .field{display:flex;flex-direction:column;gap:6px}
   .field.full{grid-column:1/-1}
-  .field label{font-size:12px;font-weight:600;color:#555}
+  .field label{font-size:12px;font-weight:700;color:#444}
   .field label .req{color:#c62828}
   .field label .opt{color:#888;font-weight:400;font-size:11px}
-  .field small{font-size:11px;color:#888}
-  .actions-row{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
-  .preview{margin-top:12px;padding:10px 12px;border-radius:7px;background:#fff5f5;border:1px solid #ffcdd2;font-size:12.5px;color:#8a1c1c}
+  .actions-row{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+  .preview{margin-top:14px;padding:12px 14px;border-radius:8px;background:#f4f8fb;border:1px solid #d0e1f9;font-size:13px;color:#2c3e50}
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
-  #toast{position:fixed;bottom:16px;right:16px;background:#222;color:#fff;padding:10px 14px;border-radius:7px;font-size:13px;display:none;max-width:340px;z-index:999}
+  
+  #toast{position:fixed;bottom:20px;right:20px;background:#222;color:#fff;padding:12px 16px;border-radius:8px;font-size:13.5px;display:none;max-width:340px;z-index:9999; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
   #toast.ok{background:#2e7d32}
   #toast.err{background:#c62828}
-  .empty{text-align:center;padding:30px;color:#888}
-  .hist-list{display:flex;flex-direction:column;gap:6px}
-  .hist-item{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid #eee;border-radius:7px;background:#fffafa}
-  .hist-item b{font-size:13px}
-  .hist-item .meta{font-size:11.5px;color:#777}
+  .empty{text-align:center;padding:40px;color:#888}
+  
+  .hist-list{display:flex;flex-direction:column;gap:8px}
+  .hist-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+  .hist-item b{font-size:14px; color: #222;}
+  .hist-item .meta{font-size:12px;color:#666; margin-top: 4px;}
   .hist-item .kasir{color:#b71c1c;font-weight:700}
-  .mode-switch{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-  .mode-switch button{background:#fff;color:#c62828;border:1px solid #c62828;padding:8px 14px;font-size:13px;border-radius:7px}
+  
+  .mode-switch{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .mode-switch button{background:#fff;color:#c62828;border:1px solid #c62828;padding:8px 16px;font-size:13px;border-radius:8px}
   .mode-switch button.active{background:#c62828;color:#fff}
-  .report-card{border:1px solid #e0e0e0;border-radius:10px;padding:16px;margin-bottom:16px}
-  .report-card h3{margin:0 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #f0f0f0;padding-bottom:8px}
-  .report-table{width:100%;border-collapse:collapse;font-size:13px}
-  .report-table th{background:transparent;color:#555;text-align:left;padding:6px 4px;font-size:12px;border-bottom:1px solid #e0e0e0;text-transform:none;letter-spacing:0}
-  .report-table td{padding:6px 4px;border-bottom:1px dashed #f0f0f0}
+  
+  .report-card{border:1px solid #e0e0e0;border-radius:10px;padding:20px;margin-bottom:20px; background:#fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
+  .report-card h3{margin:0 0 16px;font-size:15px;color:#b71c1c;border-bottom:1px solid #f0f0f0;padding-bottom:10px}
+  .report-table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .report-table th{background:transparent;color:#555;text-align:left;padding:8px 4px;font-size:12px;border-bottom:1px solid #e0e0e0;text-transform:none;letter-spacing:0}
+  .report-table td{padding:8px 4px;border-bottom:1px dashed #f0f0f0}
   .report-table td:last-child,.report-table th:last-child{text-align:right;font-variant-numeric:tabular-nums}
-  .report-table tr.total td{font-weight:700;border-top:2px solid #c62828;border-bottom:none;color:#b71c1c}
+  .report-table tr.total td{font-weight:800;border-top:2px solid #c62828;border-bottom:none;color:#b71c1c}
   .report-table tr.sub td{font-weight:600;background:#fafafa}
-  .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  
+  .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   @media(max-width:800px){.report-grid{grid-template-columns:1fr}}
   .chart-wrap{position:relative;height:340px}
-  .chart-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .chart-filters{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center; background: #f8fafc; padding: 12px; border-radius: 8px;}
   .chart-filters select{min-width:180px}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
+  
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:999}
   .modal-backdrop.show{display:flex}
-  .modal{background:#fff;border-radius:12px;padding:22px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
-  .modal h3{margin:0 0 15px;color:#b71c1c;font-size:16px}
-  .modal .field{margin-bottom:12px;}
-  .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+  .modal{background:#fff;border-radius:12px;padding:24px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
+  .modal h3{margin:0 0 16px;color:#b71c1c;font-size:16px}
+  .modal .field{margin-bottom:14px;}
+  
+  .pos-container{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:start}
   @media(max-width:900px){.pos-container{grid-template-columns:1fr}}
   .cart-table{min-width:100% !important; border-collapse: collapse !important;}
-  .cart-table th,.cart-table td{padding:10px 12px;font-size:13px;border: 1px solid #000 !important;}
-  .cart-table th{ background:#ffe4e4; }
-  .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:15px;margin-top:0}
-  .summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600;font-size:14px}
-  .summary-row.total{font-size:18px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:10px;margin-top:10px}
-  .summary-input{width:120px !important;text-align:right;padding:5px 8px !important;}
-  .pos-btn{background:#2e7d32;border-color:#2e7d32;width:100%;padding:15px;font-size:16px;margin-top:15px;}
+  .cart-table th,.cart-table td{padding:12px 14px;font-size:13.5px;border: 1px solid #e0e0e0 !important;}
+  .cart-table th{ background:#fff5f5; color:#c62828;}
+  
+  .pos-summary{background:#fffafa;border:1px solid #ffcdd2;border-radius:10px;padding:20px;margin-top:0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
+  .summary-row{display:flex;justify-content:space-between;margin-bottom:12px;font-weight:600;font-size:14px}
+  .summary-row.total{font-size:20px;color:#c62828;border-top:2px dashed #ffcdd2;padding-top:14px;margin-top:14px; font-weight: 800;}
+  .summary-input{width:120px !important;text-align:right;padding:6px 10px !important;}
+  .pos-btn{background:#2e7d32;border-color:#2e7d32;width:100%;padding:16px;font-size:16px;margin-top:20px; border-radius: 8px;}
   .pos-btn:hover{background:#1b5e20}
+  
   .money-input-wrap{position:relative;display:inline-block;width:140px}
   .money-input-wrap .prefix{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#2e7d32;font-size:15px;font-weight:bold;pointer-events:none;z-index:1}
   .money-input-wrap input.summary-input{padding-left:32px !important;width:100% !important;text-align:right;font-size:16px;font-weight:bold;color:#2e7d32;-moz-appearance:textfield}
   .money-input-wrap input.summary-input::-webkit-outer-spin-button,
   .money-input-wrap input.summary-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  
   .rekap-wrap{overflow-x:auto;}
   .rekap-wrap table{min-width:1050px;}
-  .koreksi-box{background:#fff8e1;padding:12px;border-radius:8px;border:1px solid #ffe082;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+  
+  .koreksi-box{background:#fff8e1;padding:14px;border-radius:8px;border:1px solid #ffe082;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
   .koreksi-box input{width:auto;margin-top:2px;}
   .koreksi-box span{flex:1;}
   .koreksi-box b{color:#b71c1c;}
   .koreksi-box small{color:#7a4a00;font-size:11.5px;display:block;margin-top:4px;}
   
   .searchable-select{position:relative;}
-  .searchable-select input[type=text]{width:100%;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;font-size:13.5px;font-family:inherit;color:#222;transition:0.2s;}
-  .searchable-select input[type=text]:focus{outline:2px solid #ef9a9a;border-color:#c62828}
-  .ss-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:7px;margin-top:4px;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:50;display:none;}
+  .searchable-select input[type=text]{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;font-size:13.5px;font-family:inherit;color:#222;transition:0.2s;}
+  .searchable-select input[type=text]:focus{outline:none; border-color:#c62828; box-shadow:0 0 0 3px rgba(198,40,40,0.1);}
+  .ss-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ccc;border-radius:8px;margin-top:6px;max-height:240px;overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.15);z-index:50;display:none;}
   .ss-dropdown.show{display:block;}
-  .ss-item{padding:9px 12px;cursor:pointer;font-size:13.5px;border-bottom:1px solid #f5f5f5;transition:0.1s;}
+  .ss-item{padding:10px 14px;cursor:pointer;font-size:13.5px;border-bottom:1px solid #f5f5f5;transition:0.1s;}
   .ss-item:last-child{border-bottom:none;}
-  .ss-item:hover,.ss-item.highlight{background:#ffebee;color:#c62828;font-weight:600;}
-  .ss-empty{padding:12px;color:#888;text-align:center;font-size:12.5px;}
+  .ss-item:hover,.ss-item.highlight{background:#fff5f5;color:#c62828;font-weight:700;}
+  .ss-empty{padding:14px;color:#888;text-align:center;font-size:13px;}
   
   @media(max-width:600px){
-    header h1{font-size:15px}
+    header h1{font-size:16px}
     .grid{grid-template-columns:1fr}
     .menu-grid{grid-template-columns:1fr}
     .auth-card{padding:25px;}
@@ -406,37 +443,37 @@
       <small>Politeknik Keuangan Negara STAN</small>
     </div>
     <div class="topbar-actions">
-      <span id="userInfo" style="font-size:13px; font-weight:600;"></span>
-      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent;">Keluar</button>
+      <span id="userInfo" style="font-size:13.5px; font-weight:600;"></span>
+      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent; border-radius: 6px;">Keluar</button>
     </div>
   </header>
 
   <main>
     <!-- MENU UTAMA -->
     <section id="view-menu" class="view active">
-      <h2 class="panel-title" style="margin-bottom:20px;">Menu Utama</h2>
+      <h2 class="panel-title">Menu Utama</h2>
       <div class="menu-grid">
-        <button class="menu-btn" onclick="switchTab('stok')">Stok</button>
+        <button class="menu-btn" onclick="switchTab('stok')">Stok Barang</button>
         <button class="menu-btn" onclick="switchTab('beli')">Pembelian</button>
-        <button class="menu-btn" onclick="switchTab('jual')">Penjualan</button>
+        <button class="menu-btn" onclick="switchTab('jual')">Penjualan Kasir</button>
         <button class="menu-btn" data-role="manajer" onclick="switchTab('aset')">Aset Tetap</button>
         <button class="menu-btn" onclick="switchTab('stokdaerah')">Stok Fisik</button>
         <button class="menu-btn" data-role="manajer" onclick="switchTab('edit')">Edit Barang</button>
-        <button class="menu-btn" onclick="switchTab('keuangan')">Keuangan</button>
+        <button class="menu-btn" onclick="switchTab('keuangan')">Keuangan Lain</button>
         <button class="menu-btn" data-role="manajer" onclick="switchTab('laporan')">Laporan</button>
         <button class="menu-btn" data-role="manajer" onclick="switchTab('penjualan')">Riwayat Penjualan</button>
         <button class="menu-btn" data-role="manajer" onclick="switchTab('riwayat')">Riwayat Umum</button>
         <button class="menu-btn" onclick="switchTab('ganti-sandi')">Ganti Sandi</button>
       </div>
-      <div style="margin-top:30px; text-align:center;">
-        <span id="status" style="font-size:12px; background:#e0e0e0; color:#333; padding:5px 10px; border-radius:6px;">Menghubungkan…</span>
+      <div style="margin-top:40px; text-align:center;">
+        <span id="status" style="font-size:12.5px; background:#e0e0e0; color:#333; padding:6px 14px; border-radius:20px; font-weight: 600;">Menghubungkan…</span>
       </div>
     </section>
 
     <!-- STOK -->
     <section id="view-stok" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
-      <h2 class="panel-title">Stok</h2>
+      <h2 class="panel-title">Stok Barang</h2>
       <div class="bar">
         <input type="text" id="search" placeholder="Cari barang…">
         <select id="filter">
@@ -474,7 +511,11 @@
         <div class="grid">
           <div class="field full" id="bExistingWrap">
             <label>Barang <span class="req">*</span></label>
-            <select id="bExisting"></select>
+            <div class="searchable-select">
+              <input type="text" id="bExistingSearch" placeholder="Ketik nama barang..." autocomplete="off">
+              <input type="hidden" id="bExisting">
+              <div class="ss-dropdown" id="bExistingDropdown"></div>
+            </div>
           </div>
           <div class="field" id="bQtyExistingWrap">
             <label>Jumlah <span class="req">*</span></label>
@@ -547,7 +588,7 @@
     <!-- PENJUALAN -->
     <section id="view-jual" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
-      <h2 class="panel-title">Penjualan</h2>
+      <h2 class="panel-title">Penjualan Kasir</h2>
       <div class="pos-container">
         <div>
           <div class="form-card" style="margin-bottom:15px;">
@@ -565,10 +606,10 @@
                 <label>Jumlah (Qty)</label>
                 <input type="number" id="kQty" min="1" value="1">
               </div>
-              <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">Tambah</button>
+              <button id="btnAddToCart" style="height:40px; background:#1976d2; border-color:#1976d2; padding:0 20px; border-radius: 8px;">Tambah</button>
             </div>
           </div>
-          <div class="table-wrap" style="min-height:200px; border:1px solid #000; padding:0;">
+          <div class="table-wrap" style="min-height:200px; padding:0;">
             <table class="cart-table">
               <thead>
                 <tr>
@@ -617,7 +658,7 @@
     <section id="view-aset" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Aset Tetap</h2>
-      <div class="form-card" style="margin-bottom:16px;">
+      <div class="form-card" style="margin-bottom:20px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah / Edit Aset</h3>
         <div class="grid">
           <div class="field full"><label>Nama Aset <span class="req">*</span></label><input type="text" id="aNama" placeholder="cth: Truk, AC, CCTV, Kursi"></div>
@@ -629,7 +670,14 @@
           </div>
           <div class="field"><label>Jumlah <span class="opt">(opsional)</span></label><input type="number" id="aJumlah" min="0" value="1"></div>
           <div class="field"><label>Harga Satuan (Rp) <span class="opt">(opsional)</span></label><input type="number" id="aHarga" min="0" value="0"></div>
-          <div class="field"><label>Tanggal Perolehan <span class="opt">(opsional)</span></label><input type="date" id="aTanggal"></div>
+          <div class="field"><label>Tanggal Perolehan</label><input type="date" id="aTanggal"></div>
+          <div class="field"><label>Masa Pakai <span class="opt">(untuk depresiasi)</span></label><input type="number" id="aMasaPakai" min="0" value="0"></div>
+          <div class="field"><label>Satuan Masa</label>
+            <select id="aSatuanMasa">
+              <option value="tahun">Tahun</option>
+              <option value="bulan">Bulan</option>
+            </select>
+          </div>
           <div class="field full"><label>Keterangan <span class="opt">(opsional)</span></label><input type="text" id="aKeterangan" placeholder="Kondisi, lokasi, dll."></div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="aPencatat" autocomplete="name"></div>
         </div>
@@ -648,14 +696,18 @@
         </select>
       </div>
       <div class="table-wrap">
-        <table>
+        <table style="min-width: 1100px;">
           <thead>
             <tr>
               <th>Nama</th><th>Kategori</th>
               <th style="text-align:right">Jumlah</th>
-              <th style="text-align:right">Harga Satuan</th>
+              <th style="text-align:right">Harga</th>
               <th style="text-align:right">Total Nilai</th>
-              <th>Perolehan</th><th>Keterangan</th>
+              <th>Masa Pakai</th>
+              <th style="text-align:right">Penyusutan/Tahun</th>
+              <th style="text-align:right">Akumulasi</th>
+              <th style="text-align:right">Nilai Buku</th>
+              <th>Perolehan</th>
               <th style="text-align:right">Aksi</th>
             </tr>
           </thead>
@@ -668,7 +720,7 @@
     <section id="view-stokdaerah" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Stok Fisik</h2>
-      <div class="form-card" style="margin-bottom:16px;">
+      <div class="form-card" style="margin-bottom:20px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Input Stok Fisik</h3>
         <div class="grid">
           <div class="field full">
@@ -714,8 +766,8 @@
           <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">Simpan Stok Fisik</button>
         </div>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Akhir</h3>
-      <div class="table-wrap" style="margin-bottom:16px;">
+      <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c; border-bottom: 1px solid #ffcdd2; padding-bottom: 8px;">Riwayat Stok Akhir (Pusat)</h3>
+      <div class="table-wrap" style="margin-bottom:24px;">
         <table>
           <thead>
             <tr>
@@ -728,7 +780,7 @@
           <tbody id="tbodyStokAkhir"></tbody>
         </table>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok On Hand</h3>
+      <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c; border-bottom: 1px solid #ffcdd2; padding-bottom: 8px;">Riwayat Stok On Hand (Daerah)</h3>
       <div class="table-wrap">
         <table>
           <thead>
@@ -751,8 +803,12 @@
       <div class="form-card">
         <div class="grid">
           <div class="field full">
-            <label>Pilih barang <span class="req">*</span></label>
-            <select id="editItemSelect"></select>
+            <label>Pilih Barang <span class="req">*</span></label>
+            <div class="searchable-select">
+              <input type="text" id="editItemSearch" placeholder="Ketik nama barang..." autocomplete="off">
+              <input type="hidden" id="editItemSelect">
+              <div class="ss-dropdown" id="editItemDropdown"></div>
+            </div>
           </div>
           <div class="field full"><label>Nama <span class="req">*</span></label><input type="text" id="eNama"></div>
           <div class="field"><label>Kategori</label>
@@ -809,7 +865,7 @@
         </div>
         <div class="actions-row"><button id="btnKeuangan">Simpan</button></div>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Daftar Keuangan</h3>
+      <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c; border-bottom: 1px solid #ffcdd2; padding-bottom: 8px;">Daftar Keuangan</h3>
       <div class="bar">
         <select id="filterKeuangan">
           <option value="all">Semua</option>
@@ -843,9 +899,9 @@
       <div class="report-card">
         <h3>Grafik Penjualan</h3>
         <div class="chart-filters">
-          <label style="font-size:12px;font-weight:600">Dari</label>
+          <label style="font-size:12px;font-weight:700">Dari</label>
           <input type="month" id="chartPeriodStart" style="width:auto">
-          <label style="font-size:12px;font-weight:600">sampai</label>
+          <label style="font-size:12px;font-weight:700">sampai</label>
           <input type="month" id="chartPeriodEnd" style="width:auto">
           <button class="ghost small" data-chart-quick="3">3 bln</button>
           <button class="ghost small" data-chart-quick="6">6 bln</button>
@@ -868,10 +924,10 @@
         <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
 
-      <div class="bar" style="margin-top:20px; background:#fff; padding:10px; border-radius:8px; border:1px solid #ddd;">
-        <label style="font-size:12px;font-weight:600">Periode Laporan:</label>
+      <div class="bar" style="margin-top:20px;">
+        <label style="font-size:12.5px;font-weight:700">Periode Laporan:</label>
         <input type="month" id="periodStart" style="width:auto">
-        <label style="font-size:12px;font-weight:600">s.d.</label>
+        <label style="font-size:12.5px;font-weight:700">s.d.</label>
         <input type="month" id="periodEnd" style="width:auto">
         <button id="btnTampilkan">Tampilkan Laporan</button>
         <button class="ghost small" data-quick="3">3 bln</button>
@@ -1174,8 +1230,8 @@ function toast(msg, type = "") {
 function setStatus(text, ok = true) {
   const el = $("status");
   el.textContent = text;
-  el.style.background = ok ? "rgba(0,0,0,0.1)" : "rgba(255,0,0,0.2)";
-  el.style.color = ok ? "#333" : "#c62828";
+  el.style.background = ok ? "#dcfce7" : "#fee2e2";
+  el.style.color = ok ? "#166534" : "#991b1b";
 }
 
 function loadNames() {
@@ -1212,7 +1268,7 @@ function switchTab(name) {
 
 async function load() {
   try {
-    setStatus("Memuat…");
+    setStatus("Memuat data...");
     const [dItems, dHist, dKeu, dAset, dSD, dSA] = await Promise.all([
       api(null, "GET", ""),
       api(null, "GET", "history=1&all=1"),
@@ -1310,111 +1366,64 @@ function renderPenjualan() {
 }
 
 function fillSelects() {
-  const selB = $("bExisting");
-  const prevB = selB.value;
-  selB.innerHTML = items.length
-    ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
-    : '<option value="">— Belum ada barang —</option>';
-  if (prevB && items.some(i => i.id === prevB)) selB.value = prevB;
-  
+  $("bExistingSearch").value = "";
+  $("bExisting").value = "";
   $("kItemSearch").value = "";
   $("kItem").value = "";
-  
   updateBeliPreview();
 }
 
-/* Searchable Dropdown Logic for Penjualan */
-function renderItemDropdown(filterText) {
-  const dropdown = $("kItemDropdown");
-  if (!dropdown) return;
-  const q = String(filterText || "").toLowerCase().trim();
-  const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
-  if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
-  if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
-  dropdown.innerHTML = filtered.slice(0, 100).map(i => `
-    <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
-      ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
-    </div>
-  `).join("");
-  dropdown.classList.add("show");
-  dropdown.querySelectorAll(".ss-item").forEach(el => {
-    el.addEventListener("mousedown", e => {
-      e.preventDefault();
-      $("kItem").value = el.dataset.id;
-      $("kItemSearch").value = el.dataset.nama;
-      dropdown.classList.remove("show");
+/* Generic Searchable Dropdown Logic */
+function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
+  const searchEl = $(searchId);
+  const hiddenEl = $(hiddenId);
+  const dropdown = $(dropdownId);
+  if (!searchEl || !hiddenEl || !dropdown) return;
+
+  function render(filterText) {
+    const q = String(filterText || "").toLowerCase().trim();
+    const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
+    if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
+    if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
+    dropdown.innerHTML = filtered.slice(0, 100).map(i => `
+      <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
+        ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
+      </div>
+    `).join("");
+    dropdown.classList.add("show");
+    dropdown.querySelectorAll(".ss-item").forEach(el => {
+      el.addEventListener("mousedown", e => {
+        e.preventDefault();
+        hiddenEl.value = el.dataset.id;
+        searchEl.value = el.dataset.nama;
+        dropdown.classList.remove("show");
+        if (onSelect) onSelect(el.dataset.id, el.dataset.nama);
+      });
     });
+  }
+
+  searchEl.addEventListener("input", e => { hiddenEl.value = ""; render(e.target.value); });
+  searchEl.addEventListener("focus", e => render(e.target.value));
+  searchEl.addEventListener("blur", () => setTimeout(() => dropdown.classList.remove("show"), 180));
+  searchEl.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const first = dropdown.querySelector(".ss-item");
+      if (first) {
+        hiddenEl.value = first.dataset.id;
+        searchEl.value = first.dataset.nama;
+        dropdown.classList.remove("show");
+        if (onSelect) onSelect(first.dataset.id, first.dataset.nama);
+      }
+    }
   });
 }
 
-$("kItemSearch").addEventListener("input", e => { $("kItem").value = ""; renderItemDropdown(e.target.value); });
-$("kItemSearch").addEventListener("focus", e => renderItemDropdown(e.target.value));
-$("kItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("kItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
-$("kItemSearch").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const dropdown = $("kItemDropdown");
-    const first = dropdown.querySelector(".ss-item");
-    if (first) {
-      $("kItem").value = first.dataset.id;
-      $("kItemSearch").value = first.dataset.nama;
-      dropdown.classList.remove("show");
-    }
-  }
-});
-
-/* Searchable Dropdown Logic for Stok Fisik */
-function populateStokFisikView() {
-  const searchEl = $("sdItemSearch");
-  const hiddenEl = $("sdItemSelect");
-  if (!searchEl || !hiddenEl) return;
-  const prevId = hiddenEl.value;
-  if (prevId) {
-    const prevItem = items.find(i => i.id === prevId);
-    if (prevItem) { searchEl.value = prevItem.nama; hiddenEl.value = prevItem.id; }
-    else { searchEl.value = ""; hiddenEl.value = ""; }
-  }
-  updateStokFisikPreview();
-}
-function renderStokFisikDropdown(filterText) {
-  const dropdown = $("sdItemDropdown");
-  if (!dropdown) return;
-  const q = String(filterText || "").toLowerCase().trim();
-  const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
-  if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
-  if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
-  dropdown.innerHTML = filtered.slice(0, 100).map(i => `
-    <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
-      ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
-    </div>
-  `).join("");
-  dropdown.classList.add("show");
-  dropdown.querySelectorAll(".ss-item").forEach(el => {
-    el.addEventListener("mousedown", e => {
-      e.preventDefault();
-      $("sdItemSelect").value = el.dataset.id;
-      $("sdItemSearch").value = el.dataset.nama;
-      dropdown.classList.remove("show");
-      updateStokFisikPreview();
-    });
-  });
-}
-$("sdItemSearch").addEventListener("input", e => { $("sdItemSelect").value = ""; renderStokFisikDropdown(e.target.value); });
-$("sdItemSearch").addEventListener("focus", e => renderStokFisikDropdown(e.target.value));
-$("sdItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("sdItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
-$("sdItemSearch").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const dropdown = $("sdItemDropdown");
-    const first = dropdown.querySelector(".ss-item");
-    if (first) {
-      $("sdItemSelect").value = first.dataset.id;
-      $("sdItemSearch").value = first.dataset.nama;
-      dropdown.classList.remove("show");
-      updateStokFisikPreview();
-    }
-  }
-});
+// Initialize all searchable dropdowns
+setupSearchable('sdItemSearch', 'sdItemSelect', 'sdItemDropdown', () => updateStokFisikPreview());
+setupSearchable('kItemSearch', 'kItem', 'kItemDropdown');
+setupSearchable('bExistingSearch', 'bExisting', 'bExistingDropdown', () => updateBeliPreview());
+setupSearchable('editItemSearch', 'editItemSelect', 'editItemDropdown', (id) => loadEditForm(id));
 
 function updateStokFisikPreview() {
   const box = $("sdPreview");
@@ -1550,15 +1559,18 @@ function populateEditView() {
   const sel = $("editItemSelect");
   if (!sel) return;
   const prev = sel.value;
-  sel.innerHTML = items.length
-    ? items.map(i => `<option value="${i.id}">${esc(i.nama)}</option>`).join("")
-    : '<option value="">— Belum ada barang —</option>';
-  if (prev && items.some(i => i.id === prev)) sel.value = prev;
-  if (sel.value) loadEditForm(sel.value);
-  else clearEditForm();
+  if (prev) {
+    const item = items.find(i => i.id === prev);
+    if (item) { $("editItemSearch").value = item.nama; loadEditForm(prev); }
+    else { $("editItemSearch").value = ""; clearEditForm(); }
+  } else {
+    $("editItemSearch").value = "";
+    clearEditForm();
+  }
 }
 function clearEditForm() {
   editingId = null;
+  $("editItemSelect").value = "";
   $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; $("eHargaJual").value = 0;
 }
 function loadEditForm(id) {
@@ -1570,7 +1582,6 @@ function loadEditForm(id) {
   $("eSatuan").value = item.satuan || "pcs";
   $("eHargaJual").value = item.harga_jual || 0;
 }
-$("editItemSelect").addEventListener("change", e => loadEditForm(e.target.value));
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
@@ -1659,7 +1670,10 @@ async function submitBeli() {
       if (go) {
         beliMode = "existing";
         document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-        applyBeliMode(); $("bExisting").value = dup.id; $("bQtyExisting").value = qty > 0 ? qty : 1; updateBeliPreview();
+        applyBeliMode(); 
+        $("bExistingSearch").value = dup.nama;
+        $("bExisting").value = dup.id; 
+        $("bQtyExisting").value = qty > 0 ? qty : 1; updateBeliPreview();
       }
       return;
     }
@@ -1671,7 +1685,9 @@ async function submitBeli() {
         if (go) {
           beliMode = "existing";
           document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-          applyBeliMode(); $("bExisting").value = res.existingId; $("bQtyExisting").value = qty > 0 ? qty : 1;
+          applyBeliMode(); 
+          $("bExistingSearch").value = res.existingNama;
+          $("bExisting").value = res.existingId; $("bQtyExisting").value = qty > 0 ? qty : 1;
         }
         setStatus("Terhubung ke Google Sheets"); return;
       }
@@ -1684,7 +1700,7 @@ async function submitBeli() {
     const id = $("bExisting").value;
     const qty = parseInt($("bQtyExisting").value, 10) || 0;
     const item = items.find(i => i.id === id);
-    if (!item) { toast("Pilih barang.", "err"); return; }
+    if (!item) { toast("Ketik dan pilih barang terlebih dahulu.", "err"); return; }
     if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
     const hargaBaruStr = $("bHargaBaru").value.trim();
     const expBaru = $("bExpiredBaru").value;
@@ -1697,6 +1713,7 @@ async function submitBeli() {
       if (!res.ok) throw new Error(res.message);
       saveSupplier(supplier); toast(`+${qty} ${item.satuan} ${item.nama}`, "ok");
       $("bQtyExisting").value = 1; $("bHargaBaru").value = ""; $("bExpiredBaru").value = "";
+      $("bExistingSearch").value = ""; $("bExisting").value = "";
       setStatus("Terhubung ke Google Sheets"); await load();
     } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
   }
@@ -1875,26 +1892,74 @@ function renderAset() {
     if (f !== "all" && a.kategori !== f) return false;
     return true;
   }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
-  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada aset tetap.</div></td></tr>'; return; }
-  tb.innerHTML = list.map(a => `
-    <tr>
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="11"><div class="empty">Belum ada aset tetap.</div></td></tr>'; return; }
+  
+  tb.innerHTML = list.map(a => {
+    const totalNilai = (a.jumlah || 0) * (a.harga || 0);
+    let masaPakaiStr = "-";
+    let penyusutanTahunanStr = "-";
+    let akumulasiStr = "-";
+    let nilaiBukuStr = "-";
+
+    if (a.masa_pakai > 0 && a.tanggal_perolehan && totalNilai > 0) {
+      const tglBeli = new Date(a.tanggal_perolehan);
+      const tglSekarang = new Date();
+      
+      // Selisih bulan
+      let bulanTerpakai = (tglSekarang.getFullYear() - tglBeli.getFullYear()) * 12 + (tglSekarang.getMonth() - tglBeli.getMonth());
+      if (bulanTerpakai < 0) bulanTerpakai = 0;
+      
+      const satuan = a.satuan_masa || "tahun";
+      masaPakaiStr = `${a.masa_pakai} ${satuan.charAt(0).toUpperCase() + satuan.slice(1)}`;
+      
+      // Straight-Line Method
+      let penyusutanPerBulan = 0;
+      if (satuan === "tahun") {
+        penyusutanPerBulan = totalNilai / (a.masa_pakai * 12);
+      } else {
+        penyusutanPerBulan = totalNilai / a.masa_pakai;
+      }
+      
+      let akumulasi = penyusutanPerBulan * bulanTerpakai;
+      if (akumulasi > totalNilai) akumulasi = totalNilai; // Max depreciation = cost
+      
+      const nilaiBuku = totalNilai - akumulasi;
+      
+      penyusutanTahunanStr = rp(penyusutanPerBulan * 12);
+      akumulasiStr = rp(akumulasi);
+      nilaiBukuStr = `<b>${rp(nilaiBuku)}</b>`;
+    }
+
+    return `<tr>
       <td><div class="name">${esc(a.nama)}</div></td>
       <td>${esc(a.kategori || "-")}</td>
       <td style="text-align:right"><span class="qty">${a.jumlah || "-"}</span></td>
       <td style="text-align:right">${a.harga ? rp(a.harga) : '<span class="sub">—</span>'}</td>
-      <td style="text-align:right"><b>${(a.jumlah && a.harga) ? rp(a.jumlah * a.harga) : '—'}</b></td>
+      <td style="text-align:right"><b>${totalNilai ? rp(totalNilai) : '—'}</b></td>
+      <td>${masaPakaiStr}</td>
+      <td style="text-align:right">${penyusutanTahunanStr}</td>
+      <td style="text-align:right">${akumulasiStr}</td>
+      <td style="text-align:right">${nilaiBukuStr}</td>
       <td class="sub">${esc(a.tanggal_perolehan || "-")}</td>
-      <td class="sub">${esc(a.keterangan || "-")}</td>
       <td><div class="actions">
         <button class="small ghost" data-aact="edit" data-id="${a.id}">✎</button>
         <button class="small ghost" data-aact="del" data-id="${a.id}">×</button>
       </div></td>
-    </tr>
-  `).join("");
+    </tr>`;
+  }).join("");
 }
 async function submitAset() {
   const id = $("aEditId").value;
-  const data = { nama: $("aNama").value.trim(), kategori: $("aKategori").value, jumlah: Math.max(0, parseInt($("aJumlah").value, 10) || 0), harga: Math.max(0, parseInt($("aHarga").value, 10) || 0), tanggal_perolehan: $("aTanggal").value || "", keterangan: $("aKeterangan").value.trim(), nama_pencatat: $("aPencatat").value.trim() };
+  const data = { 
+    nama: $("aNama").value.trim(), kategori: $("aKategori").value, 
+    jumlah: Math.max(0, parseInt($("aJumlah").value, 10) || 0), 
+    harga: Math.max(0, parseInt($("aHarga").value, 10) || 0), 
+    tanggal_perolehan: $("aTanggal").value || "", 
+    masa_pakai: Math.max(0, parseInt($("aMasaPakai").value, 10) || 0),
+    satuan_masa: $("aSatuanMasa").value,
+    keterangan: $("aKeterangan").value.trim(), 
+    nama_pencatat: $("aPencatat").value.trim() 
+  };
   if (!data.nama) { toast("Nama aset wajib diisi.", "err"); return; }
   try {
     const payload = id ? { action: "update_aset", id, data } : { action: "add_aset", data };
@@ -1906,15 +1971,19 @@ async function submitAset() {
 function editAset(id) {
   const a = aset.find(x => x.id === id);
   if (!a) return;
-  $("aEditId").value = a.id; $("aNama").value = a.nama; $("aKategori").value = a.kategori || "Lainnya";
+  $("aEditId").value = a.id; 
+  $("aNama").value = a.nama; $("aKategori").value = a.kategori || "Lainnya";
   $("aJumlah").value = a.jumlah; $("aHarga").value = a.harga; $("aTanggal").value = a.tanggal_perolehan;
+  $("aMasaPakai").value = a.masa_pakai || 0; $("aSatuanMasa").value = a.satuan_masa || "tahun";
   $("aKeterangan").value = a.keterangan; $("aPencatat").value = a.nama_pencatat;
   $("btnSaveAset").textContent = "Update Aset"; $("btnCancelAset").style.display = "inline-block";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function resetFormAset() {
   $("aEditId").value = ""; $("aNama").value = ""; $("aKategori").value = "Kendaraan";
-  $("aJumlah").value = 1; $("aHarga").value = 0; $("aTanggal").value = ""; $("aKeterangan").value = "";
+  $("aJumlah").value = 1; $("aHarga").value = 0; $("aTanggal").value = "";
+  $("aMasaPakai").value = 0; $("aSatuanMasa").value = "tahun";
+  $("aKeterangan").value = "";
   $("btnSaveAset").textContent = "Simpan Aset"; $("btnCancelAset").style.display = "none";
 }
 async function deleteAset(id) {
@@ -2340,7 +2409,6 @@ $("btnTampilkan").addEventListener("click", renderLaporan);
 $("search").addEventListener("input", renderTable);
 $("filter").addEventListener("change", renderTable);
 $("btnReload").addEventListener("click", load);
-$("bExisting").addEventListener("change", updateBeliPreview);
 $("bQtyExisting").addEventListener("input", updateBeliPreview);
 $("bHargaBaru").addEventListener("input", updateBeliPreview);
 $("bExpiredBaru").addEventListener("change", updateBeliPreview);
@@ -2358,12 +2426,14 @@ $("tbody").addEventListener("click", e => {
   if (!btn) return;
   const id = btn.dataset.id;
   const act = btn.dataset.act;
-  if (act === "edit") { switchTab("edit"); $("editItemSelect").value = id; loadEditForm(id); return; }
+  if (act === "edit") { switchTab("edit"); $("editItemSearch").value = items.find(i=>i.id===id)?.nama || ""; $("editItemSelect").value = id; loadEditForm(id); return; }
   if (act === "del") { deleteItem(id); return; }
   if (act === "in") {
     beliMode = "existing";
     document.querySelectorAll(".mode-switch button").forEach(b => b.classList.toggle("active", b.dataset.mode === "existing"));
-    applyBeliMode(); $("bExisting").value = id; $("bQtyExisting").value = 1; updateBeliPreview();
+    applyBeliMode(); 
+    $("bExistingSearch").value = items.find(i=>i.id===id)?.nama || "";
+    $("bExisting").value = id; $("bQtyExisting").value = 1; updateBeliPreview();
     switchTab("beli"); $("bQtyExisting").focus(); $("bQtyExisting").select();
   }
   if (act === "out") {
