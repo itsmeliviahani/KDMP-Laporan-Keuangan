@@ -113,7 +113,7 @@
 
   /* --- KOTAK FORM (PUTIH SOLID) --- */
   .auth-card{
-    background: #ffffff !important; /* Putih pekat, tidak transparan */
+    background: #ffffff !important;
     padding: 32px 30px;
     border-radius: 16px;
     width: 100%;
@@ -133,20 +133,12 @@
   .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
   
   .auth-field input, .auth-field select{
-    width:100%;
-    padding:10px 14px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    font-size:14px;
-    font-family:inherit;
-    outline:none; 
-    transition:0.2s;
-    background: #ffffff;
-    color: #333;
+    width:100%; padding:10px 14px; border:1px solid #ddd; border-radius:8px;
+    font-size:14px; font-family:inherit; outline:none; transition:0.2s;
+    background: #ffffff; color: #333;
   }
   .auth-field input:focus, .auth-field select:focus{
-    border-color:#c62828; 
-    box-shadow:0 0 0 3px rgba(198,40,40,0.15);
+    border-color:#c62828; box-shadow:0 0 0 3px rgba(198,40,40,0.15);
   }
 
   .password-wrap{position:relative;}
@@ -154,17 +146,9 @@
   .toggle-eye{position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; font-size:18px; user-select:none;}
 
   .auth-btn{
-    width:100%;
-    padding:12px;
-    font-size:15px;
-    border-radius:8px;
-    background:#c62828;
-    color:#fff;
-    border:none;
-    font-weight:700;
-    cursor:pointer;
-    margin-top:8px; 
-    transition:0.2s;
+    width:100%; padding:12px; font-size:15px; border-radius:8px;
+    background:#c62828; color:#fff; border:none; font-weight:700;
+    cursor:pointer; margin-top:8px; transition:0.2s;
     box-shadow: 0 4px 10px rgba(198,40,40,0.3);
   }
   .auth-btn:hover{background:#b71c1c; transform: translateY(-1px);}
@@ -178,18 +162,29 @@
   header{background:#c62828;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
   header h1{margin:0;font-size:17px;font-weight:600}
   header small{opacity:.85;font-size:12px}
-  #status{font-size:12px;background:rgba(255,255,255,.15);padding:5px 10px;border-radius:6px}
   .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .user-actions a{color:#fff;text-decoration:underline;cursor:pointer;font-size:12px;margin-left:8px;}
-  nav.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid #e0e0e0;overflow-x:auto}
-  nav.tabs button{background:none;border:none;padding:12px 14px;font-size:13px;font-weight:600;color:#666;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
-  nav.tabs button:hover{color:#c62828;background:#fff5f5}
-  nav.tabs button.active{color:#c62828;border-bottom-color:#c62828;background:#fff}
+  
   main{max-width:1150px;margin:0 auto;padding:18px 14px 60px; width: 100%;}
   .view{display:none;animation:fade .2s}
   .view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .panel-title{margin:0 0 12px;font-size:15px;color:#b71c1c}
+  
+  /* --- MENU GRID --- */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  .menu-btn {
+    background: #fff; color: #c62828; border: 2px solid #c62828;
+    padding: 20px; font-size: 16px; font-weight: 700; border-radius: 10px;
+    cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    font-family: inherit;
+  }
+  .menu-btn:hover { background: #c62828; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(198, 40, 40, 0.2); }
+  .back-btn { margin-bottom: 15px; padding: 6px 12px; font-size: 13px; }
+
   .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
   input,select,button{font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;color:#222}
   input:focus,select:focus{outline:2px solid #ef9a9a;border-color:#c62828}
@@ -285,6 +280,7 @@
   .koreksi-box span{flex:1;}
   .koreksi-box b{color:#b71c1c;}
   .koreksi-box small{color:#7a4a00;font-size:11.5px;display:block;margin-top:4px;}
+  
   .searchable-select{position:relative;}
   .searchable-select input[type=text]{width:100%;padding:9px 11px;border:1px solid #ddd;border-radius:7px;background:#fff;font-size:13.5px;font-family:inherit;color:#222;transition:0.2s;}
   .searchable-select input[type=text]:focus{outline:2px solid #ef9a9a;border-color:#c62828}
@@ -294,10 +290,11 @@
   .ss-item:last-child{border-bottom:none;}
   .ss-item:hover,.ss-item.highlight{background:#ffebee;color:#c62828;font-weight:600;}
   .ss-empty{padding:12px;color:#888;text-align:center;font-size:12.5px;}
+  
   @media(max-width:600px){
     header h1{font-size:15px}
     .grid{grid-template-columns:1fr}
-    nav.tabs button{padding:10px 10px;font-size:12px}
+    .menu-grid{grid-template-columns:1fr}
     .auth-card{padding:25px;}
     .summary-row{flex-direction:column; align-items:flex-start; gap:5px;}
     .summary-input{width:100% !important;}
@@ -310,11 +307,10 @@
 <!-- ============ LOGIN & LANDING SCREEN ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
   
-  <!-- HALAMAN AWAL (LANDING) -->
   <div id="authLanding" class="auth-landing">
     <div class="landing-content">
       <h1>Koperasi Desa Merah Putih Kapas</h1>
-      <p>Sistem Informasi Pelaporan Keuangan Internal</p>
+      <p>Sistem Informasi Stok & Laporan Terpadu</p>
       <div class="landing-buttons">
         <button class="btn-primary" onclick="showAuthForm('login')">Masuk</button>
         <button class="btn-secondary" onclick="showAuthForm('register')">Daftar Akun</button>
@@ -322,7 +318,6 @@
     </div>
   </div>
 
-  <!-- FORM LOGIN -->
   <div class="auth-card" id="formLogin" style="display:none;">
     <div style="text-align:left; margin-bottom:15px;">
       <a onclick="showLanding()" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali</a>
@@ -350,7 +345,6 @@
     <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
   </div>
 
-  <!-- FORM REGISTER -->
   <div class="auth-card" id="formRegister" style="display:none;">
     <div style="text-align:left; margin-bottom:15px;">
       <a onclick="showLanding()" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali</a>
@@ -379,7 +373,6 @@
     <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
   </div>
 
-  <!-- FORM RESET PASSWORD -->
   <div class="auth-card" id="formResetPassword" style="display:none;">
     <div style="text-align:left; margin-bottom:15px;">
       <a onclick="toggleAuth('login')" style="cursor:pointer; color:#888; font-size:12px; font-weight:600; text-decoration:none;">← Kembali ke Login</a>
@@ -413,28 +406,37 @@
       <small>Politeknik Keuangan Negara STAN</small>
     </div>
     <div class="topbar-actions">
-      <span id="userInfo" class="user-actions" style="font-size:12px; font-weight:600;"></span>
+      <span id="userInfo" style="font-size:13px; font-weight:600;"></span>
       <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent;">Keluar</button>
-      <span id="status">Menghubungkan…</span>
     </div>
   </header>
 
-  <nav class="tabs">
-    <button data-tab="stok" class="active" data-role="all">📦 Stok</button>
-    <button data-tab="beli" data-role="all">🛒 Pembelian</button>
-    <button data-tab="jual" data-role="all">💰 Penjualan</button>
-    <button data-tab="aset" data-role="manajer">🏢 Aset Tetap</button>
-    <button data-tab="stokdaerah" data-role="all">🏬 Stok Fisik</button>
-    <button data-tab="edit" data-role="manajer">✎ Edit Barang</button>
-    <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
-    <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
-    <button data-tab="penjualan" data-role="manajer">📈 Riwayat Penjualan</button>
-    <button data-tab="riwayat" data-role="manajer">🕒 Riwayat Umum</button>
-  </nav>
-
   <main>
+    <!-- MENU UTAMA -->
+    <section id="view-menu" class="view active">
+      <h2 class="panel-title" style="margin-bottom:20px;">Menu Utama</h2>
+      <div class="menu-grid">
+        <button class="menu-btn" onclick="switchTab('stok')">Stok</button>
+        <button class="menu-btn" onclick="switchTab('beli')">Pembelian</button>
+        <button class="menu-btn" onclick="switchTab('jual')">Penjualan</button>
+        <button class="menu-btn" data-role="manajer" onclick="switchTab('aset')">Aset Tetap</button>
+        <button class="menu-btn" onclick="switchTab('stokdaerah')">Stok Fisik</button>
+        <button class="menu-btn" data-role="manajer" onclick="switchTab('edit')">Edit Barang</button>
+        <button class="menu-btn" onclick="switchTab('keuangan')">Keuangan</button>
+        <button class="menu-btn" data-role="manajer" onclick="switchTab('laporan')">Laporan</button>
+        <button class="menu-btn" data-role="manajer" onclick="switchTab('penjualan')">Riwayat Penjualan</button>
+        <button class="menu-btn" data-role="manajer" onclick="switchTab('riwayat')">Riwayat Umum</button>
+        <button class="menu-btn" onclick="switchTab('ganti-sandi')">Ganti Sandi</button>
+      </div>
+      <div style="margin-top:30px; text-align:center;">
+        <span id="status" style="font-size:12px; background:#e0e0e0; color:#333; padding:5px 10px; border-radius:6px;">Menghubungkan…</span>
+      </div>
+    </section>
+
     <!-- STOK -->
-    <section id="view-stok" class="view active">
+    <section id="view-stok" class="view">
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Stok</h2>
       <div class="bar">
         <input type="text" id="search" placeholder="Cari barang…">
         <select id="filter">
@@ -462,10 +464,11 @@
 
     <!-- PEMBELIAN -->
     <section id="view-beli" class="view">
-      <h2 class="panel-title">🛒 Pembelian</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Pembelian</h2>
       <div class="mode-switch">
-        <button id="btnModeExisting" data-mode="existing" class="active">📦 Dibeli</button>
-        <button id="btnModeNew" data-mode="new">🆕 Stok Awal</button>
+        <button id="btnModeExisting" data-mode="existing" class="active">Dibeli</button>
+        <button id="btnModeNew" data-mode="new">Stok Awal</button>
       </div>
       <div class="form-card">
         <div class="grid">
@@ -536,14 +539,15 @@
         </div>
         <div class="preview" id="bPreview">Pilih barang.</div>
         <div class="actions-row">
-          <button id="btnBeli">✅ Simpan</button>
+          <button id="btnBeli">Simpan</button>
         </div>
       </div>
     </section>
 
     <!-- PENJUALAN -->
     <section id="view-jual" class="view">
-      <h2 class="panel-title">💰 Penjualan</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Penjualan</h2>
       <div class="pos-container">
         <div>
           <div class="form-card" style="margin-bottom:15px;">
@@ -551,13 +555,17 @@
             <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
               <div class="field" style="flex:2; min-width:200px">
                 <label>Cari & Pilih Barang</label>
-                <select id="kItem"></select>
+                <div class="searchable-select">
+                  <input type="text" id="kItemSearch" placeholder="Ketik nama barang..." autocomplete="off">
+                  <input type="hidden" id="kItem">
+                  <div class="ss-dropdown" id="kItemDropdown"></div>
+                </div>
               </div>
               <div class="field" style="flex:1; min-width:80px">
                 <label>Jumlah (Qty)</label>
                 <input type="number" id="kQty" min="1" value="1">
               </div>
-              <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">➕ Tambah</button>
+              <button id="btnAddToCart" style="height:38px; background:#1976d2; border-color:#1976d2; padding:0 20px;">Tambah</button>
             </div>
           </div>
           <div class="table-wrap" style="min-height:200px; border:1px solid #000; padding:0;">
@@ -599,7 +607,7 @@
               <label>Nama Kasir</label>
               <input type="text" id="kNote" placeholder="Nama kasir/petugas">
             </div>
-            <button id="btnCheckout" class="btn pos-btn">💳 Proses Pembayaran</button>
+            <button id="btnCheckout" class="btn pos-btn">Proses Pembayaran</button>
           </div>
         </div>
       </div>
@@ -607,8 +615,8 @@
 
     <!-- ASET TETAP -->
     <section id="view-aset" class="view">
-      <h2 class="panel-title">🏢 Aset Tetap</h2>
-      <p class="sub" style="margin-bottom:14px;font-size:12.5px">Pencatatan aset tetap koperasi. <b>Jumlah</b> dan <b>harga</b> bersifat opsional.</p>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Aset Tetap</h2>
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah / Edit Aset</h3>
         <div class="grid">
@@ -627,7 +635,7 @@
         </div>
         <input type="hidden" id="aEditId">
         <div class="actions-row">
-          <button id="btnSaveAset">💾 Simpan Aset</button>
+          <button id="btnSaveAset">Simpan Aset</button>
           <button class="ghost" id="btnCancelAset" style="display:none;">Batal Edit</button>
         </div>
       </div>
@@ -658,10 +666,8 @@
 
     <!-- STOK FISIK -->
     <section id="view-stokdaerah" class="view">
-      <h2 class="panel-title">🏬 Stok Fisik (Akhir & On Hand)</h2>
-      <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Input hasil <b>stock opname fisik</b>. <b>Stok Akhir (Pusat)</b> dipakai untuk formula Rekap (<b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>). <b>Stok On Hand (Daerah)</b> untuk pembanding/pengawasan. Minimal salah satu diisi.
-      </p>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Stok Fisik</h2>
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Input Stok Fisik</h3>
         <div class="grid">
@@ -698,17 +704,17 @@
               <input type="checkbox" id="sdKoreksi">
               <span>
                 <b>Sinkronkan stok sistem dengan Stok Akhir</b>
-                <small>Hanya aktif jika Stok Akhir diisi. Item.stok akan diubah = Stok Akhir, dan jurnal penyesuaian (Beban Persediaan / Persediaan) dibuat otomatis.</small>
+                <small>Hanya aktif jika Stok Akhir diisi. Item.stok akan diubah = Stok Akhir, dan jurnal penyesuaian dibuat otomatis.</small>
               </span>
             </label>
           </div>
         </div>
         <div class="preview" id="sdPreview">Pilih barang.</div>
         <div class="actions-row">
-          <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">📥 Simpan Stok Fisik</button>
+          <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">Simpan Stok Fisik</button>
         </div>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Akhir (Pusat)</h3>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Akhir</h3>
       <div class="table-wrap" style="margin-bottom:16px;">
         <table>
           <thead>
@@ -722,7 +728,7 @@
           <tbody id="tbodyStokAkhir"></tbody>
         </table>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok On Hand (Daerah)</h3>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok On Hand</h3>
       <div class="table-wrap">
         <table>
           <thead>
@@ -740,10 +746,8 @@
 
     <!-- EDIT BARANG -->
     <section id="view-edit" class="view">
-      <h2 class="panel-title">✎ Edit Barang</h2>
-      <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Ubah nama, kategori, satuan, atau harga jual. Untuk koreksi <b>stok fisik</b>, gunakan tab <b>Stok Fisik</b>.
-      </p>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Edit Barang</h2>
       <div class="form-card">
         <div class="grid">
           <div class="field full">
@@ -777,14 +781,15 @@
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name"></div>
         </div>
         <div class="actions-row">
-          <button id="btnSaveEdit">💾 Simpan Perubahan Data</button>
+          <button id="btnSaveEdit">Simpan Perubahan Data</button>
         </div>
       </div>
     </section>
 
     <!-- KEUANGAN -->
     <section id="view-keuangan" class="view">
-      <h2 class="panel-title">💵 Keuangan Lain</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Keuangan Lain</h2>
       <div class="form-card">
         <div class="grid">
           <div class="field"><label>Tipe <span class="req">*</span></label>
@@ -802,7 +807,7 @@
           <div class="field full"><label>Keterangan</label><input type="text" id="kfKeterangan" placeholder="Opsional"></div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="kfNama" placeholder="Nama" autocomplete="name"></div>
         </div>
-        <div class="actions-row"><button id="btnKeuangan">✅ Simpan</button></div>
+        <div class="actions-row"><button id="btnKeuangan">Simpan</button></div>
       </div>
       <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Daftar Keuangan</h3>
       <div class="bar">
@@ -832,14 +837,11 @@
 
     <!-- LAPORAN -->
     <section id="view-laporan" class="view">
-      <h2 class="panel-title">📊 Laporan Keuangan</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Laporan Keuangan</h2>
       
-      <!-- GRAFIK PENJUALAN (PALING ATAS) -->
       <div class="report-card">
-        <h3>📈 Grafik Penjualan</h3>
-        <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
-          Pilih periode, item, dan metrik. Grafik ini punya periode sendiri — tidak ikut berubah saat periode laporan utama diubah.
-        </p>
+        <h3>Grafik Penjualan</h3>
         <div class="chart-filters">
           <label style="font-size:12px;font-weight:600">Dari</label>
           <input type="month" id="chartPeriodStart" style="width:auto">
@@ -851,7 +853,7 @@
         </div>
         <div class="chart-filters" style="margin-top:8px;">
           <select id="chartItemFilter">
-            <option value="all">📊 Seluruh Item</option>
+            <option value="all">Seluruh Item</option>
           </select>
           <select id="chartMetric">
             <option value="qty">Jumlah (Qty)</option>
@@ -861,13 +863,11 @@
         <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
       </div>
 
-      <!-- GRAFIK LABA RUGI -->
       <div class="report-card">
         <h3>Grafik Laba Rugi Bulanan</h3>
         <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
 
-      <!-- FILTER PERIODE LAPORAN UTAMA -->
       <div class="bar" style="margin-top:20px; background:#fff; padding:10px; border-radius:8px; border:1px solid #ddd;">
         <label style="font-size:12px;font-weight:600">Periode Laporan:</label>
         <input type="month" id="periodStart" style="width:auto">
@@ -897,9 +897,6 @@
 
       <div class="report-card">
         <h3>Rekap Barang (Persediaan)</h3>
-        <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
-          <b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>. Jika Stok Akhir belum diinput (tanda *), Penjualan diambil dari total transaksi penjualan tercatat. Selisih = Stok Akhir − Stok On Hand.
-        </p>
         <div class="rekap-wrap">
           <table class="report-table" id="tableRekap">
             <thead>
@@ -910,7 +907,7 @@
                 <th style="text-align:right">Penjualan</th>
                 <th style="text-align:right">Penyesuaian</th>
                 <th style="text-align:right">Stok Akhir</th>
-                <th style="text-align:right">Stok On Hand (Daerah)</th>
+                <th style="text-align:right">Stok On Hand</th>
                 <th style="text-align:right">Selisih</th>
                 <th style="text-align:right">Nilai Selisih</th>
               </tr>
@@ -923,7 +920,8 @@
 
     <!-- RIWAYAT PENJUALAN -->
     <section id="view-penjualan" class="view">
-      <h2 class="panel-title">📈 Riwayat Penjualan</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Riwayat Penjualan</h2>
       <div class="table-wrap">
         <table>
           <thead>
@@ -941,24 +939,34 @@
 
     <!-- RIWAYAT UMUM -->
     <section id="view-riwayat" class="view">
-      <h2 class="panel-title">🕒 Riwayat Umum</h2>
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Riwayat Umum</h2>
       <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
+    </section>
+
+    <!-- GANTI SANDI -->
+    <section id="view-ganti-sandi" class="view">
+      <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
+      <h2 class="panel-title">Ganti Sandi</h2>
+      <div class="form-card">
+        <div class="grid">
+          <div class="field full">
+            <label>Password Lama</label>
+            <input type="password" id="gsOld">
+          </div>
+          <div class="field full">
+            <label>Password Baru</label>
+            <input type="password" id="gsNew">
+          </div>
+        </div>
+        <div class="actions-row">
+          <button id="btnGS">Simpan Sandi</button>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
-</div>
-
-<div class="modal-backdrop" id="modalPassword">
-  <div class="modal">
-    <h3>Ganti Sandi</h3>
-    <div class="field" style="margin-bottom:10px"><label>Password Lama</label><input type="password" id="oldPassword"></div>
-    <div class="field" style="margin-bottom:15px"><label>Password Baru</label><input type="password" id="newPassword"></div>
-    <div class="actions-row" style="justify-content:flex-end; margin-top:0">
-      <button class="ghost" onclick="closeModalPassword()">Batal</button>
-      <button onclick="submitChangePassword()">Simpan Sandi</button>
-    </div>
-  </div>
 </div>
 
 <div id="toast"></div>
@@ -1133,16 +1141,21 @@ async function handleRegister() {
 function showApp(user) {
   $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
-  $("userInfo").innerHTML = `Halo, <b>${user.username}</b> (${user.role === 'manajer' ? 'Manajer' : 'Karyawan'}) <a onclick="openChangePassword()" title="Ganti Password">⚙️ Ganti Sandi</a>`;
-  document.querySelectorAll("nav.tabs button").forEach(btn => {
-    if (btn.dataset.role === "manajer" && user.role !== "manajer") btn.style.display = "none";
+  
+  $("userInfo").innerHTML = `Halo, <b>${user.username}</b>`;
+  
+  document.querySelectorAll(".menu-btn[data-role='manajer']").forEach(btn => {
+    if (user.role !== "manajer") btn.style.display = "none";
     else btn.style.display = "block";
   });
+
   if (user.role === "karyawan") { $("btnModeExisting").style.display = "none"; beliMode = "new"; }
   else { $("btnModeExisting").style.display = "block"; }
+  
   const koreksiWrap = $("sdKoreksiWrap");
   if (koreksiWrap) koreksiWrap.style.display = user.role === "manajer" ? "flex" : "none";
-  switchTab("stok");
+  
+  switchTab("menu");
   applyBeliMode();
   updateKategoriOptions();
   loadNames();
@@ -1152,19 +1165,6 @@ function showApp(user) {
 }
 
 function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
-function openChangePassword() { $("oldPassword").value = ""; $("newPassword").value = ""; $("modalPassword").classList.add("show"); }
-function closeModalPassword() { $("modalPassword").classList.remove("show"); }
-async function submitChangePassword() {
-  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
-  const oldP = $("oldPassword").value;
-  const newP = $("newPassword").value;
-  if (!oldP || !newP) { toast("Isi kedua kolom.", "err"); return; }
-  try {
-    const res = await api({ action: "change_password", username: auth.username, oldPassword: oldP, newPassword: newP }, "POST");
-    if (res.ok) { toast(res.message, "ok"); closeModalPassword(); }
-    else toast(res.message, "err");
-  } catch (e) { toast("Gagal terhubung ke server.", "err"); }
-}
 
 function toast(msg, type = "") {
   const el = $("toast");
@@ -1174,7 +1174,8 @@ function toast(msg, type = "") {
 function setStatus(text, ok = true) {
   const el = $("status");
   el.textContent = text;
-  el.style.background = ok ? "rgba(255,255,255,.18)" : "rgba(255,0,0,.35)";
+  el.style.background = ok ? "rgba(0,0,0,0.1)" : "rgba(255,0,0,0.2)";
+  el.style.color = ok ? "#333" : "#c62828";
 }
 
 function loadNames() {
@@ -1196,8 +1197,9 @@ function switchTab(name) {
   if (auth.role !== "manajer" && ["edit", "laporan", "riwayat", "penjualan", "aset"].includes(name)) {
     toast("Akses ditolak. Fitur ini khusus Manajer.", "err"); return;
   }
-  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
+  
   if (name === "riwayat") loadHistory();
   if (name === "laporan") renderLaporan();
   if (name === "keuangan") renderKeuangan();
@@ -1207,7 +1209,6 @@ function switchTab(name) {
   if (name === "stokdaerah") { populateStokFisikView(); renderStokDaerah(); renderStokAkhir(); }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
 async function load() {
   try {
@@ -1315,15 +1316,54 @@ function fillSelects() {
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prevB && items.some(i => i.id === prevB)) selB.value = prevB;
-  const selK = $("kItem");
-  const prevK = selK.value;
-  selK.innerHTML = items.length
-    ? items.map(i => `<option value="${i.id}">${esc(i.nama)} — ${i.stok} ${esc(i.satuan)}</option>`).join("")
-    : '<option value="">— Belum ada barang —</option>';
-  if (prevK && items.some(i => i.id === prevK)) selK.value = prevK;
+  
+  $("kItemSearch").value = "";
+  $("kItem").value = "";
+  
   updateBeliPreview();
 }
 
+/* Searchable Dropdown Logic for Penjualan */
+function renderItemDropdown(filterText) {
+  const dropdown = $("kItemDropdown");
+  if (!dropdown) return;
+  const q = String(filterText || "").toLowerCase().trim();
+  const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
+  if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
+  if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
+  dropdown.innerHTML = filtered.slice(0, 100).map(i => `
+    <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
+      ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
+    </div>
+  `).join("");
+  dropdown.classList.add("show");
+  dropdown.querySelectorAll(".ss-item").forEach(el => {
+    el.addEventListener("mousedown", e => {
+      e.preventDefault();
+      $("kItem").value = el.dataset.id;
+      $("kItemSearch").value = el.dataset.nama;
+      dropdown.classList.remove("show");
+    });
+  });
+}
+
+$("kItemSearch").addEventListener("input", e => { $("kItem").value = ""; renderItemDropdown(e.target.value); });
+$("kItemSearch").addEventListener("focus", e => renderItemDropdown(e.target.value));
+$("kItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("kItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
+$("kItemSearch").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const dropdown = $("kItemDropdown");
+    const first = dropdown.querySelector(".ss-item");
+    if (first) {
+      $("kItem").value = first.dataset.id;
+      $("kItemSearch").value = first.dataset.nama;
+      dropdown.classList.remove("show");
+    }
+  }
+});
+
+/* Searchable Dropdown Logic for Stok Fisik */
 function populateStokFisikView() {
   const searchEl = $("sdItemSearch");
   const hiddenEl = $("sdItemSelect");
@@ -1359,6 +1399,23 @@ function renderStokFisikDropdown(filterText) {
     });
   });
 }
+$("sdItemSearch").addEventListener("input", e => { $("sdItemSelect").value = ""; renderStokFisikDropdown(e.target.value); });
+$("sdItemSearch").addEventListener("focus", e => renderStokFisikDropdown(e.target.value));
+$("sdItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("sdItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
+$("sdItemSearch").addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const dropdown = $("sdItemDropdown");
+    const first = dropdown.querySelector(".ss-item");
+    if (first) {
+      $("sdItemSelect").value = first.dataset.id;
+      $("sdItemSearch").value = first.dataset.nama;
+      dropdown.classList.remove("show");
+      updateStokFisikPreview();
+    }
+  }
+});
+
 function updateStokFisikPreview() {
   const box = $("sdPreview");
   const item = items.find(i => i.id === $("sdItemSelect").value);
@@ -1401,6 +1458,7 @@ function updateStokFisikPreview() {
     box.innerHTML = `<b>${esc(item.nama)}</b> · Sistem: ${item.stok} ${esc(item.satuan)}<br>${parts.join("<br>")}`;
   }
 }
+
 async function submitStokFisik() {
   const item = items.find(i => i.id === $("sdItemSelect").value);
   if (!item) { toast("Pilih barang terlebih dahulu.", "err"); return; }
@@ -1430,6 +1488,7 @@ async function submitStokFisik() {
     await load();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
+
 function renderStokAkhir() {
   const tb = $("tbodyStokAkhir");
   if (!tb) return;
@@ -1482,22 +1541,6 @@ function renderStokDaerah() {
     });
   });
 }
-$("sdItemSearch").addEventListener("input", e => { $("sdItemSelect").value = ""; renderStokFisikDropdown(e.target.value); });
-$("sdItemSearch").addEventListener("focus", e => renderStokFisikDropdown(e.target.value));
-$("sdItemSearch").addEventListener("blur", () => { setTimeout(() => { const dd = $("sdItemDropdown"); if (dd) dd.classList.remove("show"); }, 180); });
-$("sdItemSearch").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    const dropdown = $("sdItemDropdown");
-    const first = dropdown.querySelector(".ss-item");
-    if (first) {
-      $("sdItemSelect").value = first.dataset.id;
-      $("sdItemSearch").value = first.dataset.nama;
-      dropdown.classList.remove("show");
-      updateStokFisikPreview();
-    }
-  }
-});
 $("sdStokAkhir").addEventListener("input", updateStokFisikPreview);
 $("sdStokOnHand").addEventListener("input", updateStokFisikPreview);
 $("sdKoreksi").addEventListener("change", updateStokFisikPreview);
@@ -1666,16 +1709,20 @@ function resetBeliNew() {
 
 function addToCart() {
   const id = $("kItem").value;
+  if (!id) { toast("Ketik dan pilih barang terlebih dahulu.", "err"); return; }
   const qty = parseInt($("kQty").value, 10) || 0;
   const item = items.find(i => i.id === id);
-  if (!item) { toast("Pilih barang.", "err"); return; }
+  if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   if (qty <= 0) { toast("Jumlah harus > 0.", "err"); return; }
   const existing = cart.find(c => c.id === id);
   const currentQty = existing ? existing.qty : 0;
   if (currentQty + qty > item.stok) { toast(`Stok tidak cukup. Sisa ${item.stok} ${item.satuan}.`, "err"); return; }
   if (existing) { existing.qty += qty; existing.subtotal = existing.qty * item.harga_jual; }
   else { cart.push({ id: item.id, nama: item.nama, harga: item.harga_jual || 0, qty, subtotal: qty * (item.harga_jual || 0), satuan: item.satuan }); }
-  $("kQty").value = 1; renderCart();
+  $("kQty").value = 1; 
+  $("kItem").value = "";
+  $("kItemSearch").value = "";
+  renderCart();
 }
 function renderCart() {
   const tb = $("cartBody");
@@ -1732,10 +1779,29 @@ async function submitCheckout() {
       saveKasir(kasir); await load();
     } else toast(res.message, "err");
   } catch (e) { toast("Gagal memproses pembayaran.", "err"); }
-  finally { btn.textContent = "💳 Proses Pembayaran"; btn.disabled = false; }
+  finally { btn.textContent = "Proses Pembayaran"; btn.disabled = false; }
 }
 $("btnAddToCart").addEventListener("click", addToCart);
 $("btnCheckout").addEventListener("click", submitCheckout);
+
+async function submitChangePasswordView() {
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  const oldP = $("gsOld").value;
+  const newP = $("gsNew").value;
+  if (!oldP || !newP) { toast("Isi kedua kolom.", "err"); return; }
+  const btn = $("btnGS");
+  btn.textContent = "Menyimpan..."; btn.disabled = true;
+  try {
+    const res = await api({ action: "change_password", username: auth.username, oldPassword: oldP, newPassword: newP }, "POST");
+    if (res.ok) { 
+      toast(res.message, "ok"); 
+      $("gsOld").value = ""; $("gsNew").value = "";
+      switchTab("menu");
+    } else toast(res.message, "err");
+  } catch (e) { toast("Gagal terhubung ke server.", "err"); }
+  finally { btn.textContent = "Simpan Sandi"; btn.disabled = false; }
+}
+$("btnGS").addEventListener("click", submitChangePasswordView);
 
 const KATEGORI = {
   pendapatan_lain: ["Bunga Bank", "Donasi", "Penjualan Aset", "Pengembalian", "Jasa", "Lainnya"],
@@ -1843,13 +1909,13 @@ function editAset(id) {
   $("aEditId").value = a.id; $("aNama").value = a.nama; $("aKategori").value = a.kategori || "Lainnya";
   $("aJumlah").value = a.jumlah; $("aHarga").value = a.harga; $("aTanggal").value = a.tanggal_perolehan;
   $("aKeterangan").value = a.keterangan; $("aPencatat").value = a.nama_pencatat;
-  $("btnSaveAset").textContent = "💾 Update Aset"; $("btnCancelAset").style.display = "inline-block";
+  $("btnSaveAset").textContent = "Update Aset"; $("btnCancelAset").style.display = "inline-block";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function resetFormAset() {
   $("aEditId").value = ""; $("aNama").value = ""; $("aKategori").value = "Kendaraan";
   $("aJumlah").value = 1; $("aHarga").value = 0; $("aTanggal").value = ""; $("aKeterangan").value = "";
-  $("btnSaveAset").textContent = "💾 Simpan Aset"; $("btnCancelAset").style.display = "none";
+  $("btnSaveAset").textContent = "Simpan Aset"; $("btnCancelAset").style.display = "none";
 }
 async function deleteAset(id) {
   if (!confirm("Hapus aset ini?")) return;
@@ -2134,7 +2200,6 @@ function renderLaporan() {
 
   renderRekapBarang(startR.start, endR.end);
 
-  // Chart Laba Rugi
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
   const endD = new Date(endR.y, endR.m - 1, 1);
@@ -2175,7 +2240,7 @@ function fillChartItemDropdown() {
   const sel = $("chartItemFilter");
   if (!sel) return;
   const prev = sel.value;
-  sel.innerHTML = '<option value="all">📊 Seluruh Item</option>' +
+  sel.innerHTML = '<option value="all">Seluruh Item</option>' +
     items.map(i => `<option value="${esc(i.nama)}">${esc(i.nama)}</option>`).join("");
   if (prev && (prev === "all" || items.some(i => i.nama === prev))) sel.value = prev;
 }
@@ -2302,7 +2367,9 @@ $("tbody").addEventListener("click", e => {
     switchTab("beli"); $("bQtyExisting").focus(); $("bQtyExisting").select();
   }
   if (act === "out") {
-    switchTab("jual"); $("kItem").value = id; $("kQty").value = 1; $("kQty").focus(); $("kQty").select();
+    switchTab("jual"); $("kItemSearch").value = ""; $("kItem").value = ""; $("kQty").value = 1; 
+    renderItemDropdown("");
+    $("kItemSearch").focus();
   }
 });
 
