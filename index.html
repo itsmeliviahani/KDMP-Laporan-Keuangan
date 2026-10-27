@@ -25,7 +25,17 @@
     z-index:1000;
     padding:20px;
   }
-  .auth-card{background:#fff;padding:40px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.08);width:100%;max-width:480px;border-top:6px solid #c62828}
+    .auth-card{
+    background: rgba(255, 255, 255, 0.8); /* Membuat background putih jadi 80% transparan */
+    backdrop-filter: blur(10px); /* Memberikan efek blur pada foto di belakangnya */
+    -webkit-backdrop-filter: blur(10px); /* Dukungan untuk browser Safari */
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3); /* Bayangan sedikit dipertegas */
+    width:100%;
+    max-width:480px;
+    border-top:6px solid #c62828;
+  }
   .auth-header{text-align:center; margin-bottom:30px;}
   .auth-header h2{margin:0; color:#c62828; font-size:26px; font-weight:700;}
   .auth-header p{margin:8px 0 0; color:#666; font-size:14px;}
