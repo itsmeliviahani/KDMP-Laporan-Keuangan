@@ -112,6 +112,8 @@
   .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:800px){.report-grid{grid-template-columns:1fr}}
   .chart-wrap{position:relative;height:340px}
+  .chart-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+  .chart-filters select{min-width:180px}
   .guide h3{margin:22px 0 8px;font-size:15px;color:#b71c1c}
   .guide h3:first-of-type{margin-top:0}
   .guide p, .guide li{font-size:13.5px;line-height:1.6;color:#333}
@@ -141,7 +143,7 @@
   .money-input-wrap input.summary-input::-webkit-outer-spin-button,
   .money-input-wrap input.summary-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .rekap-wrap{overflow-x:auto;}
-  .rekap-wrap table{min-width:900px;}
+  .rekap-wrap table{min-width:1050px;}
   .koreksi-box{background:#fff8e1;padding:12px;border-radius:8px;border:1px solid #ffe082;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
   .koreksi-box input{width:auto;margin-top:2px;}
   .koreksi-box span{flex:1;}
@@ -253,7 +255,7 @@
     <button data-tab="beli" data-role="all">🛒 Pembelian</button>
     <button data-tab="jual" data-role="all">💰 Penjualan</button>
     <button data-tab="aset" data-role="manajer">🏢 Aset Tetap</button>
-    <button data-tab="stokdaerah" data-role="all">🏬 Stok On Hand</button>
+    <button data-tab="stokdaerah" data-role="all">🏬 Stok Fisik</button>
     <button data-tab="edit" data-role="manajer">✎ Edit Barang</button>
     <button data-tab="keuangan" data-role="all">💵 Keuangan</button>
     <button data-tab="laporan" data-role="manajer">📊 Laporan</button>
@@ -263,7 +265,6 @@
   </nav>
 
   <main>
-    <!-- STOK -->
     <section id="view-stok" class="view active">
       <div class="bar">
         <input type="text" id="search" placeholder="Cari barang…">
@@ -290,7 +291,6 @@
       </div>
     </section>
 
-    <!-- PEMBELIAN -->
     <section id="view-beli" class="view">
       <h2 class="panel-title">🛒 Pembelian</h2>
       <div class="mode-switch">
@@ -371,7 +371,6 @@
       </div>
     </section>
 
-    <!-- PENJUALAN -->
     <section id="view-jual" class="view">
       <h2 class="panel-title">💰 Penjualan</h2>
       <div class="pos-container">
@@ -435,7 +434,6 @@
       </div>
     </section>
 
-    <!-- ASET TETAP -->
     <section id="view-aset" class="view">
       <h2 class="panel-title">🏢 Aset Tetap</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">Pencatatan aset tetap koperasi. <b>Jumlah</b> dan <b>harga</b> bersifat opsional.</p>
@@ -486,30 +484,34 @@
       </div>
     </section>
 
-    <!-- STOK ON HAND (dengan opsi koreksi) -->
+    <!-- STOK FISIK (Stok Akhir + On Hand) -->
     <section id="view-stokdaerah" class="view">
-      <h2 class="panel-title">🏬 Stok On Hand (Daerah)</h2>
+      <h2 class="panel-title">🏬 Stok Fisik (Akhir & On Hand)</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Catat hasil perhitungan fisik dari <b>instansi daerah</b>. Centang <b>"Sesuaikan stok sistem"</b> jika ingin mengoreksi stok pusat sekaligus membuat jurnal penyesuaian (menggantikan fungsi Stock Opname).
+        Input hasil <b>stock opname fisik</b>. <b>Stok Akhir (Pusat)</b> dipakai untuk formula Rekap (<b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>). <b>Stok On Hand (Daerah)</b> untuk pembanding/pengawasan. Minimal salah satu diisi.
       </p>
       <div class="form-card" style="margin-bottom:16px;">
-        <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Input Stok On Hand</h3>
+        <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Input Stok Fisik</h3>
         <div class="grid">
           <div class="field full">
             <label>Pilih Barang <span class="req">*</span></label>
             <select id="sdItemSelect"></select>
           </div>
           <div class="field">
-            <label>Stok Sistem (Pusat)</label>
+            <label>Stok Sistem (saat ini)</label>
             <input type="text" id="sdStokSistem" readonly style="background:#f5f5f5;color:#666;font-weight:bold;">
           </div>
           <div class="field">
-            <label>Stok On Hand (Daerah) <span class="req">*</span></label>
-            <input type="number" id="sdJumlah" min="0" placeholder="Hasil hitung fisik daerah">
+            <label>Stok Akhir (Pusat) <span class="opt">(opsional)</span></label>
+            <input type="number" id="sdStokAkhir" min="0" placeholder="Dari laporan pusat">
+          </div>
+          <div class="field">
+            <label>Stok On Hand (Daerah) <span class="opt">(opsional)</span></label>
+            <input type="number" id="sdStokOnHand" min="0" placeholder="Hasil hitung fisik daerah">
           </div>
           <div class="field full">
             <label>Nama Pencatat</label>
-            <input type="text" id="sdPencatat" placeholder="Nama petugas daerah" autocomplete="name">
+            <input type="text" id="sdPencatat" placeholder="Nama petugas" autocomplete="name">
           </div>
           <div class="field full">
             <label>Keterangan <span class="opt">(opsional)</span></label>
@@ -519,18 +521,32 @@
             <label class="koreksi-box">
               <input type="checkbox" id="sdKoreksi">
               <span>
-                <b>Sesuaikan stok sistem dengan fisik ini</b>
-                <small>Menggantikan fungsi Stock Opname. Akan mengoreksi stok pusat & membuat jurnal penyesuaian (Beban Persediaan / Persediaan) otomatis.</small>
+                <b>Sinkronkan stok sistem dengan Stok Akhir</b>
+                <small>Hanya aktif jika Stok Akhir diisi. Item.stok akan diubah = Stok Akhir, dan jurnal penyesuaian (Beban Persediaan / Persediaan) dibuat otomatis.</small>
               </span>
             </label>
           </div>
         </div>
         <div class="preview" id="sdPreview">Pilih barang.</div>
         <div class="actions-row">
-          <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">📥 Simpan Stok Daerah</button>
+          <button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">📥 Simpan Stok Fisik</button>
         </div>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Daerah</h3>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok Akhir (Pusat)</h3>
+      <div class="table-wrap" style="margin-bottom:16px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th><th>Barang</th>
+              <th style="text-align:right">Jumlah</th>
+              <th>Pencatat</th><th>Keterangan</th>
+              <th style="text-align:right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyStokAkhir"></tbody>
+        </table>
+      </div>
+      <h3 style="margin:24px 0 12px;font-size:14px;color:#b71c1c">Riwayat Stok On Hand (Daerah)</h3>
       <div class="table-wrap">
         <table>
           <thead>
@@ -546,11 +562,10 @@
       </div>
     </section>
 
-    <!-- EDIT BARANG (dulu Stock Opname, sekarang hanya edit data) -->
     <section id="view-edit" class="view">
       <h2 class="panel-title">✎ Edit Barang</h2>
       <p class="sub" style="margin-bottom:14px;font-size:12.5px">
-        Ubah nama, kategori, satuan, atau harga jual barang. Untuk koreksi <b>stok fisik</b>, gunakan tab <b>Stok On Hand</b>.
+        Ubah nama, kategori, satuan, atau harga jual. Untuk koreksi <b>stok fisik</b>, gunakan tab <b>Stok Fisik</b>.
       </p>
       <div class="form-card">
         <div class="grid">
@@ -590,7 +605,6 @@
       </div>
     </section>
 
-    <!-- KEUANGAN -->
     <section id="view-keuangan" class="view">
       <h2 class="panel-title">💵 Keuangan Lain</h2>
       <div class="form-card">
@@ -638,7 +652,6 @@
       </div>
     </section>
 
-    <!-- LAPORAN -->
     <section id="view-laporan" class="view">
       <h2 class="panel-title">📊 Laporan Keuangan</h2>
       <div class="bar">
@@ -671,7 +684,7 @@
       <div class="report-card">
         <h3>Rekap Barang (Persediaan)</h3>
         <p class="sub" style="font-size:11.5px;margin:-6px 0 12px">
-          Stok Akhir = Stok Awal + Pembelian − Penjualan. Selisih = Stok Akhir (Pusat) − Stok On Hand (Daerah). Nilai Selisih = Selisih × Harga Beli.
+          <b>Penjualan = Stok Awal + Pembelian − Stok Akhir</b>. Jika Stok Akhir belum diinput, Penjualan = total transaksi penjualan tercatat. Selisih = Stok Akhir − Stok On Hand.
         </p>
         <div class="rekap-wrap">
           <table class="report-table" id="tableRekap">
@@ -681,7 +694,8 @@
                 <th style="text-align:right">Stok Awal</th>
                 <th style="text-align:right">Pembelian</th>
                 <th style="text-align:right">Penjualan</th>
-                <th style="text-align:right">Stok Akhir (Pusat)</th>
+                <th style="text-align:right">Penyesuaian</th>
+                <th style="text-align:right">Stok Akhir</th>
                 <th style="text-align:right">Stok On Hand (Daerah)</th>
                 <th style="text-align:right">Selisih</th>
                 <th style="text-align:right">Nilai Selisih</th>
@@ -693,12 +707,25 @@
       </div>
 
       <div class="report-card">
+        <h3>📈 Grafik Penjualan</h3>
+        <div class="chart-filters">
+          <select id="chartItemFilter">
+            <option value="all">📊 Seluruh Item</option>
+          </select>
+          <select id="chartMetric">
+            <option value="qty">Jumlah (Qty)</option>
+            <option value="revenue">Nilai (Rp)</option>
+          </select>
+        </div>
+        <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
+      </div>
+
+      <div class="report-card">
         <h3>Grafik Laba Rugi Bulanan</h3>
         <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
     </section>
 
-    <!-- RIWAYAT PENJUALAN -->
     <section id="view-penjualan" class="view">
       <h2 class="panel-title">📈 Riwayat Penjualan</h2>
       <div class="table-wrap">
@@ -716,20 +743,18 @@
       </div>
     </section>
 
-    <!-- RIWAYAT UMUM -->
     <section id="view-riwayat" class="view">
       <h2 class="panel-title">🕒 Riwayat Umum</h2>
       <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
     </section>
 
-    <!-- PANDUAN -->
     <section id="view-panduan" class="view">
       <h2 class="panel-title">📖 Panduan</h2>
       <div class="guide">
         <h3>Akses Pengguna</h3>
         <ul>
-          <li><b>Manajer</b> — akses penuh (Aset Tetap, Edit Barang, Laporan, Riwayat, koreksi stok dari Stok On Hand).</li>
-          <li><b>Karyawan</b> — Stok, Pembelian, Penjualan, Stok On Hand (observasi saja), Keuangan, Panduan.</li>
+          <li><b>Manajer</b> — akses penuh (Aset Tetap, Edit Barang, Laporan, Riwayat, koreksi stok).</li>
+          <li><b>Karyawan</b> — Stok, Pembelian, Penjualan, Stok Fisik, Keuangan, Panduan.</li>
         </ul>
 
         <h3>Pembelian</h3>
@@ -738,23 +763,26 @@
           <li><b>Dibeli</b> — menambah stok barang yang sudah terdaftar.</li>
         </ul>
 
-        <h3>Stok On Hand (Daerah)</h3>
-        <p>Satu tempat untuk input stok fisik. Ada dua mode:</p>
+        <h3>Stok Fisik (Akhir & On Hand)</h3>
+        <p>Dua field input fisik, keduanya opsional, minimal satu diisi:</p>
         <ul>
-          <li><b>Mode observasi</b> (checkbox tidak dicentang) — hanya mencatat, tidak mengubah stok sistem. Cocok untuk monitoring rutin.</li>
-          <li><b>Mode koreksi</b> (checkbox <b>"Sesuaikan stok sistem"</b> dicentang, khusus manajer) — mengoreksi stok sistem dan membuat jurnal penyesuaian otomatis:
-            <ul>
-              <li>Fisik &lt; sistem: <b>Beban Persediaan (D)</b> / <b>Persediaan (K)</b></li>
-              <li>Fisik &gt; sistem: <b>Persediaan (D)</b> / <b>Beban Persediaan (K)</b></li>
-            </ul>
-          </li>
+          <li><b>Stok Akhir (Pusat)</b> — angka dari laporan instansi pusat. Dipakai di formula Rekap:
+            <code>Penjualan = Stok Awal + Pembelian − Stok Akhir</code></li>
+          <li><b>Stok On Hand (Daerah)</b> — hasil hitung fisik daerah. Untuk pembanding di Rekap:
+            <code>Selisih = Stok Akhir − Stok On Hand</code></li>
         </ul>
-
-        <h3>Edit Barang</h3>
-        <p>Untuk mengubah nama, kategori, satuan, atau harga jual. Perubahan nama barang otomatis ikut mengubah riwayat terkait agar laporan tetap sinkron.</p>
+        <p>Jika <b>Sinkronkan stok sistem</b> dicentang (dan Stok Akhir diisi): Item.stok akan diubah = Stok Akhir, dengan jurnal penyesuaian otomatis (Beban Persediaan / Persediaan).</p>
 
         <h3>Rekap Barang</h3>
-        <p><b>Stok Akhir (Pusat) = Stok Awal + Pembelian − Penjualan.</b> Dibandingkan dengan <b>Stok On Hand (Daerah)</b>. Selisih positif artinya sistem lebih tinggi dari fisik (potensi kehilangan), selisih negatif artinya fisik lebih tinggi dari sistem.</p>
+        <p><b>Penjualan</b> dihitung otomatis:</p>
+        <ul>
+          <li>Jika Stok Akhir diinput → <code>Penjualan = Stok Awal + Pembelian − Stok Akhir</code></li>
+          <li>Jika Stok Akhir belum diinput → <code>Penjualan = total transaksi penjualan tercatat</code></li>
+        </ul>
+        <p>Jadi transaksi POS tetap masuk ke Penjualan. Kalau ada selisih antara sistem vs fisik, akan tampil di kolom <b>Selisih</b>.</p>
+
+        <h3>Grafik Penjualan</h3>
+        <p>Pilih <b>item</b> (atau seluruh item) dan <b>metrik</b> (Qty / Rp) untuk melihat tren penjualan bulanan.</p>
 
         <div class="note"><b>HPP Metode FIFO</b> — barang yang paling awal masuk dianggap paling awal terjual.</div>
       </div>
@@ -779,7 +807,6 @@
 <div id="toast"></div>
 
 <script>
-/* ============ KONFIG ============ */
 const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
 const K_KASIR = "kdmpkapas_kasir";
 const K_SUPPLIER = "kdmpkapas_supplier";
@@ -790,9 +817,11 @@ let keuangan = [];
 let penjualan = [];
 let aset = [];
 let stokDaerah = [];
+let stokAkhir = [];
 let beliMode = "existing";
 let editingId = null;
 let chartInstance = null;
+let chartPenjualanInstance = null;
 let cart = [];
 
 const $ = id => document.getElementById(id);
@@ -807,7 +836,6 @@ const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const dateFromStr = s => new Date(String(s).replace(" ", "T"));
 const pad2 = n => String(n).padStart(2, "0");
 
-/* ---------- MONEY ---------- */
 function formatMoney(el) {
   let val = el.value.replace(/\D/g, "");
   if (val === "") val = "0";
@@ -826,7 +854,6 @@ function attachMoneyInputs() {
   });
 }
 
-/* ---------- API ---------- */
 async function api(payload = null, method = "GET", query = "") {
   const opts = method === "GET"
     ? { method: "GET" }
@@ -837,7 +864,6 @@ async function api(payload = null, method = "GET", query = "") {
   return res.json();
 }
 
-/* ---------- AUTH ---------- */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) showApp(JSON.parse(auth));
@@ -931,12 +957,8 @@ function showApp(user) {
   });
   if (user.role === "karyawan") { $("btnModeExisting").style.display = "none"; beliMode = "new"; }
   else { $("btnModeExisting").style.display = "block"; }
-  // Sembunyikan checkbox koreksi untuk karyawan
   const koreksiWrap = $("sdKoreksiWrap");
-  if (koreksiWrap) {
-    if (user.role === "manajer") koreksiWrap.style.display = "flex";
-    else koreksiWrap.style.display = "none";
-  }
+  if (koreksiWrap) koreksiWrap.style.display = user.role === "manajer" ? "flex" : "none";
   switchTab("stok");
   applyBeliMode();
   updateKategoriOptions();
@@ -970,7 +992,6 @@ function setStatus(text, ok = true) {
   el.style.background = ok ? "rgba(255,255,255,.18)" : "rgba(255,0,0,.35)";
 }
 
-/* ---------- NAMES ---------- */
 function loadNames() {
   const sup = (localStorage.getItem(K_SUPPLIER) || "").trim();
   const kas = (localStorage.getItem(K_KASIR) || "").trim();
@@ -985,7 +1006,6 @@ function saveSupplier(v) { const n = String(v || "").trim(); if (n) localStorage
 function saveKasir(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_KASIR, n); }
 function val(id) { return String($(id).value || "").trim(); }
 
-/* ---------- TAB ---------- */
 function switchTab(name) {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
   if (auth.role !== "manajer" && ["edit", "laporan", "riwayat", "penjualan", "aset"].includes(name)) {
@@ -999,21 +1019,21 @@ function switchTab(name) {
   if (name === "edit") populateEditView();
   if (name === "penjualan") loadPenjualan();
   if (name === "aset") renderAset();
-  if (name === "stokdaerah") { populateStokDaerahView(); renderStokDaerah(); }
+  if (name === "stokdaerah") { populateStokFisikView(); renderStokDaerah(); renderStokAkhir(); }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
 
-/* ---------- LOAD ---------- */
 async function load() {
   try {
     setStatus("Memuat…");
-    const [dItems, dHist, dKeu, dAset, dSD] = await Promise.all([
+    const [dItems, dHist, dKeu, dAset, dSD, dSA] = await Promise.all([
       api(null, "GET", ""),
       api(null, "GET", "history=1&all=1"),
       api(null, "GET", "keuangan=1"),
       api(null, "GET", "aset=1"),
-      api(null, "GET", "stokdaerah=1")
+      api(null, "GET", "stokdaerah=1"),
+      api(null, "GET", "stokakhir=1")
     ]);
     if (!dItems.ok) throw new Error(dItems.message || "Gagal memuat barang");
     items = dItems.items || [];
@@ -1021,12 +1041,15 @@ async function load() {
     keuangan = dKeu.keuangan || [];
     aset = dAset.aset || [];
     stokDaerah = dSD.stokdaerah || [];
+    stokAkhir = dSA.stokakhir || [];
     renderTable();
     fillSelects();
     populateEditView();
     renderAset();
-    populateStokDaerahView();
+    populateStokFisikView();
     renderStokDaerah();
+    renderStokAkhir();
+    fillChartItemDropdown();
     setStatus("Terhubung ke Google Sheets");
   } catch (e) {
     setStatus("Gagal: " + e.message, false);
@@ -1038,7 +1061,6 @@ async function loadPenjualan() {
   catch (e) { toast("Gagal memuat riwayat penjualan.", "err"); }
 }
 
-/* ---------- TABEL STOK ---------- */
 function daysLeft(dateStr) {
   if (!dateStr) return null;
   const today = new Date(); today.setHours(0,0,0,0);
@@ -1101,7 +1123,6 @@ function renderPenjualan() {
   `).join("");
 }
 
-/* ---------- SELECTS ---------- */
 function fillSelects() {
   const selB = $("bExisting");
   const prevB = selB.value;
@@ -1118,8 +1139,7 @@ function fillSelects() {
   updateBeliPreview();
 }
 
-/* ---------- STOK DAERAH ---------- */
-function populateStokDaerahView() {
+function populateStokFisikView() {
   const sel = $("sdItemSelect");
   if (!sel) return;
   const prev = sel.value;
@@ -1127,73 +1147,135 @@ function populateStokDaerahView() {
     ? items.map(i => `<option value="${i.id}">${esc(i.nama)}</option>`).join("")
     : '<option value="">— Belum ada barang —</option>';
   if (prev && items.some(i => i.id === prev)) sel.value = prev;
-  updateStokDaerahPreview();
+  updateStokFisikPreview();
 }
-function updateStokDaerahPreview() {
+function updateStokFisikPreview() {
   const box = $("sdPreview");
   const item = items.find(i => i.id === $("sdItemSelect").value);
   if (!item) { box.className = "preview"; box.textContent = "Belum ada barang."; return; }
   $("sdStokSistem").value = `${item.stok} ${item.satuan}`;
-  const jumlah = parseInt($("sdJumlah").value, 10);
-  if (isNaN(jumlah) || jumlah < 0) {
-    box.className = "preview";
-    box.textContent = `Stok sistem: ${item.stok} ${item.satuan}. Masukkan jumlah on hand daerah.`;
-    return;
-  }
-  const selisih = item.stok - jumlah;
-  const nilai = Math.abs(selisih) * (Number(item.harga) || 0);
+
+  const stokAkhirRaw = $("sdStokAkhir").value.trim();
+  const onHandRaw = $("sdStokOnHand").value.trim();
+  const stokAkhirVal = stokAkhirRaw === "" ? null : parseInt(stokAkhirRaw, 10);
+  const onHandVal = onHandRaw === "" ? null : parseInt(onHandRaw, 10);
+
   const koreksi = $("sdKoreksi") && $("sdKoreksi").checked;
+  const koreksiWrap = $("sdKoreksiWrap");
+  if (koreksiWrap) {
+    koreksiWrap.style.display = (stokAkhirVal !== null && !isNaN(stokAkhirVal)) ? "flex" : "none";
+  }
 
-  let html = "";
-  box.className = selisih === 0 ? "preview ok" : "preview";
-  if (selisih === 0) {
-    html = `<b>${esc(item.nama)}</b> · Stok sistem ${item.stok} = Stok daerah <b>${jumlah}</b> ${esc(item.satuan)}. Sesuai.`;
-  } else if (selisih > 0) {
-    html = `<b>${esc(item.nama)}</b> · Pusat <b>${item.stok}</b> &gt; Daerah <b>${jumlah}</b> ${esc(item.satuan)}. Selisih <b>+${selisih}</b> (potensi kehilangan <b>${rp(nilai)}</b>).`;
+  let parts = [];
+  if (stokAkhirVal !== null && !isNaN(stokAkhirVal) && stokAkhirVal >= 0) {
+    const diff = stokAkhirVal - item.stok;
+    const nilai = Math.abs(diff) * (Number(item.harga) || 0);
+    if (diff === 0) parts.push(`✅ Stok Akhir = Stok Sistem (${stokAkhirVal} ${esc(item.satuan)}).`);
+    else if (diff < 0) parts.push(`⚠️ Stok Akhir < Sistem (kurang <b>${Math.abs(diff)}</b> · ${rp(nilai)})`);
+    else parts.push(`ℹ️ Stok Akhir > Sistem (lebih <b>${diff}</b> · ${rp(nilai)})`);
+
+    if (koreksi) {
+      const jurnal = diff > 0
+        ? `<b>Persediaan (D) ${rp(nilai)}</b> / <b>Beban Persediaan (K) ${rp(nilai)}</b>`
+        : diff < 0
+          ? `<b>Beban Persediaan (D) ${rp(nilai)}</b> / <b>Persediaan (K) ${rp(nilai)}</b>`
+          : "Tidak ada jurnal.";
+      parts.push(`Jurnal koreksi: ${jurnal}`);
+    }
+  }
+
+  if (onHandVal !== null && !isNaN(onHandVal) && onHandVal >= 0) {
+    parts.push(`On Hand Daerah: <b>${onHandVal}</b> ${esc(item.satuan)}`);
+    if (stokAkhirVal !== null && !isNaN(stokAkhirVal)) {
+      const selisih = stokAkhirVal - onHandVal;
+      parts.push(`Selisih Akhir − OnHand: <b>${selisih > 0 ? '+' : ''}${selisih}</b>`);
+    }
+  }
+
+  if (parts.length === 0) {
+    box.className = "preview";
+    box.textContent = "Isi minimal salah satu: Stok Akhir atau Stok On Hand.";
   } else {
-    html = `<b>${esc(item.nama)}</b> · Pusat <b>${item.stok}</b> &lt; Daerah <b>${jumlah}</b> ${esc(item.satuan)}. Selisih <b>${selisih}</b> (surplus <b>${rp(nilai)}</b>).`;
+    box.className = "preview ok";
+    box.innerHTML = `<b>${esc(item.nama)}</b> · Sistem: ${item.stok} ${esc(item.satuan)}<br>${parts.join("<br>")}`;
   }
-
-  if (koreksi && selisih !== 0) {
-    const jurnal = selisih > 0
-      ? `<b>Beban Persediaan (D) ${rp(nilai)}</b> / <b>Persediaan (K) ${rp(nilai)}</b>`
-      : `<b>Persediaan (D) ${rp(nilai)}</b> / <b>Beban Persediaan (K) ${rp(nilai)}</b>`;
-    html += `<br><span style="color:#b71c1c;">Jurnal otomatis: ${jurnal}</span>`;
-  } else if (koreksi && selisih === 0) {
-    html += `<br><span style="color:#2e7d32;">Stok sudah sesuai. Tidak ada penyesuaian.</span>`;
-  }
-  box.innerHTML = html;
 }
-async function submitStokDaerah() {
+async function submitStokFisik() {
   const item = items.find(i => i.id === $("sdItemSelect").value);
   if (!item) { toast("Pilih barang.", "err"); return; }
-  const jumlah = parseInt($("sdJumlah").value, 10);
-  if (isNaN(jumlah) || jumlah < 0) { toast("Jumlah harus angka ≥ 0.", "err"); return; }
+  const stokAkhirRaw = $("sdStokAkhir").value.trim();
+  const onHandRaw = $("sdStokOnHand").value.trim();
+  const stokAkhirVal = stokAkhirRaw === "" ? null : parseInt(stokAkhirRaw, 10);
+  const onHandVal = onHandRaw === "" ? null : parseInt(onHandRaw, 10);
+
+  if (stokAkhirVal === null && onHandVal === null) {
+    toast("Minimal isi Stok Akhir atau Stok On Hand.", "err");
+    return;
+  }
+  if (stokAkhirVal !== null && (isNaN(stokAkhirVal) || stokAkhirVal < 0)) { toast("Stok Akhir harus ≥ 0.", "err"); return; }
+  if (onHandVal !== null && (isNaN(onHandVal) || onHandVal < 0)) { toast("Stok On Hand harus ≥ 0.", "err"); return; }
+
   const pencatat = val("sdPencatat");
-  const koreksi = $("sdKoreksi") && $("sdKoreksi").checked;
-  const data = { nama: item.nama, jumlah, nama_pencatat: pencatat, keterangan: val("sdKeterangan"), koreksi };
+  const koreksi = $("sdKoreksi") && $("sdKoreksi").checked && stokAkhirVal !== null;
+  const data = {
+    nama: item.nama,
+    stokAkhir: stokAkhirVal,
+    stokOnHand: onHandVal,
+    nama_pencatat: pencatat,
+    keterangan: val("sdKeterangan"),
+    koreksi
+  };
   try {
     setStatus("Menyimpan…");
-    const res = await api({ action: "add_stok_daerah", data }, "POST");
+    const res = await api({ action: "add_stok_fisik", data }, "POST");
     if (!res.ok) throw new Error(res.message);
     saveKasir(pencatat);
-    if (koreksi && res.selisih !== undefined) {
-      if (res.selisih === 0) toast("Stok sistem = fisik. Tidak ada penyesuaian.", "ok");
-      else toast(`Stok disesuaikan! Selisih ${res.selisih}. ${res.jurnal}`, "ok");
+    if (koreksi && res.koreksiInfo) {
+      const ki = res.koreksiInfo;
+      if (ki.selisih === 0) toast("Stok sistem = stok fisik. Tidak ada penyesuaian.", "ok");
+      else toast(`Koreksi stok: selisih ${ki.selisih}. ${ki.jurnal}`, "ok");
     } else {
       toast(res.message, "ok");
     }
-    $("sdJumlah").value = ""; $("sdKeterangan").value = "";
+    $("sdStokAkhir").value = "";
+    $("sdStokOnHand").value = "";
+    $("sdKeterangan").value = "";
     if ($("sdKoreksi")) $("sdKoreksi").checked = false;
     setStatus("Terhubung ke Google Sheets");
     await load();
   } catch (e) { setStatus("Gagal", false); toast(e.message, "err"); }
 }
+function renderStokAkhir() {
+  const tb = $("tbodyStokAkhir");
+  if (!tb) return;
+  const list = [...stokAkhir].sort((a, b) => b.waktu.localeCompare(a.waktu)).slice(0, 100);
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada catatan stok akhir.</div></td></tr>'; return; }
+  tb.innerHTML = list.map(sa => `
+    <tr>
+      <td class="sub">${esc(sa.waktu)}</td>
+      <td><b>${esc(sa.nama)}</b></td>
+      <td style="text-align:right"><span class="qty">${sa.jumlah}</span></td>
+      <td class="sub">${esc(sa.nama_pencatat || "-")}</td>
+      <td class="sub">${esc(sa.keterangan || "-")}</td>
+      <td><div class="actions"><button class="small ghost" data-sadel="${sa.id}" title="Hapus">×</button></div></td>
+    </tr>
+  `).join("");
+  tb.querySelectorAll("[data-sadel]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Hapus catatan stok akhir ini?")) return;
+      try {
+        const res = await api({ action: "delete_stok_akhir", id: btn.dataset.sadel }, "POST");
+        if (!res.ok) throw new Error(res.message);
+        toast("Dihapus.", "ok"); await load();
+      } catch (e) { toast(e.message, "err"); }
+    });
+  });
+}
 function renderStokDaerah() {
   const tb = $("tbodyStokDaerah");
   if (!tb) return;
   const list = [...stokDaerah].sort((a, b) => b.waktu.localeCompare(a.waktu)).slice(0, 100);
-  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada catatan stok daerah.</div></td></tr>'; return; }
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada catatan stok on-hand.</div></td></tr>'; return; }
   tb.innerHTML = list.map(sd => `
     <tr>
       <td class="sub">${esc(sd.waktu)}</td>
@@ -1206,7 +1288,7 @@ function renderStokDaerah() {
   `).join("");
   tb.querySelectorAll("[data-sdel]").forEach(btn => {
     btn.addEventListener("click", async () => {
-      if (!confirm("Hapus catatan stok daerah ini?")) return;
+      if (!confirm("Hapus catatan stok on-hand ini?")) return;
       try {
         const res = await api({ action: "delete_stok_daerah", id: btn.dataset.sdel }, "POST");
         if (!res.ok) throw new Error(res.message);
@@ -1215,12 +1297,12 @@ function renderStokDaerah() {
     });
   });
 }
-$("sdItemSelect").addEventListener("change", updateStokDaerahPreview);
-$("sdJumlah").addEventListener("input", updateStokDaerahPreview);
-$("sdKoreksi").addEventListener("change", updateStokDaerahPreview);
-$("btnSaveStokDaerah").addEventListener("click", submitStokDaerah);
+$("sdItemSelect").addEventListener("change", updateStokFisikPreview);
+$("sdStokAkhir").addEventListener("input", updateStokFisikPreview);
+$("sdStokOnHand").addEventListener("input", updateStokFisikPreview);
+$("sdKoreksi").addEventListener("change", updateStokFisikPreview);
+$("btnSaveStokDaerah").addEventListener("click", submitStokFisik);
 
-/* ---------- EDIT BARANG ---------- */
 function populateEditView() {
   const sel = $("editItemSelect");
   if (!sel) return;
@@ -1271,12 +1353,11 @@ async function submitEdit() {
 }
 $("btnSaveEdit").addEventListener("click", submitEdit);
 
-/* ---------- DELETE ITEM ---------- */
 async function deleteItem(id) {
   const item = items.find(i => i.id === id);
   if (!item) return;
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
-  if (!confirm(`Hapus barang "${item.nama}" beserta SELURUH riwayat, penjualan, dan stok daerahnya?`)) return;
+  if (!confirm(`Hapus barang "${item.nama}" beserta SELURUH riwayat, penjualan, stok akhir, dan stok on-hand-nya?`)) return;
   try {
     const res = await api({ action: "delete", id, kasir: auth.username || "" }, "POST");
     if (!res.ok) throw new Error(res.message);
@@ -1284,7 +1365,6 @@ async function deleteItem(id) {
   } catch (e) { toast(e.message, "err"); }
 }
 
-/* ---------- BELI ---------- */
 document.querySelectorAll(".mode-switch button").forEach(btn => {
   btn.addEventListener("click", () => {
     beliMode = btn.dataset.mode;
@@ -1309,7 +1389,7 @@ function updateBeliPreview() {
     const hb = parseInt($("bHarga").value, 10) || 0;
     if (nama !== "(belum diisi)") {
       box.className = "preview ok";
-      if (qty === 0) box.innerHTML = `<b>${esc(nama)}</b> · <i>Registrasi barang</i> (stok awal 0). Bisa ditambah lewat mode "Dibeli" nanti.`;
+      if (qty === 0) box.innerHTML = `<b>${esc(nama)}</b> · <i>Registrasi barang</i> (stok awal 0).`;
       else box.innerHTML = `<b>${esc(nama)}</b> × ${qty} ${esc(satuan)} · Total: <b>${rp(qty * hb)}</b>.`;
     } else {
       box.className = "preview";
@@ -1399,7 +1479,6 @@ function resetBeliNew() {
   updateBeliPreview();
 }
 
-/* ---------- KASIR ---------- */
 function addToCart() {
   const id = $("kItem").value;
   const qty = parseInt($("kQty").value, 10) || 0;
@@ -1473,7 +1552,6 @@ async function submitCheckout() {
 $("btnAddToCart").addEventListener("click", addToCart);
 $("btnCheckout").addEventListener("click", submitCheckout);
 
-/* ---------- KEUANGAN ---------- */
 const KATEGORI = {
   pendapatan_lain: ["Bunga Bank", "Donasi", "Penjualan Aset", "Pengembalian", "Jasa", "Lainnya"],
   beban_lain: ["Listrik", "Air", "Telepon/Internet", "Sewa", "Gaji", "Transport", "Perlengkapan", "Pemeliharaan", "Pajak", "Administrasi", "Beban Depresiasi", "Lainnya"],
@@ -1541,7 +1619,6 @@ function renderKeuangan() {
 }
 $("filterKeuangan").addEventListener("change", renderKeuangan);
 
-/* ---------- ASET TETAP ---------- */
 function renderAset() {
   const tb = $("tbodyAset");
   if (!tb) return;
@@ -1619,7 +1696,6 @@ $("tbodyAset").addEventListener("click", e => {
   else if (btn.dataset.aact === "del") deleteAset(btn.dataset.id);
 });
 
-/* ---------- RIWAYAT UMUM ---------- */
 function formatCatatan(catatan, tipe) {
   if (!catatan) return '';
   const match = catatan.match(/^(.+?)\s*\((.+?)\)\s*$/);
@@ -1641,7 +1717,6 @@ function loadHistory() {
   }).join("");
 }
 
-/* ---------- FIFO ---------- */
 function computeFifoHpp(startDate, endDate) {
   const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
@@ -1751,29 +1826,31 @@ function computeAsetTotal(endDate) {
   }).reduce((s, a) => s + (a.jumlah || 0) * (a.harga || 0), 0);
 }
 
-/* ---------- REKAP BARANG (BACKEND) ---------- */
 async function renderRekapBarang(startDate, endDate) {
   const tb = $("tbodyRekap");
   if (!tb) return;
-  tb.innerHTML = '<tr><td colspan="8"><div class="empty">Memuat rekap…</div></td></tr>';
+  tb.innerHTML = '<tr><td colspan="9"><div class="empty">Memuat rekap…</div></td></tr>';
   try {
     const res = await api(null, "GET", `rekap=1&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`);
     if (!res.ok) throw new Error(res.message || "Gagal memuat rekap");
     const rekap = res.rekap || [];
     if (rekap.length === 0) {
-      tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada barang terdaftar.</div></td></tr>';
+      tb.innerHTML = '<tr><td colspan="9"><div class="empty">Belum ada barang terdaftar.</div></td></tr>';
       return;
     }
     tb.innerHTML = rekap.map(r => {
       const selisihClass = r.selisih === null ? '' : (r.selisih > 0 ? 'money-neg' : r.selisih < 0 ? 'money-pos' : '');
       const nilaiClass = r.nilaiSelisih === null ? '' : (r.nilaiSelisih > 0 ? 'money-neg' : r.nilaiSelisih < 0 ? 'money-pos' : '');
+      const penyesuaianClass = r.penyesuaian > 0 ? 'money-pos' : r.penyesuaian < 0 ? 'money-neg' : '';
+      const saBadge = r.hasStokAkhirInput ? '' : ' <span class="sub" title="Belum ada input Stok Akhir">*</span>';
       return `
         <tr>
           <td>${esc(r.nama)}</td>
           <td style="text-align:right">${r.stokAwal}</td>
           <td style="text-align:right">${r.pembelian}</td>
           <td style="text-align:right">${r.penjualan}</td>
-          <td style="text-align:right"><b>${r.stokAkhir}</b></td>
+          <td style="text-align:right" class="${penyesuaianClass}">${r.penyesuaian > 0 ? '+' : ''}${r.penyesuaian}</td>
+          <td style="text-align:right"><b>${r.stokAkhir}</b>${saBadge}</td>
           <td style="text-align:right">${r.onHand === null ? '<span class="sub">—</span>' : r.onHand}</td>
           <td style="text-align:right" class="${selisihClass}">${r.selisih === null ? '<span class="sub">—</span>' : (r.selisih > 0 ? '+' : '') + r.selisih}</td>
           <td style="text-align:right" class="${nilaiClass}">${r.nilaiSelisih === null ? '<span class="sub">—</span>' : rp(r.nilaiSelisih)}</td>
@@ -1781,11 +1858,10 @@ async function renderRekapBarang(startDate, endDate) {
       `;
     }).join("");
   } catch (e) {
-    tb.innerHTML = `<tr><td colspan="8"><div class="empty">Gagal memuat rekap: ${esc(e.message)}</div></td></tr>`;
+    tb.innerHTML = `<tr><td colspan="9"><div class="empty">Gagal memuat rekap: ${esc(e.message)}</div></td></tr>`;
   }
 }
 
-/* ---------- LAPORAN ---------- */
 function lastDayOfMonth(y, m) { return new Date(y, m, 0).getDate(); }
 function fmtMonthLabel(y, m) {
   const bulan = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
@@ -1887,6 +1963,7 @@ function renderLaporan() {
   `;
 
   renderRekapBarang(startR.start, endR.end);
+  renderChartPenjualan();
 
   const months = [];
   let cur = new Date(startR.y, startR.m - 1, 1);
@@ -1922,6 +1999,79 @@ function renderLaporan() {
   });
 }
 
+function fillChartItemDropdown() {
+  const sel = $("chartItemFilter");
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="all">📊 Seluruh Item</option>' +
+    items.map(i => `<option value="${esc(i.nama)}">${esc(i.nama)}</option>`).join("");
+  if (prev && (prev === "all" || items.some(i => i.nama === prev))) sel.value = prev;
+}
+
+function renderChartPenjualan() {
+  const startM = $("periodStart").value;
+  const endM = $("periodEnd").value;
+  if (!startM || !endM) return;
+  const startR = monthRangeOf(startM);
+  const endR = monthRangeOf(endM);
+  const itemFilter = $("chartItemFilter").value;
+  const metric = $("chartMetric").value;
+
+  const months = [];
+  let cur = new Date(startR.y, startR.m - 1, 1);
+  const endD = new Date(endR.y, endR.m - 1, 1);
+  while (cur <= endD) {
+    months.push({ y: cur.getFullYear(), m: cur.getMonth() + 1 });
+    cur.setMonth(cur.getMonth() + 1);
+  }
+
+  const labels = months.map(({y,m}) => fmtMonthLabel(y,m));
+  const data = months.map(({y,m}) => {
+    const mStart = new Date(y, m - 1, 1);
+    const mEnd = new Date(y, m, 0, 23, 59, 59);
+    let total = 0;
+    for (const ev of riwayat) {
+      if (ev.tipe !== "keluar") continue;
+      const d = dateFromStr(ev.waktu);
+      if (isNaN(d.getTime()) || d < mStart || d > mEnd) continue;
+      if (itemFilter !== "all" && ev.nama !== itemFilter) continue;
+      total += metric === "qty" ? ev.jumlah : (Number(ev.total) || 0);
+    }
+    return total;
+  });
+
+  if (chartPenjualanInstance) chartPenjualanInstance.destroy();
+  const ctx = $("chartPenjualan").getContext("2d");
+  chartPenjualanInstance = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: itemFilter === "all" ? "Penjualan (Seluruh Item)" : `Penjualan — ${itemFilter}`,
+        data,
+        backgroundColor: "#1976d2",
+        borderColor: "#0d47a1",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom" } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: v => metric === "revenue" ? "Rp " + Number(v).toLocaleString("id-ID") : Number(v).toLocaleString("id-ID")
+          }
+        }
+      }
+    }
+  });
+}
+
+$("chartItemFilter").addEventListener("change", renderChartPenjualan);
+$("chartMetric").addEventListener("change", renderChartPenjualan);
+
 document.querySelectorAll("[data-quick]").forEach(btn => {
   btn.addEventListener("click", () => {
     const n = parseInt(btn.dataset.quick, 10) || 6;
@@ -1941,7 +2091,6 @@ function initPeriod() {
 }
 $("btnTampilkan").addEventListener("click", renderLaporan);
 
-/* ---------- EVENTS ---------- */
 $("search").addEventListener("input", renderTable);
 $("filter").addEventListener("change", renderTable);
 $("btnReload").addEventListener("click", load);
@@ -1978,7 +2127,6 @@ $("tbody").addEventListener("click", e => {
   }
 });
 
-/* ---------- START ---------- */
 checkAuth();
 setInterval(() => { if (localStorage.getItem("kdmp_auth")) load(); }, 60000);
 </script>
