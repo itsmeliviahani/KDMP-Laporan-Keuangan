@@ -1425,6 +1425,19 @@ setupSearchable('kItemSearch', 'kItem', 'kItemDropdown');
 setupSearchable('bExistingSearch', 'bExisting', 'bExistingDropdown', () => updateBeliPreview());
 setupSearchable('editItemSearch', 'editItemSelect', 'editItemDropdown', (id) => loadEditForm(id));
 
+function populateStokFisikView() {
+  const searchEl = $("sdItemSearch");
+  const hiddenEl = $("sdItemSelect");
+  if (!searchEl || !hiddenEl) return;
+  const prevId = hiddenEl.value;
+  if (prevId) {
+    const prevItem = items.find(i => i.id === prevId);
+    if (prevItem) { searchEl.value = prevItem.nama; hiddenEl.value = prevItem.id; }
+    else { searchEl.value = ""; hiddenEl.value = ""; }
+  }
+  updateStokFisikPreview();
+}
+
 function updateStokFisikPreview() {
   const box = $("sdPreview");
   const item = items.find(i => i.id === $("sdItemSelect").value);
@@ -1905,14 +1918,12 @@ function renderAset() {
       const tglBeli = new Date(a.tanggal_perolehan);
       const tglSekarang = new Date();
       
-      // Selisih bulan
       let bulanTerpakai = (tglSekarang.getFullYear() - tglBeli.getFullYear()) * 12 + (tglSekarang.getMonth() - tglBeli.getMonth());
       if (bulanTerpakai < 0) bulanTerpakai = 0;
       
       const satuan = a.satuan_masa || "tahun";
       masaPakaiStr = `${a.masa_pakai} ${satuan.charAt(0).toUpperCase() + satuan.slice(1)}`;
       
-      // Straight-Line Method
       let penyusutanPerBulan = 0;
       if (satuan === "tahun") {
         penyusutanPerBulan = totalNilai / (a.masa_pakai * 12);
@@ -1921,7 +1932,7 @@ function renderAset() {
       }
       
       let akumulasi = penyusutanPerBulan * bulanTerpakai;
-      if (akumulasi > totalNilai) akumulasi = totalNilai; // Max depreciation = cost
+      if (akumulasi > totalNilai) akumulasi = totalNilai;
       
       const nilaiBuku = totalNilai - akumulasi;
       
@@ -2438,7 +2449,6 @@ $("tbody").addEventListener("click", e => {
   }
   if (act === "out") {
     switchTab("jual"); $("kItemSearch").value = ""; $("kItem").value = ""; $("kQty").value = 1; 
-    renderItemDropdown("");
     $("kItemSearch").focus();
   }
 });
