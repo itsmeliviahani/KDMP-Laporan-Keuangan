@@ -444,7 +444,7 @@
     </div>
     <div class="topbar-actions">
       <span id="userInfo" style="font-size:13.5px; font-weight:600;"></span>
-      <button class="ghost small" onclick="logout()" style="border-color:rgba(255,255,255,0.5); color:#fff; background:transparent; border-radius: 6px;">Keluar</button>
+      <button onclick="logout()" style="background:#2e7d32; border-color:#2e7d32; color:#fff; border-radius: 6px; font-weight:700; padding:8px 16px; border:none; cursor:pointer;">Keluar</button>
     </div>
   </header>
 
@@ -800,7 +800,10 @@
     <section id="view-edit" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Edit Barang</h2>
-      <div class="form-card">
+      
+      <!-- MASTER DATA -->
+      <div class="form-card" style="margin-bottom:20px;">
+        <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Data Master</h3>
         <div class="grid">
           <div class="field full">
             <label>Pilih Barang <span class="req">*</span></label>
@@ -833,17 +836,31 @@
               <option value="set">set</option><option value="rim">rim</option>
             </select>
           </div>
-          
-          <!-- FITUR BARU: EDIT HARGA BELI, TANGGAL, KUANTITAS -->
-          <div class="field"><label>Harga Beli (Rp) <span class="req">*</span></label><input type="number" id="eHargaBeli" min="0"></div>
-          <div class="field"><label>Tanggal Pembelian <span class="opt">(opsional)</span></label><input type="date" id="eTanggalBeli"></div>
-          <div class="field"><label>Kuantitas / Stok <span class="req">*</span></label><input type="number" id="eKuantitas" min="0"></div>
-          
           <div class="field"><label>Harga jual (Rp)</label><input type="number" id="eHargaJual" min="0"></div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name"></div>
         </div>
         <div class="actions-row">
-          <button id="btnSaveEdit">Simpan Perubahan Data</button>
+          <button id="btnSaveEdit">Simpan Data Master</button>
+        </div>
+      </div>
+
+      <!-- BATCH FIFO -->
+      <div class="form-card" id="batchContainer" style="display:none;">
+        <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Riwayat Pembelian (Batch FIFO)</h3>
+        <p class="sub" style="margin-bottom:12px; font-size:12px;">Di bawah ini adalah daftar barang masuk berdasarkan tanggal. Anda dapat mengedit Kuantitas atau Harga Beli per batch jika terjadi kesalahan input.</p>
+        <div class="table-wrap">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Tanggal Masuk</th>
+                <th style="text-align:right">Kuantitas</th>
+                <th style="text-align:right">Harga Beli</th>
+                <th style="text-align:right">Total</th>
+                <th style="text-align:center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyBatch"></tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -1591,7 +1608,8 @@ function clearEditForm() {
   editingId = null;
   $("editItemSelect").value = "";
   $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; $("eHargaJual").value = 0;
-  $("eHargaBeli").value = 0; $("eTanggalBeli").value = ""; $("eKuantitas").value = 0;
+  $("batchContainer").style.display = "none";
+  $("tbodyBatch").innerHTML = "";
 }
 function loadEditForm(id) {
   const item = items.find(i => i.id === id);
@@ -1601,33 +1619,61 @@ function loadEditForm(id) {
   $("eKategori").value = item.kategori || "Lainnya";
   $("eSatuan").value = item.satuan || "pcs";
   $("eHargaJual").value = item.harga_jual || 0;
-  $("eHargaBeli").value = item.harga || 0;
+  renderBatchList(item.nama);
+}
+function renderBatchList(nama) {
+  const container = $("batchContainer");
+  const tb = $("tbodyBatch");
+  const batches = riwayat.filter(r => norm(r.nama) === norm(nama) && (r.tipe === "baru" || r.tipe === "masuk"));
   
-  // Cari tanggal pembelian terakhir dari riwayat
-  let tglTerakhir = "";
-  const hist = riwayat.filter(r => norm(r.nama) === norm(item.nama) && (r.tipe === "baru" || r.tipe === "masuk"));
-  if (hist.length > 0) {
-    // Ambil yang paling baru (data riwayat dibalik di API, tapi kita sort manual)
-    hist.sort((a,b) => new Date(b.waktu) - new Date(a.waktu));
-    tglTerakhir = hist[0].waktu.split(" ")[0];
+  if (batches.length === 0) {
+    container.style.display = "none";
+    return;
   }
-  $("eTanggalBeli").value = tglTerakhir;
-  $("eKuantitas").value = item.stok;
+  container.style.display = "block";
+  
+  batches.sort((a,b) => new Date(a.waktu) - new Date(b.waktu));
+  
+  tb.innerHTML = batches.map(b => `
+    <tr>
+      <td class="sub">${esc(b.waktu)}</td>
+      <td style="text-align:right"><b>${b.jumlah}</b></td>
+      <td style="text-align:right">${rp(b.harga_satuan)}</td>
+      <td style="text-align:right">${rp(b.total)}</td>
+      <td style="text-align:center">
+        <button class="small ghost" onclick="editBatch('${esc(b.waktu)}', '${esc(nama)}', ${b.jumlah}, ${b.harga_satuan})">Edit</button>
+      </td>
+    </tr>
+  `).join("");
+}
+async function editBatch(waktu, nama, oldQty, oldHarga) {
+  const newQty = prompt(`Masukkan Kuantitas Baru untuk batch ${waktu} (Sebelumnya: ${oldQty}):`, oldQty);
+  if (newQty === null) return;
+  const newHarga = prompt(`Masukkan Harga Beli Baru untuk batch ${waktu} (Sebelumnya: ${oldHarga}):`, oldHarga);
+  if (newHarga === null) return;
+
+  const q = parseInt(newQty, 10);
+  const h = parseInt(newHarga, 10);
+  if (isNaN(q) || q < 0 || isNaN(h) || h < 0) { toast("Input tidak valid.", "err"); return; }
+
+  try {
+    setStatus("Memperbarui batch...");
+    const res = await api({ action: "update_batch", data: { waktu, nama, newQty: q, newHarga: h } }, "POST");
+    if (!res.ok) throw new Error(res.message);
+    toast("Batch berhasil diperbarui.", "ok");
+    await load();
+    renderBatchList(nama);
+  } catch (e) {
+    setStatus("Gagal", false);
+    toast(e.message, "err");
+  }
 }
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
   if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   const kasir = val("eKasir");
-  const data = { 
-    nama: $("eNama").value.trim(), 
-    kategori: $("eKategori").value, 
-    satuan: $("eSatuan").value, 
-    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
-    harga_beli: Math.max(0, parseInt($("eHargaBeli").value, 10) || 0),
-    stok: Math.max(0, parseInt($("eKuantitas").value, 10) || 0),
-    note: kasir 
-  };
+  const data = { nama: $("eNama").value.trim(), kategori: $("eKategori").value, satuan: $("eSatuan").value, harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), note: kasir };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
   try {
     setStatus("Menyimpan…");
