@@ -1476,4 +1476,15 @@ function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
   searchEl.addEventListener("blur", () => setTimeout(() => dropdown.classList.remove("show"), 180));
   searchEl.addEventListener("keydown", e => {
     if (e.key === "Enter") {
-      e.preventDefault
+      e.preventDefault();
+      const first = dropdown.querySelector(".ss-item");
+      if (first) {
+        hiddenEl.value = first.dataset.id;
+        searchEl.value = first.dataset.nama;
+        dropdown.classList.remove("show");
+        if (onSelect) onSelect(first.dataset.id, first.dataset.nama);
+      }
+    }
+    if (e.key === "Escape") dropdown.classList.remove("show");
+  });
+}
