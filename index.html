@@ -158,15 +158,15 @@
   .auth-msg.error{display:block; background:#ffebee; color:#c62828; border:1px solid #ffcdd2;}
   .auth-msg.success{display:block; background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9;}
 
-  /* --- MAIN APP HEADER --- */
+  /* --- MAIN APP HEADER (DIPERBESAR) --- */
   header{
     background: linear-gradient(135deg, #b71c1c 0%, #c62828 100%);
-    color:#fff; padding:16px 24px;
+    color:#fff; padding:24px 32px;
     display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
   }
-  header h1{margin:0;font-size:18px;font-weight:700;letter-spacing: -0.3px;}
-  header small{opacity:.85;font-size:12px}
+  header h1{margin:0;font-size:26px;font-weight:800;letter-spacing: -0.5px;}
+  header small{opacity:.9;font-size:15px; font-weight:500;}
   .topbar-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
   
   .view{display:none;animation:fade .2s}
@@ -178,35 +178,45 @@
     border-bottom: 2px solid #ffcdd2; padding-bottom: 10px;
   }
   
-  /* --- MENU GRID --- */
+  /* --- MENU GRID BERWARNA --- */
   .menu-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 16px;
   }
   .menu-btn {
-    background: #ffffff; 
-    color: #333; 
-    border: 1px solid #e0e0e0; 
-    border-left: 5px solid #c62828; 
-    padding: 20px; 
-    font-size: 15px; 
-    font-weight: 700; 
-    border-radius: 10px; 
-    cursor: pointer; 
+    display: flex; align-items: center; gap: 12px;
+    background: #ffffff; color: #333; 
+    border: 1px solid #e0e0e0; border-left: 5px solid #ccc;
+    padding: 20px; font-size: 15px; font-weight: 700; 
+    border-radius: 10px; cursor: pointer; 
     transition: 0.2s ease-in-out; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.03);
-    font-family: inherit;
-    text-align: left;
+    font-family: inherit; text-align: left;
   }
-  .menu-btn:hover { 
-    background: #fff5f5; 
-    transform: translateY(-3px); 
-    box-shadow: 0 8px 15px rgba(198, 40, 40, 0.15); 
-    border-color: #ffcdd2;
-    border-left-color: #b71c1c;
+  .menu-btn span.ico { font-size: 24px; }
+  .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+
+  .menu-stok { background: #e3f2fd; border-left-color: #1976d2; color: #0d47a1; }
+  .menu-beli { background: #e8f5e9; border-left-color: #2e7d32; color: #1b5e20; }
+  .menu-jual { background: #fff3e0; border-left-color: #ef6c00; color: #e65100; }
+  .menu-aset { background: #f3e5f5; border-left-color: #8e24aa; color: #4a148c; }
+  .menu-fisik { background: #e0f7fa; border-left-color: #00acc1; color: #006064; }
+  .menu-edit { background: #ffebee; border-left-color: #c62828; color: #b71c1c; }
+  .menu-keu { background: #fffde7; border-left-color: #fbc02d; color: #f57f17; }
+  .menu-lap { background: #fce4ec; border-left-color: #d81b60; color: #880e4f; }
+  .menu-rip { background: #f1f8e9; border-left-color: #558b2f; color: #33691e; }
+  .menu-riu { background: #efebe9; border-left-color: #5d4037; color: #3e2723; }
+  .menu-sandi { background: #eceff1; border-left-color: #546e7a; color: #263238; }
+  
+  /* --- TOMBOL KEMBALI (KUNING) --- */
+  .back-btn { 
+    margin-bottom: 20px; padding: 10px 18px; font-size: 14px; font-weight: 800;
+    background: #fbc02d !important; color: #333 !important;
+    border: 2px solid #fbc02d !important; border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
   }
-  .back-btn { margin-bottom: 16px; padding: 8px 14px; font-size: 13px; font-weight:700;}
+  .back-btn:hover { background: #f9a825 !important; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
 
   .bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center; background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
   input,select,button{font-family:inherit;font-size:13.5px;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;color:#222; transition: 0.2s;}
@@ -258,12 +268,6 @@
   #toast.ok{background:#2e7d32}
   #toast.err{background:#c62828}
   .empty{text-align:center;padding:40px;color:#888}
-  
-  .hist-list{display:flex;flex-direction:column;gap:8px}
-  .hist-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
-  .hist-item b{font-size:14px; color: #222;}
-  .hist-item .meta{font-size:12px;color:#666; margin-top: 4px;}
-  .hist-item .kasir{color:#b71c1c;font-weight:700}
   
   .mode-switch{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
   .mode-switch button{background:#fff;color:#c62828;border:1px solid #c62828;padding:8px 16px;font-size:13px;border-radius:8px}
@@ -329,7 +333,8 @@
   .ss-empty{padding:14px;color:#888;text-align:center;font-size:13px;}
   
   @media(max-width:600px){
-    header h1{font-size:16px}
+    header h1{font-size:20px}
+    header small{font-size:13px}
     .grid{grid-template-columns:1fr}
     .menu-grid{grid-template-columns:1fr}
     .auth-card{padding:25px;}
@@ -453,17 +458,17 @@
     <section id="view-menu" class="view active">
       <h2 class="panel-title">Menu Utama</h2>
       <div class="menu-grid">
-        <button class="menu-btn" onclick="switchTab('stok')">Stok Barang</button>
-        <button class="menu-btn" onclick="switchTab('beli')">Pembelian</button>
-        <button class="menu-btn" onclick="switchTab('jual')">Penjualan Kasir</button>
-        <button class="menu-btn" data-role="manajer" onclick="switchTab('aset')">Aset Tetap</button>
-        <button class="menu-btn" onclick="switchTab('stokdaerah')">Stok Fisik</button>
-        <button class="menu-btn" data-role="manajer" onclick="switchTab('edit')">Edit Barang</button>
-        <button class="menu-btn" onclick="switchTab('keuangan')">Keuangan Lain</button>
-        <button class="menu-btn" data-role="manajer" onclick="switchTab('laporan')">Laporan</button>
-        <button class="menu-btn" data-role="manajer" onclick="switchTab('penjualan')">Riwayat Penjualan</button>
-        <button class="menu-btn" data-role="manajer" onclick="switchTab('riwayat')">Riwayat Umum</button>
-        <button class="menu-btn" onclick="switchTab('ganti-sandi')">Ganti Sandi</button>
+        <button class="menu-btn menu-stok" onclick="switchTab('stok')"><span class="ico">📦</span> Stok Barang</button>
+        <button class="menu-btn menu-beli" onclick="switchTab('beli')"><span class="ico">🛒</span> Pembelian</button>
+        <button class="menu-btn menu-jual" onclick="switchTab('jual')"><span class="ico">💰</span> Penjualan Kasir</button>
+        <button class="menu-btn menu-aset" data-role="manajer" onclick="switchTab('aset')"><span class="ico">🏢</span> Aset Tetap</button>
+        <button class="menu-btn menu-fisik" onclick="switchTab('stokdaerah')"><span class="ico">🏬</span> Stok Fisik</button>
+        <button class="menu-btn menu-edit" data-role="manajer" onclick="switchTab('edit')"><span class="ico">✎</span> Edit Barang</button>
+        <button class="menu-btn menu-keu" onclick="switchTab('keuangan')"><span class="ico">💵</span> Keuangan Lain</button>
+        <button class="menu-btn menu-lap" data-role="manajer" onclick="switchTab('laporan')"><span class="ico">📊</span> Laporan</button>
+        <button class="menu-btn menu-rip" data-role="manajer" onclick="switchTab('penjualan')"><span class="ico">📈</span> Riwayat Penjualan</button>
+        <button class="menu-btn menu-riu" data-role="manajer" onclick="switchTab('riwayat')"><span class="ico">🕒</span> Riwayat Umum</button>
+        <button class="menu-btn menu-sandi" onclick="switchTab('ganti-sandi')"><span class="ico">⚙️</span> Ganti Sandi</button>
       </div>
       <div style="margin-top:40px; text-align:center;">
         <span id="status" style="font-size:12.5px; background:#e0e0e0; color:#333; padding:6px 14px; border-radius:20px; font-weight: 600;">Menghubungkan…</span>
@@ -578,7 +583,6 @@
             <input type="text" id="bNote" placeholder="cth: Supplier A" autocomplete="organization">
           </div>
         </div>
-        <div class="preview" id="bPreview">Pilih barang.</div>
         <div class="actions-row">
           <button id="btnBeli">Simpan</button>
         </div>
@@ -801,7 +805,6 @@
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Edit Barang</h2>
       
-      <!-- MASTER DATA -->
       <div class="form-card" style="margin-bottom:20px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Data Master</h3>
         <div class="grid">
@@ -844,10 +847,8 @@
         </div>
       </div>
 
-      <!-- BATCH FIFO -->
       <div class="form-card" id="batchContainer" style="display:none;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Riwayat Pembelian (Batch FIFO)</h3>
-        <p class="sub" style="margin-bottom:12px; font-size:12px;">Di bawah ini adalah daftar barang masuk berdasarkan tanggal. Anda dapat mengedit Kuantitas atau Harga Beli per batch jika terjadi kesalahan input.</p>
         <div class="table-wrap">
           <table class="report-table">
             <thead>
@@ -1020,7 +1021,21 @@
     <section id="view-riwayat" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Riwayat Umum</h2>
-      <div class="hist-list" id="histList"><div class="empty">Memuat…</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th><th>Tipe</th><th>Barang</th>
+              <th style="text-align:center">Jumlah</th>
+              <th>Satuan</th>
+              <th style="text-align:right">Harga Satuan</th>
+              <th style="text-align:right">Total</th>
+              <th>Catatan</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyRiwayat"></tbody>
+        </table>
+      </div>
     </section>
 
     <!-- GANTI SANDI -->
@@ -1225,7 +1240,7 @@ function showApp(user) {
   
   document.querySelectorAll(".menu-btn[data-role='manajer']").forEach(btn => {
     if (user.role !== "manajer") btn.style.display = "none";
-    else btn.style.display = "block";
+    else btn.style.display = "flex";
   });
 
   if (user.role === "karyawan") { $("btnModeExisting").style.display = "none"; beliMode = "new"; }
@@ -1621,6 +1636,7 @@ function loadEditForm(id) {
   $("eHargaJual").value = item.harga_jual || 0;
   renderBatchList(item.nama);
 }
+
 function renderBatchList(nama) {
   const container = $("batchContainer");
   const tb = $("tbodyBatch");
@@ -1634,33 +1650,33 @@ function renderBatchList(nama) {
   
   batches.sort((a,b) => new Date(a.waktu) - new Date(b.waktu));
   
-  tb.innerHTML = batches.map(b => `
+  tb.innerHTML = batches.map((b, i) => `
     <tr>
       <td class="sub">${esc(b.waktu)}</td>
-      <td style="text-align:right"><b>${b.jumlah}</b></td>
-      <td style="text-align:right">${rp(b.harga_satuan)}</td>
+      <td style="text-align:right">
+        <input type="number" id="batchQty_${i}" value="${b.jumlah}" style="width:80px; padding:6px; text-align:right; border:1px solid #ccc; border-radius:4px;">
+      </td>
+      <td style="text-align:right">
+        <input type="number" id="batchHarga_${i}" value="${b.harga_satuan}" style="width:120px; padding:6px; text-align:right; border:1px solid #ccc; border-radius:4px;">
+      </td>
       <td style="text-align:right">${rp(b.total)}</td>
       <td style="text-align:center">
-        <button class="small ghost" onclick="editBatch('${esc(b.waktu)}', '${esc(nama)}', ${b.jumlah}, ${b.harga_satuan})">Edit</button>
+        <button class="small" onclick="updateBatch('${esc(b.waktu)}', '${esc(nama)}', ${i})">Simpan</button>
       </td>
     </tr>
   `).join("");
 }
-async function editBatch(waktu, nama, oldQty, oldHarga) {
-  const newQty = prompt(`Masukkan Kuantitas Baru untuk batch ${waktu} (Sebelumnya: ${oldQty}):`, oldQty);
-  if (newQty === null) return;
-  const newHarga = prompt(`Masukkan Harga Beli Baru untuk batch ${waktu} (Sebelumnya: ${oldHarga}):`, oldHarga);
-  if (newHarga === null) return;
 
-  const q = parseInt(newQty, 10);
-  const h = parseInt(newHarga, 10);
+async function updateBatch(waktu, nama, index) {
+  const q = parseInt($(`batchQty_${index}`).value, 10);
+  const h = parseInt($(`batchHarga_${index}`).value, 10);
   if (isNaN(q) || q < 0 || isNaN(h) || h < 0) { toast("Input tidak valid.", "err"); return; }
-
+  
   try {
     setStatus("Memperbarui batch...");
     const res = await api({ action: "update_batch", data: { waktu, nama, newQty: q, newHarga: h } }, "POST");
     if (!res.ok) throw new Error(res.message);
-    toast("Batch berhasil diperbarui.", "ok");
+    toast("Batch pembelian berhasil diperbarui.", "ok");
     await load();
     renderBatchList(nama);
   } catch (e) {
@@ -1668,6 +1684,7 @@ async function editBatch(waktu, nama, oldQty, oldHarga) {
     toast(e.message, "err");
   }
 }
+
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
@@ -2099,14 +2116,22 @@ function formatCatatan(catatan, tipe) {
   return esc(catatan);
 }
 function loadHistory() {
-  const box = $("histList");
-  if (!riwayat.length) { box.innerHTML = '<div class="empty">Belum ada riwayat.</div>'; return; }
-  box.innerHTML = riwayat.slice(0, 30).map(h => {
-    const tanda = h.tipe === "masuk" ? "+" : h.tipe === "keluar" ? "−" : "";
-    const jumlahTeks = h.jumlah ? `${tanda}${h.jumlah} ${esc(h.satuan || "")}` : "";
-    const totalTeks = h.total ? ` · <b>${rp(h.total)}</b>` : "";
-    const catatanHtml = h.catatan ? ` · ${formatCatatan(h.catatan, h.tipe)}` : "";
-    return `<div class="hist-item"><div style="flex:1"><b>${esc(h.nama)}</b><div class="meta">${esc(h.tipe)}${jumlahTeks ? " · " + jumlahTeks : ""}${totalTeks} · ${esc(h.waktu)}${catatanHtml}</div></div></div>`;
+  const tb = $("tbodyRiwayat");
+  if (!riwayat.length) { tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada riwayat.</div></td></tr>'; return; }
+  
+  tb.innerHTML = riwayat.slice(0, 100).map(h => {
+    const tipeBadge = h.tipe === "masuk" ? "in" : h.tipe === "keluar" ? "out" : h.tipe === "baru" ? "ok" : "";
+    const catatanFormatted = formatCatatan(h.catatan, h.tipe);
+    return `<tr>
+      <td class="sub">${esc(h.waktu)}</td>
+      <td><span class="badge ${tipeBadge}">${esc(h.tipe.toUpperCase())}</span></td>
+      <td><b>${esc(h.nama)}</b></td>
+      <td style="text-align:center">${h.jumlah || "-"}</td>
+      <td class="sub">${esc(h.satuan || "-")}</td>
+      <td style="text-align:right">${h.harga_satuan ? rp(h.harga_satuan) : "-"}</td>
+      <td style="text-align:right">${h.total ? rp(h.total) : "-"}</td>
+      <td class="sub">${catatanFormatted || "-"}</td>
+    </tr>`;
   }).join("");
 }
 
@@ -2134,8 +2159,12 @@ function computeFifoHpp(startDate, endDate) {
       }
       if (remaining > 0) {
         const item = items.find(i => norm(i.nama) === norm(ev.nama));
-        const fallback = item ? (Number(item.harga) || 0) : 0;
-        hppSale += remaining * fallback;
+        let fallbackPrice = item ? (Number(item.harga) || 0) : 0;
+        if (fallbackPrice === 0) {
+          const pastPurchases = riwayat.filter(r => norm(r.nama) === norm(ev.nama) && (r.tipe === 'baru' || r.tipe === 'masuk') && r.harga_satuan > 0);
+          if (pastPurchases.length > 0) fallbackPrice = pastPurchases[pastPurchases.length - 1].harga_satuan;
+        }
+        hppSale += remaining * fallbackPrice;
         if (inPeriod) fallbackQty += remaining;
       }
       if (inPeriod) { revenue += ev.jumlah * (ev.harga_satuan || 0); hpp += hppSale; }
