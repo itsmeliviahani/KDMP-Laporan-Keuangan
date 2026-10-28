@@ -48,7 +48,6 @@
   .auth-msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ffcdd2}
   .auth-msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
 
-  /* ============ HEADER & MAIN ============ */
   header{background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);color:#fff;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.15)}
   header h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px}
   header small{opacity:.9;font-size:16px;font-weight:500}
@@ -61,7 +60,6 @@
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .panel-title{margin:0 0 18px;font-size:18px;color:#b71c1c;font-weight:800;border-bottom:2px solid #ffcdd2;padding-bottom:10px}
 
-  /* ============ MENU ============ */
   .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
   .menu-btn{display:flex;align-items:center;gap:12px;background:#fff;color:#333;border:1px solid #e0e0e0;border-left:5px solid #ccc;padding:20px;font-size:15px;font-weight:700;border-radius:10px;cursor:pointer;transition:.2s ease-in-out;box-shadow:0 4px 6px rgba(0,0,0,.03);font-family:inherit;text-align:left}
   .menu-btn span.ico{font-size:24px}
@@ -139,20 +137,43 @@
   .report-table{width:100%;border-collapse:collapse;font-size:13.5px}
   .report-table th{background:transparent;color:#555;text-align:center;padding:8px 4px;font-size:12px}
   .report-table td{padding:8px 4px;text-align:center}
-  .report-table tr.total td{font-weight:800;border-top:2px solid #c62828;border-bottom:none;color:#b71c1c}
   .report-table tr.sub td{font-weight:600;background:#fafafa}
 
-  /* ===== 1. Laporan keuangan TANPA GARIS + WARNA per hitungan ===== */
-  .report-noline th,
-  .report-noline td{border:none!important;padding:10px 6px}
-  .report-noline tr.section td{font-weight:800!important;color:#b71c1c!important;padding-top:14px!important;font-size:13px;letter-spacing:.3px;background:transparent!important}
-  .report-noline tr.laba-kotor td{font-weight:800!important;color:#1976d2!important;font-size:14px}
-  .report-noline tr.laba-bersih td{font-weight:800!important;color:#2e7d32!important;font-size:15px}
-  .report-noline tr.laba-bersih.negatif td{color:#c62828!important}
-  .report-noline tr.total-aset td,
-  .report-noline tr.total-pasiva td{font-weight:800!important;color:#1976d2!important;font-size:14.5px}
-  .report-noline tr.modal-akhir td{font-weight:800!important;color:#2e7d32!important;font-size:14.5px}
-  .report-noline tr.sub td{background:transparent!important;font-weight:600;color:#333}
+  /* ===== Laporan Keuangan (dengan garis, warna bold per hitungan) ===== */
+  .report-kas{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff}
+  .report-kas thead th{
+    background:#fff5f5;color:#b71c1c;font-weight:800;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;
+    padding:10px 14px;border:1px solid #999!important;
+  }
+  .report-kas tbody td{
+    padding:10px 14px;border:1px solid #ccc!important;
+    vertical-align:middle;
+  }
+  .report-kas tr.section td{
+    background:#fce4ec!important;color:#b71c1c!important;
+    font-weight:800!important;font-size:12.5px;letter-spacing:.3px;
+  }
+  .report-kas tr.laba-kotor td{
+    background:#e3f2fd!important;color:#1565c0!important;
+    font-weight:800!important;font-size:14px;
+  }
+  .report-kas tr.laba-bersih td{
+    background:#e8f5e9!important;color:#2e7d32!important;
+    font-weight:800!important;font-size:15px;
+  }
+  .report-kas tr.laba-bersih.negatif td{
+    background:#ffebee!important;color:#c62828!important;
+  }
+  .report-kas tr.total-aset td,
+  .report-kas tr.total-pasiva td{
+    background:#e3f2fd!important;color:#1565c0!important;
+    font-weight:800!important;font-size:14px;
+  }
+  .report-kas tr.modal-akhir td{
+    background:#e8f5e9!important;color:#2e7d32!important;
+    font-weight:800!important;font-size:14px;
+  }
 
   .report-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   @media(max-width:800px){.report-grid{grid-template-columns:1fr}}
@@ -161,10 +182,10 @@
   .chart-filters select{min-width:180px}
   .chart-filters select#chartLabaYear{min-width:110px}
 
-  /* ===== 2. Rekap barang: kolom nama rata kiri ===== */
+  /* ===== Rekap barang (garis + item rata kiri) ===== */
   .rekap-wrap{overflow-x:auto}
   .rekap-wrap table{min-width:1050px;border:1px solid #333;border-collapse:collapse}
-  .rekap-wrap th,.rekap-wrap td{border:1px solid #333;text-align:center}
+  .rekap-wrap th,.rekap-wrap td{border:1px solid #333;text-align:center;padding:10px 8px}
   .rekap-wrap td:first-child,
   .rekap-wrap th:first-child{text-align:left!important;padding-left:12px!important}
 
@@ -833,21 +854,30 @@
       <div class="report-grid">
         <div class="report-card">
           <h3>Laporan Laba Rugi</h3>
-          <table class="report-table report-noline" id="tableLabaRugi"></table>
+          <table class="report-kas">
+            <thead><tr><th style="text-align:left">Keterangan</th><th style="text-align:right">Jumlah (Rp)</th></tr></thead>
+            <tbody id="tableLabaRugi"></tbody>
+          </table>
         </div>
         <div class="report-card">
           <h3>Neraca</h3>
-          <table class="report-table report-noline" id="tableNeraca"></table>
+          <table class="report-kas">
+            <thead><tr><th style="text-align:left">Keterangan</th><th style="text-align:right">Jumlah (Rp)</th></tr></thead>
+            <tbody id="tableNeraca"></tbody>
+          </table>
         </div>
       </div>
 
       <div class="report-card">
         <h3>Laporan Perubahan Ekuitas</h3>
-        <table class="report-table report-noline" id="tableEkuitas"></table>
+        <table class="report-kas">
+          <thead><tr><th style="text-align:left">Keterangan</th><th style="text-align:right">Jumlah (Rp)</th></tr></thead>
+          <tbody id="tableEkuitas"></tbody>
+        </table>
       </div>
 
       <div class="report-card">
-        <h3>Rekap Barang (Persediaan)</h3>
+        <h3 style="text-align:center">Rekap Barang (Persediaan)</h3>
         <div class="rekap-wrap">
           <table class="report-table" id="tableRekap">
             <thead>
@@ -950,7 +980,6 @@ const rp = n => "Rp " + (Number(n) || 0).toLocaleString("id-ID");
 const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const pad2 = n => String(n).padStart(2, "0");
 
-/* FIX #5: harga beli fallback ke harga jual jika 0 */
 function getHargaBeli(it) {
   if (!it) return 0;
   const hb = Number(it.harga) || 0;
@@ -998,11 +1027,7 @@ function setStatus(text, ok = true) {
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) showApp(JSON.parse(auth));
-  else {
-    $("loginScreen").style.display = "flex";
-    $("appContent").style.display = "none";
-    showLanding();
-  }
+  else { $("loginScreen").style.display = "flex"; $("appContent").style.display = "none"; showLanding(); }
 }
 function showLanding() {
   $("authLanding").style.display = "flex";
@@ -1030,10 +1055,7 @@ async function handleLogin() {
   const u = $("loginUsername").value.trim();
   const p = $("loginPassword").value;
   const btn = $("btnLogin"); const errBox = $("loginError");
-  if (!u || !p) {
-    errBox.className = "auth-msg error"; errBox.textContent = "Username dan Password harus diisi.";
-    return;
-  }
+  if (!u || !p) { errBox.className = "auth-msg error"; errBox.textContent = "Username dan Password harus diisi."; return; }
   errBox.className = "auth-msg"; btn.textContent = "Memproses..."; btn.disabled = true;
   try {
     const res = await api({ action: "login", username: u, password: p }, "POST");
@@ -1097,12 +1119,8 @@ function showApp(user) {
   else { $("btnModeExisting").style.display = "block"; }
   const kw = $("sdKoreksiWrap");
   if (kw) kw.style.display = user.role === "manajer" ? "flex" : "none";
-  switchTab("menu");
-  applyBeliMode();
-  updateKategoriOptions();
-  loadNames();
-  initPeriod();
-  attachRupiahInputs();
+  switchTab("menu"); applyBeliMode(); updateKategoriOptions(); loadNames();
+  initPeriod(); attachRupiahInputs();
   load().then(() => { renderLaporan(); renderCharts(); });
 }
 function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
@@ -1138,7 +1156,6 @@ function switchTab(name) {
 async function load() {
   try {
     setStatus("Memuat data...");
-    // FIX #3: load penjualan bersama data lain agar grafik langsung terisi
     const [dItems, dHist, dKeu, dAset, dSD, dSA, dPen] = await Promise.all([
       api(null, "GET", ""),
       api(null, "GET", "history=1&all=1"),
@@ -1158,8 +1175,7 @@ async function load() {
     penjualan = dPen.penjualan || [];
     renderTable(); fillSelects(); populateEditView(); renderAset();
     populateStokFisikView(); renderStokDaerah(); renderStokAkhir();
-    fillChartItemDropdown();
-    fillLabaYearOptions();
+    fillChartItemDropdown(); fillLabaYearOptions();
     setStatus("Terhubung ke Google Sheets");
   } catch (e) {
     setStatus("Gagal: " + e.message, false);
@@ -1207,11 +1223,9 @@ async function handleTbodyClick(e) {
   const it = items.find(i => i.id === id); if (!it) return;
   if (act === "in") {
     beliMode = "existing"; switchTab("beli"); applyBeliMode();
-    $("bExistingSearch").value = it.nama; $("bExisting").value = it.id;
-    updateBeliPreview();
-  } else if (act === "edit") {
-    switchTab("edit"); populateEditFields(id);
-  } else if (act === "out") {
+    $("bExistingSearch").value = it.nama; $("bExisting").value = it.id; updateBeliPreview();
+  } else if (act === "edit") { switchTab("edit"); populateEditFields(id); }
+  else if (act === "out") {
     switchTab("jual"); $("kItemSearch").value = it.nama; $("kItem").value = it.id; $("kQty").value = 1;
   } else if (act === "del") {
     if (!confirm(`Hapus "${it.nama}" beserta seluruh riwayatnya?`)) return;
@@ -1515,8 +1529,7 @@ function populateStokFisikView() {
   $("sdStokSistem").value = ""; $("sdStokAkhir").value = "";
   $("sdStokOnHand").value = ""; $("sdKeterangan").value = "";
   $("sdKoreksi").checked = false;
-  $("sdPreview").textContent = "Pilih barang.";
-  $("sdPreview").className = "preview";
+  $("sdPreview").textContent = "Pilih barang."; $("sdPreview").className = "preview";
 }
 function updateSdPreview() {
   const id = $("sdItemSelect").value;
@@ -1576,8 +1589,7 @@ async function handleSaveStokFisik() {
   const data = {
     nama: it.nama, stokAkhir: sa, stokOnHand: oh,
     nama_pencatat: val("sdPencatat") || val("kNote") || "",
-    keterangan: val("sdKeterangan"),
-    koreksi: $("sdKoreksi").checked
+    keterangan: val("sdKeterangan"), koreksi: $("sdKoreksi").checked
   };
   if (data.nama_pencatat) saveKasir(data.nama_pencatat);
   const btn = $("btnSaveStokDaerah"); btn.disabled = true; btn.textContent = "Menyimpan...";
@@ -1747,7 +1759,6 @@ function computeLabaRugi(start, end) {
   const p = filterByPeriod(penjualan, start, end);
   const k = filterByPeriod(keuangan, start, end);
   const pendapatan = p.reduce((s, x) => s + (Number(x.subtotal) || 0), 0);
-  // FIX #5: pakai getHargaBeli (fallback ke harga_jual)
   const hpp = p.reduce((s, x) => {
     const it = items.find(i => i.nama === x.nama);
     return s + (Number(x.qty) || 0) * getHargaBeli(it);
@@ -1772,7 +1783,7 @@ function renderLaporan() {
   if (!s || !e) return;
   const lr = computeLabaRugi(s, e);
 
-  // ===== LABA RUGI (tanpa garis + warna) =====
+  // Laba Rugi
   $("tableLabaRugi").innerHTML = `
     <tr><td style="text-align:left">Pendapatan Penjualan</td><td style="text-align:right">${rp(lr.pendapatan)}</td></tr>
     <tr><td style="text-align:left">Harga Pokok Penjualan</td><td style="text-align:right">(${rp(lr.hpp)})</td></tr>
@@ -1781,8 +1792,7 @@ function renderLaporan() {
     <tr><td style="text-align:left">Beban Lain-lain</td><td style="text-align:right">(${rp(lr.beban)})</td></tr>
     <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
 
-  // ===== NERACA (tanpa garis + warna) =====
-  // FIX #5: persediaan pakai getHargaBeli
+  // Neraca
   const persediaan = items.reduce((s, i) => s + (Number(i.stok) || 0) * getHargaBeli(i), 0);
   const asetNeto = aset.reduce((s, a) => s + depreciation(a).nilaiBuku, 0);
   const totalMasuk = keuangan.filter(k => ["modal","pendapatan_lain","utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
@@ -1812,7 +1822,7 @@ function renderLaporan() {
     <tr><td style="text-align:left">Laba Ditahan</td><td style="text-align:right">${rp(labaKumulatif)}</td></tr>
     <tr class="total-pasiva"><td style="text-align:left">Total Kewajiban + Ekuitas</td><td style="text-align:right">${rp(utangOut + ekuitas)}</td></tr>`;
 
-  // ===== PERUBAHAN EKUITAS =====
+  // Perubahan Ekuitas
   $("tableEkuitas").innerHTML = `
     <tr><td style="text-align:left">Modal Awal Periode</td><td style="text-align:right">${rp(modal - prive)}</td></tr>
     <tr><td style="text-align:left">+ Setoran Modal</td><td style="text-align:right">${rp(modal)}</td></tr>
@@ -1940,7 +1950,6 @@ function renderRiwayat() {
   const tb = $("tbodyRiwayat");
   if (!riwayat.length) { tb.innerHTML = '<tr><td colspan="8"><div class="empty">Belum ada riwayat.</div></td></tr>'; return; }
   const label = { masuk:"Masuk", keluar:"Keluar", baru:"Baru", opname:"Opname", edit:"Edit" };
-  // FIX #4: warna badge — masuk=hijau, baru=kuning, keluar/edit/opname=merah
   const badgeMap = { masuk:"ok", baru:"soon", keluar:"exp", edit:"exp", opname:"exp" };
   tb.innerHTML = riwayat.slice().reverse().map(r => `
     <tr>
@@ -1981,13 +1990,11 @@ function fillSelects() {
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
 
-  // Stok
   $("btnReload").addEventListener("click", () => load());
   $("search").addEventListener("input", renderTable);
   $("filter").addEventListener("change", renderTable);
   $("tbody").addEventListener("click", handleTbodyClick);
 
-  // Beli
   $("btnModeExisting").addEventListener("click", () => { beliMode = "existing"; applyBeliMode(); });
   $("btnModeNew").addEventListener("click", () => { beliMode = "new"; applyBeliMode(); });
   $("btnBeli").addEventListener("click", handleBeli);
@@ -1995,32 +2002,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if ($(id)) { $(id).addEventListener("input", updateBeliPreview); $(id).addEventListener("change", updateBeliPreview); }
   });
 
-  // POS
   $("btnAddToCart").addEventListener("click", addToCart);
   $("btnCheckout").addEventListener("click", handleCheckout);
   $("posDiskon").addEventListener("input", updatePosSummary);
   $("posTunai").addEventListener("input", updatePosSummary);
 
-  // Aset
   $("btnSaveAset").addEventListener("click", handleSaveAset);
   $("btnCancelAset").addEventListener("click", resetAsetForm);
   $("searchAset").addEventListener("input", renderAset);
   $("filterAsetKategori").addEventListener("change", renderAset);
 
-  // Stok fisik
   $("btnSaveStokDaerah").addEventListener("click", handleSaveStokFisik);
   $("sdStokAkhir").addEventListener("input", updateSdPreview);
   $("sdStokOnHand").addEventListener("input", updateSdPreview);
 
-  // Edit
   $("btnSaveEdit").addEventListener("click", handleSaveEdit);
 
-  // Keuangan
   $("btnKeuangan").addEventListener("click", handleKeuangan);
   $("kfTipe").addEventListener("change", updateKategoriOptions);
   $("filterKeuangan").addEventListener("change", renderKeuangan);
 
-  // Laporan
   $("btnTampilkan").addEventListener("click", () => { renderLaporan(); renderCharts(); });
   document.querySelectorAll("[data-quick]").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -2044,13 +2045,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   $("chartItemFilter").addEventListener("change", renderCharts);
   $("chartMetric").addEventListener("change", renderCharts);
-  // FIX #3: year selector grafik laba rugi
   if ($("chartLabaYear")) $("chartLabaYear").addEventListener("change", renderProfitChart);
 
-  // Ganti sandi
   $("btnGS").addEventListener("click", handleGantiSandi);
 
-  // Searchable
   setupSearchable("bExistingSearch", "bExisting", "bExistingDropdown", () => updateBeliPreview());
   setupSearchable("kItemSearch", "kItem", "kItemDropdown", null);
   setupSearchable("sdItemSearch", "sdItemSelect", "sdItemDropdown", (id) => {
