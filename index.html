@@ -2264,20 +2264,18 @@ function computeDepresiasiBeban(startDate, endDate) {
   for (const a of aset) {
     if (!a.tanggal_perolehan || a.masa_pakai <= 0 || (a.jumlah * a.harga) <= 0) continue;
     const tglBeli = new Date(a.tanggal_perolehan);
-    if (tglBeli > end) continue; // Belum dibeli
+    if (tglBeli > end) continue;
     
     const totalNilai = a.jumlah * a.harga;
     const satuan = a.satuan_masa || "tahun";
     const penyusutanPerBulan = satuan === "tahun" ? totalNilai / (a.masa_pakai * 12) : totalNilai / a.masa_pakai;
     
-    // Hitung bulan yang masuk dalam periode laporan
     let cur = new Date(Math.max(start.getTime(), tglBeli.getTime()));
     cur = new Date(cur.getFullYear(), cur.getMonth(), 1);
     const endM = new Date(end.getFullYear(), end.getMonth(), 1);
     
     while (cur <= endM) {
       const bulanKe = (cur.getFullYear() - tglBeli.getFullYear()) * 12 + (cur.getMonth() - tglBeli.getMonth()) + 1;
-      // Jika belum lewat masa pakai
       if (bulanKe <= (satuan === "tahun" ? a.masa_pakai * 12 : a.masa_pakai)) {
         totalBeban += penyusutanPerBulan;
       }
@@ -2287,7 +2285,7 @@ function computeDepresiasiBeban(startDate, endDate) {
   return totalBeban;
 }
 
-// FUNGSI NILAI BUKU ASET TETAP SAAT INI (Total Aset - Total Akumulasi Depresiasi)
+// FUNGSI NILAI BUKU ASET TETAP SAAT INI
 function computeNilaiBukuAset(endDate) {
   const end = new Date(endDate + "T23:59:59");
   let totalNilaiBuku = 0;
@@ -2295,7 +2293,7 @@ function computeNilaiBukuAset(endDate) {
   for (const a of aset) {
     if (!a.tanggal_perolehan) continue;
     const tglBeli = new Date(a.tanggal_perolehan);
-    if (tglBeli > end) continue; // Belum dibeli
+    if (tglBeli > end) continue;
     
     const totalNilai = (a.jumlah || 0) * (a.harga || 0);
     if (totalNilai === 0) continue;
@@ -2395,9 +2393,6 @@ function computeNeraca(endDate) {
   const pendLain = keuUp.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
   let bebLain = keuUp.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
   
-  // KAS DIKURANGI DENGAN TOTAL BEBAN DEPRESIASI (karena depresiasi bukan kas keluar, tapi beban mengurangi ekuitas, sedangkan Kas tidak berkurang. Jadi kita menghitung Kas secara riil lalu menyeimbangkan Ekuitas).
-  // Biarkan Kas dihitung dari mutasi riil.
-  
   const modal = keuUp.filter(k => k.tipe === "modal").reduce((s, k) => s + k.jumlah, 0);
   const prive = keuUp.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
   const utangBaru = keuUp.filter(k => k.tipe === "utang").reduce((s, k) => s + k.jumlah, 0);
@@ -2406,10 +2401,9 @@ function computeNeraca(endDate) {
   const kas = (totalPenjualan + pendLain + modal + utangBaru) - (totalPembelian + bebLain + prive + bayarUtang);
   const persediaan = computeFifoPersediaan(endDate);
   
-  // ASET TETAP (Nilai Buku)
   const asetTetapNilai = computeNilaiBukuAset(endDate);
   
-  const totalAset = kas + persediaan; // Aset Tetap tetap dijadikan memo (tidak menambah Total Aset sesuai instruksi awal)
+  const totalAset = kas + persediaan; // Aset Tetap tetap dijadikan memo (tidak menambah Total Aset)
   const utang = utangBaru - bayarUtang;
   const ekuitas = totalAset - utang;
   
