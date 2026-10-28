@@ -235,7 +235,7 @@
   .table-wrap{overflow-x:auto;border:1px solid #e0e0e0;border-radius:10px; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.03);}
   table{width:100%;border-collapse:collapse;min-width:650px}
   th, td { border: 1px solid #333 !important; }
-  th{background:#fff5f5;color:#b71c1c;text-align:left;padding:12px 14px;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;}
+  th{background:#fff5f5;color:#b71c1c;text-align:center;padding:12px 14px;font-size:11.5px;text-transform:uppercase;letter-spacing:.5px;}
   td{padding:12px 14px;vertical-align:middle}
   tr:hover{background:#fafbfc}
   
@@ -1247,3 +1247,233 @@ async function handleRegister() {
     if(!email) $("regEmail").style.border = "2px solid red";
     if(!password) $("regPassword").style.border = "2px solid red";
     return; 
+  }
+  $("regEmail").style.border = "1px solid #ddd";
+  $("regPassword").style.border = "1px solid #ddd";
+
+  btn.textContent = "Memproses..."; btn.disabled = true;
+  try {
+    const res = await api({ action: "register", data: { email, password, role } }, "POST");
+    if (res.ok) {
+      successBox.className = "auth-msg success"; successBox.textContent = res.message;
+      setTimeout(() => { toggleAuth('login'); $("loginUsername").value = email; $("loginPassword").value = ""; }, 2000);
+    } else { errBox.className = "auth-msg error"; errBox.textContent = res.message || "Gagal mendaftar."; }
+  } catch (err) { errBox.className = "auth-msg error"; errBox.textContent = "Gagal terhubung ke server."; }
+  finally { btn.textContent = "Daftar Sekarang"; btn.disabled = false; }
+}
+
+function showApp(user) {
+  $("loginScreen").style.display = "none";
+  $("appContent").style.display = "block";
+  
+  $("userInfo").innerHTML = `Halo, <b>${user.username}</b>`;
+  
+  document.querySelectorAll(".menu-btn[data-role='manajer']").forEach(btn => {
+    if (user.role !== "manajer") btn.style.display = "none";
+    else btn.style.display = "flex";
+  });
+
+  if (user.role === "karyawan") { $("btnModeExisting").style.display = "none"; beliMode = "new"; }
+  else { $("btnModeExisting").style.display = "block"; }
+  
+  const koreksiWrap = $("sdKoreksiWrap");
+  if (koreksiWrap) koreksiWrap.style.display = user.role === "manajer" ? "flex" : "none";
+  
+  switchTab("menu");
+  applyBeliMode();
+  updateKategoriOptions();
+  loadNames();
+  initPeriod();
+  attachRupiahInputs();
+  load().then(() => renderLaporan());
+}
+
+function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
+
+function toast(msg, type = "") {
+  const el = $("toast");
+  el.textContent = msg; el.className = type; el.style.display = "block";
+  clearTimeout(el._t); el._t = setTimeout(() => el.style.display = "none", 3500);
+}
+function setStatus(text, ok = true) {
+  const el = $("status");
+  el.textContent = text;
+  el.style.background = ok ? "#dcfce7" : "#fee2e2";
+  el.style.color = ok ? "#166534" : "#991b1b";
+}
+
+function loadNames() {
+  const sup = (localStorage.getItem(K_SUPPLIER) || "").trim();
+  const kas = (localStorage.getItem(K_KASIR) || "").trim();
+  if (sup) $("bNote").value = sup;
+  if (kas) {
+    $("kNote").value = kas; $("eKasir").value = kas; $("kfNama").value = kas;
+    if ($("aPencatat")) $("aPencatat").value = kas;
+    if ($("sdPencatat")) $("sdPencatat").value = kas;
+  }
+}
+function saveSupplier(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_SUPPLIER, n); }
+function saveKasir(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_KASIR, n); }
+function val(id) { return String($(id).value || "").trim(); }
+
+function switchTab(name) {
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  if (auth.role !== "manajer" && ["edit", "laporan", "riwayat", "penjualan", "aset"].includes(name)) {
+    toast("Akses ditolak. Fitur ini khusus Manajer.", "err"); return;
+  }
+  
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
+  
+  if (name === "riwayat") loadHistory();
+  if (name === "laporan") renderLaporan();
+  if (name === "keuangan") renderKeuangan();
+  if (name === "edit") populateEditView();
+  if (name === "penjualan") loadPenjualan();
+  if (name === "aset") renderAset();
+  if (name === "stokdaerah") { populateStokFisikView(); renderStokDaerah(); renderStokAkhir(); }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function load() {
+  try {
+    setStatus("Memuat data...");
+    const [dItems, dHist, dKeu, dAset, dSD, dSA] = await Promise.all([
+      api(null, "GET", ""),
+      api(null, "GET", "history=1&all=1"),
+      api(null, "GET", "keuangan=1"),
+      api(null, "GET", "aset=1"),
+      api(null, "GET", "stokdaerah=1"),
+      api(null, "GET", "stokakhir=1")
+    ]);
+    if (!dItems.ok) throw new Error(dItems.message || "Gagal memuat barang");
+    items = dItems.items || [];
+    riwayat = dHist.history || [];
+    keuangan = dKeu.keuangan || [];
+    aset = dAset.aset || [];
+    stokDaerah = dSD.stokdaerah || [];
+    stokAkhir = dSA.stokakhir || [];
+    renderTable();
+    fillSelects();
+    populateEditView();
+    renderAset();
+    populateStokFisikView();
+    renderStokDaerah();
+    renderStokAkhir();
+    fillChartItemDropdown();
+    setStatus("Terhubung ke Google Sheets");
+  } catch (e) {
+    setStatus("Gagal: " + e.message, false);
+    toast("Gagal memuat data.", "err");
+  }
+}
+async function loadPenjualan() {
+  try { const res = await api(null, "GET", "penjualan=1"); penjualan = res.penjualan || []; renderPenjualan(); }
+  catch (e) { toast("Gagal memuat riwayat penjualan.", "err"); }
+}
+
+function daysLeft(dateStr) {
+  if (!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const d = new Date(dateStr + "T00:00:00");
+  if (isNaN(d)) return null;
+  return Math.round((d - today) / 86400000);
+}
+function expiredBadge(item) {
+  const d = daysLeft(item.expired);
+  if (d === null) return '<span class="badge">—</span>';
+  if (d < 0) return `<span class="badge exp">Lewat ${Math.abs(d)} hr</span>`;
+  if (d === 0) return '<span class="badge exp">Hari ini</span>';
+  if (d <= 30) return `<span class="badge soon">${d} hr</span>`;
+  return `<span class="badge ok">${d} hr</span>`;
+}
+
+function renderTable() {
+  const q = $("search").value.toLowerCase().trim();
+  const f = $("filter").value;
+  const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
+  const isManajer = auth.role === "manajer";
+  let list = items.filter(i => {
+    if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
+    if (f === "zero" && i.stok !== 0) return false;
+    if (f === "exp") { const d = daysLeft(i.expired); if (!(d !== null && d < 0)) return false; }
+    return true;
+  }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
+  const tb = $("tbody");
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>'; return; }
+  tb.innerHTML = list.map(i => {
+    const zero = i.stok === 0;
+    const statusBadge = zero ? '<span class="badge zero">Kosong</span>' : '<span class="badge tersedia">Tersedia</span>';
+    const btnRestock = isManajer ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : '';
+    const btnEdit = isManajer ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : '';
+    const btnDel = isManajer ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : '';
+    return `<tr>
+      <td><div class="name">${esc(i.nama)}</div></td>
+      <td>${esc(i.kategori || "-")}</td>
+      <td style="text-align:center">
+        <div class="qty">${i.stok}</div>
+        <div class="sub">${esc(i.satuan)}</div>
+      </td>
+      <td style="text-align:center" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
+      <td style="text-align:center">${statusBadge}</td>
+      <td><div class="actions">${btnRestock}<button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>${btnEdit}${btnDel}</div></td>
+    </tr>`;
+  }).join("");
+}
+function renderPenjualan() {
+  const tb = $("tbodyPenjualan");
+  if (penjualan.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada riwayat penjualan.</div></td></tr>'; return; }
+  tb.innerHTML = penjualan.map(p => `
+    <tr>
+      <td class="sub">${esc(p.waktu)}</td>
+      <td><b>${esc(p.kasir)}</b></td>
+      <td>${esc(p.nama)}</td>
+      <td style="text-align:center"><span class="qty">${p.qty}</span></td>
+      <td style="text-align:center" class="price">${rp(p.harga)}</td>
+      <td style="text-align:center" class="money-pos">${rp(p.subtotal)}</td>
+    </tr>
+  `).join("");
+}
+
+function fillSelects() {
+  $("bExistingSearch").value = "";
+  $("bExisting").value = "";
+  $("kItemSearch").value = "";
+  $("kItem").value = "";
+  updateBeliPreview();
+}
+
+/* Generic Searchable Dropdown Logic */
+function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
+  const searchEl = $(searchId);
+  const hiddenEl = $(hiddenId);
+  const dropdown = $(dropdownId);
+  if (!searchEl || !hiddenEl || !dropdown) return;
+
+  function render(filterText) {
+    const q = String(filterText || "").toLowerCase().trim();
+    const filtered = items.filter(i => !q || (i.nama || "").toLowerCase().includes(q));
+    if (items.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Belum ada barang terdaftar</div>'; dropdown.classList.add("show"); return; }
+    if (filtered.length === 0) { dropdown.innerHTML = '<div class="ss-empty">Barang tidak ditemukan</div>'; dropdown.classList.add("show"); return; }
+    dropdown.innerHTML = filtered.slice(0, 100).map(i => `
+      <div class="ss-item" data-id="${esc(i.id)}" data-nama="${esc(i.nama)}">
+        ${esc(i.nama)} <span class="sub">— ${i.stok} ${esc(i.satuan)}</span>
+      </div>
+    `).join("");
+    dropdown.classList.add("show");
+    dropdown.querySelectorAll(".ss-item").forEach(el => {
+      el.addEventListener("mousedown", e => {
+        e.preventDefault();
+        hiddenEl.value = el.dataset.id;
+        searchEl.value = el.dataset.nama;
+        dropdown.classList.remove("show");
+        if (onSelect) onSelect(el.dataset.id, el.dataset.nama);
+      });
+    });
+  }
+
+  searchEl.addEventListener("input", e => { hiddenEl.value = ""; render(e.target.value); });
+  searchEl.addEventListener("focus", e => render(e.target.value));
+  searchEl.addEventListener("blur", () => setTimeout(() => dropdown.classList.remove("show"), 180));
+  searchEl.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault
