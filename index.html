@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistem Pelaporan Keuangan KDMP Kapas Bojonegoro</title>
+<title>KDMP Kapas — Stok & Laporan</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   *{box-sizing:border-box}
@@ -347,7 +347,7 @@
   <div id="authLanding" class="auth-landing">
     <div class="landing-content">
       <h1>Koperasi Desa Merah Putih Kapas</h1>
-      <p>Sistem Informasi Pelaporan Keuangan</p>
+      <p>Sistem Informasi Stok & Laporan Terpadu</p>
       <div class="landing-buttons">
         <button class="btn-primary" onclick="showAuthForm('login')">Masuk</button>
         <button class="btn-secondary" onclick="showAuthForm('register')">Daftar Akun</button>
@@ -439,8 +439,8 @@
 <div id="appContent" style="display:none;">
   <header>
     <div>
-      <h1>Koperasi Desa Merah Putih</h1>
-      <small>Kecamatan Kapas, Kabupaten Bojonegoro</small>
+      <h1>Koperasi Desa Merah Putih Kapas</h1>
+      <small>Politeknik Keuangan Negara STAN</small>
     </div>
     <div class="topbar-actions">
       <span id="userInfo" style="font-size:13.5px; font-weight:600;"></span>
@@ -833,6 +833,12 @@
               <option value="set">set</option><option value="rim">rim</option>
             </select>
           </div>
+          
+          <!-- FITUR BARU: EDIT HARGA BELI, TANGGAL, KUANTITAS -->
+          <div class="field"><label>Harga Beli (Rp) <span class="req">*</span></label><input type="number" id="eHargaBeli" min="0"></div>
+          <div class="field"><label>Tanggal Pembelian <span class="opt">(opsional)</span></label><input type="date" id="eTanggalBeli"></div>
+          <div class="field"><label>Kuantitas / Stok <span class="req">*</span></label><input type="number" id="eKuantitas" min="0"></div>
+          
           <div class="field"><label>Harga jual (Rp)</label><input type="number" id="eHargaJual" min="0"></div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name"></div>
         </div>
@@ -1022,8 +1028,7 @@
     </section>
   </main>
 
-  <footer>Sistem Informasi Pelaporan Keuangan Koperasi Desa Merah Putih</footer>
- <footer>Politeknik Keuangan Negara STAN</footer>
+  <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
 </div>
 
 <div id="toast"></div>
@@ -1586,6 +1591,7 @@ function clearEditForm() {
   editingId = null;
   $("editItemSelect").value = "";
   $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; $("eHargaJual").value = 0;
+  $("eHargaBeli").value = 0; $("eTanggalBeli").value = ""; $("eKuantitas").value = 0;
 }
 function loadEditForm(id) {
   const item = items.find(i => i.id === id);
@@ -1595,13 +1601,33 @@ function loadEditForm(id) {
   $("eKategori").value = item.kategori || "Lainnya";
   $("eSatuan").value = item.satuan || "pcs";
   $("eHargaJual").value = item.harga_jual || 0;
+  $("eHargaBeli").value = item.harga || 0;
+  
+  // Cari tanggal pembelian terakhir dari riwayat
+  let tglTerakhir = "";
+  const hist = riwayat.filter(r => norm(r.nama) === norm(item.nama) && (r.tipe === "baru" || r.tipe === "masuk"));
+  if (hist.length > 0) {
+    // Ambil yang paling baru (data riwayat dibalik di API, tapi kita sort manual)
+    hist.sort((a,b) => new Date(b.waktu) - new Date(a.waktu));
+    tglTerakhir = hist[0].waktu.split(" ")[0];
+  }
+  $("eTanggalBeli").value = tglTerakhir;
+  $("eKuantitas").value = item.stok;
 }
 async function submitEdit() {
   if (!editingId) { toast("Pilih barang terlebih dahulu.", "err"); return; }
   const item = items.find(i => i.id === editingId);
   if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   const kasir = val("eKasir");
-  const data = { nama: $("eNama").value.trim(), kategori: $("eKategori").value, satuan: $("eSatuan").value, harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), note: kasir };
+  const data = { 
+    nama: $("eNama").value.trim(), 
+    kategori: $("eKategori").value, 
+    satuan: $("eSatuan").value, 
+    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
+    harga_beli: Math.max(0, parseInt($("eHargaBeli").value, 10) || 0),
+    stok: Math.max(0, parseInt($("eKuantitas").value, 10) || 0),
+    note: kasir 
+  };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
   try {
     setStatus("Menyimpan…");
