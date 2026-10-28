@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KDMP Kapas — Stok & Laporan</title>
+<link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   *{box-sizing:border-box}
@@ -352,7 +353,7 @@
   <div id="authLanding" class="auth-landing">
     <div class="landing-content">
       <h1>Koperasi Desa Merah Putih Kapas</h1>
-      <p>Sistem Informasi Pelaporan Keuangan</p>
+      <p>Sistem Informasi Stok & Laporan Terpadu</p>
       <div class="landing-buttons">
         <button class="btn-primary" onclick="showAuthForm('login')">Masuk</button>
         <button class="btn-secondary" onclick="showAuthForm('register')">Daftar Akun</button>
@@ -449,7 +450,7 @@
     </div>
     <div class="topbar-actions">
       <span id="userInfo" style="font-size:13.5px; font-weight:600;"></span>
-      <button onclick="logout()" style="background:#2e7d32; border-color:#2e7d32; color:#fff; border-radius: 8px; font-weight:900; padding:10px 20px; border:none; cursor:pointer;">Keluar</button>
+      <button onclick="logout()" style="background:#2e7d32; border-color:#2e7d32; color:#fff; border-radius: 6px; font-weight:700; padding:8px 16px; border:none; cursor:pointer;">Keluar</button>
     </div>
   </header>
 
@@ -494,6 +495,7 @@
             <tr>
               <th>Nama</th><th>Kategori</th>
               <th style="text-align:right">Stok</th>
+              <th style="text-align:right">H. Beli</th>
               <th style="text-align:right">H. Jual</th>
               <th>Expired</th>
               <th style="text-align:right">Aksi</th>
@@ -583,7 +585,7 @@
             <input type="text" id="bNote" placeholder="cth: Supplier A" autocomplete="organization">
           </div>
         </div>
-       <div class="preview" id="bPreview"></div>
+        <div class="preview" id="bPreview"></div>
         <div class="actions-row">
           <button id="btnBeli">Simpan</button>
         </div>
@@ -709,7 +711,7 @@
               <th style="text-align:right">Harga</th>
               <th style="text-align:right">Total Nilai</th>
               <th>Masa Pakai</th>
-              <th style="text-align:right">Penyusutan/Tahun</th>
+              <th style="text-align:right">Penyusutan/Bulan</th>
               <th style="text-align:right">Akumulasi</th>
               <th style="text-align:right">Nilai Buku</th>
               <th>Perolehan</th>
@@ -840,6 +842,7 @@
               <option value="set">set</option><option value="rim">rim</option>
             </select>
           </div>
+          <div class="field"><label>Harga Beli (Rp)</label><input type="number" id="eHargaBeli" min="0"></div>
           <div class="field"><label>Harga jual (Rp)</label><input type="number" id="eHargaJual" min="0"></div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir" placeholder="Nama yang mengedit" autocomplete="name"></div>
         </div>
@@ -1061,7 +1064,7 @@
     </section>
   </main>
 
-  <footer>Aplikasi ini dikembangkan oleh Mahasiswa Politeknik Keuangan Negara STAN</footer>
+  <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
 </div>
 
 <div id="toast"></div>
@@ -1369,7 +1372,7 @@ function renderTable() {
     return true;
   }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
   const tb = $("tbody");
-  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>'; return; }
+  if (list.length === 0) { tb.innerHTML = '<tr><td colspan="7"><div class="empty">Belum ada barang. Tambah lewat Pembelian.</div></td></tr>'; return; }
   tb.innerHTML = list.map(i => {
     const d = daysLeft(i.expired);
     const zero = i.stok === 0;
@@ -1383,6 +1386,7 @@ function renderTable() {
       <td><div class="name">${esc(i.nama)}</div><div class="sub">${label}</div></td>
       <td>${esc(i.kategori || "-")}</td>
       <td style="text-align:right"><span class="qty">${i.stok}</span> <span class="sub">${esc(i.satuan)}</span></td>
+      <td style="text-align:right" class="price">${i.harga ? rp(i.harga) : '—'}</td>
       <td style="text-align:right" class="price">${i.harga_jual ? rp(i.harga_jual) : '—'}</td>
       <td>${expiredBadge(i)}</td>
       <td><div class="actions">${btnRestock}<button class="small ghost" data-act="out" data-id="${i.id}" title="Penjualan">−</button>${btnEdit}${btnDel}</div></td>
@@ -1623,7 +1627,8 @@ function populateEditView() {
 function clearEditForm() {
   editingId = null;
   $("editItemSelect").value = "";
-  $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; $("eHargaJual").value = 0;
+  $("eNama").value = ""; $("eKategori").value = "Makanan"; $("eSatuan").value = "pcs"; 
+  $("eHargaBeli").value = 0; $("eHargaJual").value = 0;
   $("batchContainer").style.display = "none";
   $("tbodyBatch").innerHTML = "";
 }
@@ -1634,6 +1639,7 @@ function loadEditForm(id) {
   $("eNama").value = item.nama;
   $("eKategori").value = item.kategori || "Lainnya";
   $("eSatuan").value = item.satuan || "pcs";
+  $("eHargaBeli").value = item.harga || 0;
   $("eHargaJual").value = item.harga_jual || 0;
   renderBatchList(item.nama);
 }
@@ -1691,7 +1697,14 @@ async function submitEdit() {
   const item = items.find(i => i.id === editingId);
   if (!item) { toast("Barang tidak ditemukan.", "err"); return; }
   const kasir = val("eKasir");
-  const data = { nama: $("eNama").value.trim(), kategori: $("eKategori").value, satuan: $("eSatuan").value, harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), note: kasir };
+  const data = { 
+    nama: $("eNama").value.trim(), 
+    kategori: $("eKategori").value, 
+    satuan: $("eSatuan").value, 
+    harga: Math.max(0, parseInt($("eHargaBeli").value, 10) || 0), 
+    harga_jual: Math.max(0, parseInt($("eHargaJual").value, 10) || 0), 
+    note: kasir 
+  };
   if (!data.nama) { toast("Nama wajib diisi.", "err"); $("eNama").focus(); return; }
   try {
     setStatus("Menyimpan…");
@@ -1731,6 +1744,7 @@ function applyBeliMode() {
 }
 function updateBeliPreview() {
   const box = $("bPreview");
+  if (!box) return;
   const isNew = beliMode === "new";
   if (isNew) {
     const qtyRaw = $("bQtyNew").value.trim();
@@ -2001,7 +2015,7 @@ function renderAset() {
   tb.innerHTML = list.map(a => {
     const totalNilai = (a.jumlah || 0) * (a.harga || 0);
     let masaPakaiStr = "-";
-    let penyusutanTahunanStr = "-";
+    let penyusutanBulanStr = "-";
     let akumulasiStr = "-";
     let nilaiBukuStr = "-";
 
@@ -2027,7 +2041,7 @@ function renderAset() {
       
       const nilaiBuku = totalNilai - akumulasi;
       
-      penyusutanTahunanStr = rp(penyusutanPerBulan * 12);
+      penyusutanBulanStr = rp(penyusutanPerBulan);
       akumulasiStr = rp(akumulasi);
       nilaiBukuStr = `<b>${rp(nilaiBuku)}</b>`;
     }
@@ -2039,7 +2053,7 @@ function renderAset() {
       <td style="text-align:right">${a.harga ? rp(a.harga) : '<span class="sub">—</span>'}</td>
       <td style="text-align:right"><b>${totalNilai ? rp(totalNilai) : '—'}</b></td>
       <td>${masaPakaiStr}</td>
-      <td style="text-align:right">${penyusutanTahunanStr}</td>
+      <td style="text-align:right">${penyusutanBulanStr}</td>
       <td style="text-align:right">${akumulasiStr}</td>
       <td style="text-align:right">${nilaiBukuStr}</td>
       <td class="sub">${esc(a.tanggal_perolehan || "-")}</td>
@@ -2240,13 +2254,64 @@ function computeOpnameValue(startDate, endDate) {
   }
   return net;
 }
-function computeAsetTotal(endDate) {
+
+// FUNGSI AUTO DEPRESIASI (Beban tiap bulan yang terjadi di periode tersebut)
+function computeDepresiasiBeban(startDate, endDate) {
+  const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
-  return aset.filter(a => {
-    if (!a.tanggal_perolehan) return true;
-    const d = new Date(a.tanggal_perolehan + "T00:00:00");
-    return !isNaN(d) && d <= end;
-  }).reduce((s, a) => s + (a.jumlah || 0) * (a.harga || 0), 0);
+  let totalBeban = 0;
+  
+  for (const a of aset) {
+    if (!a.tanggal_perolehan || a.masa_pakai <= 0 || (a.jumlah * a.harga) <= 0) continue;
+    const tglBeli = new Date(a.tanggal_perolehan);
+    if (tglBeli > end) continue; // Belum dibeli
+    
+    const totalNilai = a.jumlah * a.harga;
+    const satuan = a.satuan_masa || "tahun";
+    const penyusutanPerBulan = satuan === "tahun" ? totalNilai / (a.masa_pakai * 12) : totalNilai / a.masa_pakai;
+    
+    // Hitung bulan yang masuk dalam periode laporan
+    let cur = new Date(Math.max(start.getTime(), tglBeli.getTime()));
+    cur = new Date(cur.getFullYear(), cur.getMonth(), 1);
+    const endM = new Date(end.getFullYear(), end.getMonth(), 1);
+    
+    while (cur <= endM) {
+      const bulanKe = (cur.getFullYear() - tglBeli.getFullYear()) * 12 + (cur.getMonth() - tglBeli.getMonth()) + 1;
+      // Jika belum lewat masa pakai
+      if (bulanKe <= (satuan === "tahun" ? a.masa_pakai * 12 : a.masa_pakai)) {
+        totalBeban += penyusutanPerBulan;
+      }
+      cur.setMonth(cur.getMonth() + 1);
+    }
+  }
+  return totalBeban;
+}
+
+// FUNGSI NILAI BUKU ASET TETAP SAAT INI (Total Aset - Total Akumulasi Depresiasi)
+function computeNilaiBukuAset(endDate) {
+  const end = new Date(endDate + "T23:59:59");
+  let totalNilaiBuku = 0;
+  
+  for (const a of aset) {
+    if (!a.tanggal_perolehan) continue;
+    const tglBeli = new Date(a.tanggal_perolehan);
+    if (tglBeli > end) continue; // Belum dibeli
+    
+    const totalNilai = (a.jumlah || 0) * (a.harga || 0);
+    if (totalNilai === 0) continue;
+    
+    const satuan = a.satuan_masa || "tahun";
+    const masaBulan = satuan === "tahun" ? a.masa_pakai * 12 : a.masa_pakai;
+    
+    let bulanTerpakai = (end.getFullYear() - tglBeli.getFullYear()) * 12 + (end.getMonth() - tglBeli.getMonth());
+    if (bulanTerpakai < 0) bulanTerpakai = 0;
+    if (bulanTerpakai > masaBulan) bulanTerpakai = masaBulan;
+    
+    const penyusutanPerBulan = totalNilai / masaBulan;
+    const akumulasi = penyusutanPerBulan * bulanTerpakai;
+    totalNilaiBuku += (totalNilai - akumulasi);
+  }
+  return totalNilaiBuku;
 }
 
 async function renderRekapBarang(startDate, endDate) {
@@ -2291,6 +2356,7 @@ function monthRangeOf(monthStr) {
   const [y, m] = monthStr.split("-").map(Number);
   return { y, m, start: `${y}-${pad2(m)}-01`, end: `${y}-${pad2(m)}-${lastDayOfMonth(y, m)}` };
 }
+
 function computeLaporan(startDate, endDate) {
   const start = new Date(startDate + "T00:00:00");
   const end = new Date(endDate + "T23:59:59");
@@ -2299,34 +2365,54 @@ function computeLaporan(startDate, endDate) {
   const pendapatanPenjualan = fifo.revenue;
   const hpp = fifo.hpp;
   const labaKotor = fifo.labaKotor;
+  
   const pendapatanLain = keuIn.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
-  const bebanLain = keuIn.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  let bebanLain = keuIn.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  
+  // AUTO TAMBAH BEBAN DEPRESIASI
+  const bebanDepresiasi = computeDepresiasiBeban(startDate, endDate);
+  bebanLain += bebanDepresiasi;
+  
   const modal = keuIn.filter(k => k.tipe === "modal").reduce((s, k) => s + k.jumlah, 0);
   const prive = keuIn.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
   const bebanPersediaan = computeOpnameValue(startDate, endDate);
+  
   const totalPendapatan = pendapatanPenjualan + pendapatanLain;
   const labaBersih = labaKotor + pendapatanLain - bebanLain - bebanPersediaan;
-  return { pendapatanPenjualan, hpp, labaKotor, pendapatanLain, bebanLain, bebanPersediaan, totalPendapatan, labaBersih, modal, prive, fallbackQty: fifo.fallbackQty };
+  
+  return { pendapatanPenjualan, hpp, labaKotor, pendapatanLain, bebanLain, bebanDepresiasi, bebanPersediaan, totalPendapatan, labaBersih, modal, prive, fallbackQty: fifo.fallbackQty };
 }
+
 function computeNeraca(endDate) {
   const end = new Date(endDate + "T23:59:59");
   const toDate = (waktu) => dateFromStr(waktu) <= end;
   const riwayatUp = riwayat.filter(r => toDate(r.waktu));
   const keuUp = keuangan.filter(k => toDate(k.waktu));
+  
   const totalPenjualan = riwayatUp.filter(r => r.tipe === "keluar").reduce((s, r) => s + (Number(r.total) || 0), 0);
   const totalPembelian = riwayatUp.filter(r => r.tipe === "masuk").reduce((s, r) => s + (Number(r.total) || 0), 0);
+  
   const pendLain = keuUp.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + k.jumlah, 0);
-  const bebLain = keuUp.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  let bebLain = keuUp.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + k.jumlah, 0);
+  
+  // KAS DIKURANGI DENGAN TOTAL BEBAN DEPRESIASI (karena depresiasi bukan kas keluar, tapi beban mengurangi ekuitas, sedangkan Kas tidak berkurang. Jadi kita menghitung Kas secara riil lalu menyeimbangkan Ekuitas).
+  // Biarkan Kas dihitung dari mutasi riil.
+  
   const modal = keuUp.filter(k => k.tipe === "modal").reduce((s, k) => s + k.jumlah, 0);
   const prive = keuUp.filter(k => k.tipe === "prive").reduce((s, k) => s + k.jumlah, 0);
   const utangBaru = keuUp.filter(k => k.tipe === "utang").reduce((s, k) => s + k.jumlah, 0);
   const bayarUtang = keuUp.filter(k => k.tipe === "bayar_utang").reduce((s, k) => s + k.jumlah, 0);
+  
   const kas = (totalPenjualan + pendLain + modal + utangBaru) - (totalPembelian + bebLain + prive + bayarUtang);
   const persediaan = computeFifoPersediaan(endDate);
-  const totalAset = kas + persediaan;
+  
+  // ASET TETAP (Nilai Buku)
+  const asetTetapNilai = computeNilaiBukuAset(endDate);
+  
+  const totalAset = kas + persediaan; // Aset Tetap tetap dijadikan memo (tidak menambah Total Aset sesuai instruksi awal)
   const utang = utangBaru - bayarUtang;
   const ekuitas = totalAset - utang;
-  const asetTetapNilai = computeAsetTotal(endDate);
+  
   return { kas, persediaan, totalAset, utang, ekuitas, asetTetapNilai };
 }
 
@@ -2354,6 +2440,7 @@ function renderLaporan() {
     <tr><td colspan="2" style="padding-top:8px"><b>Pendapatan & Beban Lain</b></td></tr>
     <tr><td>Pendapatan Lain-lain</td><td>${rpFull(lr.pendapatanLain)}</td></tr>
     <tr><td>Beban Lain-lain</td><td class="money-neg">(${rpFull(lr.bebanLain)})</td></tr>
+    ${lr.bebanDepresiasi > 0 ? `<tr><td style="padding-left:10px;font-size:12px;color:#666">↳ Termasuk Beban Depresiasi</td><td style="color:#666;font-size:12px">(${rpFull(lr.bebanDepresiasi)})</td></tr>` : ""}
     ${lr.bebanPersediaan !== 0 ? `<tr><td>Beban Persediaan (Stock Opname)</td><td class="${lr.bebanPersediaan > 0 ? 'money-neg' : 'money-pos'}">${lr.bebanPersediaan > 0 ? '(' + rpFull(lr.bebanPersediaan) + ')' : rpFull(-lr.bebanPersediaan)}</td></tr>` : ""}
     <tr class="total"><td>Laba Bersih</td><td class="${lr.labaBersih >= 0 ? 'money-pos' : 'money-neg'}">${rpFull(lr.labaBersih)}</td></tr>
     ${lr.fallbackQty > 0 ? `<tr><td colspan="2" style="padding-top:10px;font-size:11.5px;color:#888"><i>ℹ️ ${lr.fallbackQty} unit terjual tanpa batch tercatat.</i></td></tr>` : ""}
@@ -2369,7 +2456,7 @@ function renderLaporan() {
     <tr><td>Utang</td><td>${rpFull(neraca.utang)}</td></tr>
     <tr><td>Ekuitas</td><td>${rpFull(neraca.ekuitas)}</td></tr>
     <tr class="total"><td>Total Kewajiban & Ekuitas</td><td>${rpFull(neraca.utang + neraca.ekuitas)}</td></tr>
-    ${neraca.asetTetapNilai > 0 ? `<tr><td colspan="2" style="padding-top:14px;font-size:11.5px;color:#888"><i>Memo (tidak termasuk Total Aset):</i></td></tr><tr><td>Nilai Aset Tetap</td><td>${rpFull(neraca.asetTetapNilai)}</td></tr>` : ""}
+    ${neraca.asetTetapNilai > 0 ? `<tr><td colspan="2" style="padding-top:14px;font-size:11.5px;color:#888"><i>Memo (tidak termasuk Total Aset):</i></td></tr><tr><td>Nilai Buku Aset Tetap</td><td>${rpFull(neraca.asetTetapNilai)}</td></tr>` : ""}
   `;
 
   $("tableEkuitas").innerHTML = `
