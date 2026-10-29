@@ -101,6 +101,8 @@
   .badge.exp{background:#ffebee;color:#c62828}
   .badge.zero{background:#ffebee;color:#c62828}
   .badge.tersedia{background:#e8f5e9;color:#2e7d32}
+  .badge.info{background:#e3f2fd;color:#1565c0}
+  .badge.muted{background:#eceff1;color:#546e7a}
 
   .qty{font-weight:700;font-variant-numeric:tabular-nums}
   .price{font-variant-numeric:tabular-nums;font-size:12.5px}
@@ -545,14 +547,6 @@
         <div class="preview" id="sdPreview">Pilih barang.</div>
         <div class="actions-row"><button id="btnSaveStokDaerah" style="background:#1976d2;border-color:#1976d2;">Simpan Stok Fisik</button></div>
       </div>
-      <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c;">Riwayat Stok Akhir (Pusat)</h3>
-      <div class="table-wrap" style="margin-bottom:24px;">
-        <table><thead><tr><th>Waktu</th><th>Barang</th><th style="text-align:center">Jumlah</th><th>Pencatat</th><th>Keterangan</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="tbodyStokAkhir"></tbody></table>
-      </div>
-      <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c;">Riwayat Stok On Hand (Daerah)</h3>
-      <div class="table-wrap">
-        <table><thead><tr><th>Waktu</th><th>Barang</th><th style="text-align:center">Jumlah</th><th>Pencatat</th><th>Keterangan</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="tbodyStokDaerah"></tbody></table>
-      </div>
     </section>
 
     <!-- EDIT BARANG -->
@@ -711,6 +705,24 @@
       <h2 class="panel-title">Riwayat Umum</h2>
       <div class="table-wrap">
         <table><thead><tr><th>Waktu</th><th>Tipe</th><th>Barang</th><th>Jumlah</th><th>Satuan</th><th>Harga Satuan</th><th>Total</th><th>Catatan</th></tr></thead><tbody id="tbodyRiwayat"></tbody></table>
+      </div>
+
+      <h3 style="margin:32px 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #ffcdd2;padding-bottom:8px;">📋 Riwayat Stok Fisik (Stok Akhir & On-Hand)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Nama Barang</th>
+              <th style="text-align:center">Jenis</th>
+              <th style="text-align:center">Jumlah</th>
+              <th>Pencatat</th>
+              <th>Keterangan</th>
+              <th style="text-align:center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyRiwayatStokFisik"></tbody>
+        </table>
       </div>
     </section>
 
@@ -933,7 +945,7 @@ function showApp(user) {
   document.querySelectorAll(".menu-btn[data-role='manajer'], .mode-switch button[data-role='manajer']").forEach(el => {
     el.style.display = user.role === "manajer" ? "flex" : "none";
   });
-  if (user.role === "karyawan") { beliMode = "existing"; }
+  if (user.role === "karyawan") beliMode = "existing";
   const kw = $("sdKoreksiWrap"); if (kw) kw.style.display = user.role === "manajer" ? "flex" : "none";
   const sw = $("sdSyncWrap"); if (sw) sw.style.display = user.role === "manajer" ? "flex" : "none";
 
@@ -962,13 +974,13 @@ function switchTab(name) {
     toast("Akses ditolak. Fitur khusus Manajer.", "err"); return;
   }
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + name));
-  if (name === "riwayat") renderRiwayat();
+  if (name === "riwayat") { renderRiwayat(); renderRiwayatStokFisik(); }
   if (name === "laporan") { renderLaporan(); renderCharts(); }
   if (name === "keuangan") renderKeuangan();
   if (name === "edit") populateEditView();
   if (name === "penjualan") loadPenjualan();
   if (name === "aset") renderAset();
-  if (name === "stokdaerah") { populateStokFisikView(); renderStokDaerah(); renderStokAkhir(); }
+  if (name === "stokdaerah") populateStokFisikView();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -994,7 +1006,7 @@ async function load() {
     stokAkhir = dSA.stokakhir || [];
     penjualan = dPen.penjualan || [];
     renderTable(); fillSelects(); populateEditView(); renderAset();
-    populateStokFisikView(); renderStokDaerah(); renderStokAkhir();
+    populateStokFisikView();
     fillChartItemDropdown(); fillLabaYearOptions();
     setStatus("Terhubung ke Google Sheets");
   } catch (e) {
@@ -1436,7 +1448,6 @@ function renderAset() {
 }
 function renderRekapAset() {
   const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
-
   function buildRekap(groupKey, refList, targetId) {
     const map = {};
     refList.forEach(k => { map[k] = { rows: 0, unit: 0, harga: 0, akumulasi: 0, nilaiBuku: 0 }; });
@@ -1478,38 +1489,6 @@ function updateSdPreview() {
   el.innerHTML = `<b>${esc(it.nama)}</b> — stok sistem: ${stok} ${esc(it.satuan)}. Stok Akhir: ${sa || "-"} · On Hand: ${oh || "-"} · Selisih: <b>${sa - oh || "-"}</b>`;
   el.className = "preview ok";
 }
-function renderStokDaerah() {
-  const tb = $("tbodyStokDaerah");
-  if (!stokDaerah.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada.</div></td></tr>'; return; }
-  tb.innerHTML = stokDaerah.slice().reverse().map(s => `
-    <tr>
-      <td class="sub">${esc(s.waktu)}</td><td><b>${esc(s.nama)}</b></td>
-      <td style="text-align:center"><span class="qty">${s.jumlah}</span></td>
-      <td>${esc(s.nama_pencatat || "-")}</td><td class="sub">${esc(s.keterangan || "-")}</td>
-      <td style="text-align:center"><button class="small ghost" data-sd-del="${s.id}">×</button></td>
-    </tr>`).join("");
-  tb.querySelectorAll("[data-sd-del]").forEach(b => b.addEventListener("click", async () => {
-    if (!confirm("Hapus?")) return;
-    const res = await api({ action: "delete_stok_daerah", id: b.dataset.sdDel }, "POST");
-    if (res.ok) { toast(res.message, "ok"); await load(); } else toast(res.message, "err");
-  }));
-}
-function renderStokAkhir() {
-  const tb = $("tbodyStokAkhir");
-  if (!stokAkhir.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada.</div></td></tr>'; return; }
-  tb.innerHTML = stokAkhir.slice().reverse().map(s => `
-    <tr>
-      <td class="sub">${esc(s.waktu)}</td><td><b>${esc(s.nama)}</b></td>
-      <td style="text-align:center"><span class="qty">${s.jumlah}</span></td>
-      <td>${esc(s.nama_pencatat || "-")}</td><td class="sub">${esc(s.keterangan || "-")}</td>
-      <td style="text-align:center"><button class="small ghost" data-sa-del="${s.id}">×</button></td>
-    </tr>`).join("");
-  tb.querySelectorAll("[data-sa-del]").forEach(b => b.addEventListener("click", async () => {
-    if (!confirm("Hapus?")) return;
-    const res = await api({ action: "delete_stok_akhir", id: b.dataset.saDel }, "POST");
-    if (res.ok) { toast(res.message, "ok"); await load(); } else toast(res.message, "err");
-  }));
-}
 async function handleSaveStokFisik() {
   const id = $("sdItemSelect").value;
   if (!id) { toast("Pilih barang.", "err"); return; }
@@ -1545,6 +1524,44 @@ async function handleSaveStokFisik() {
     await load();
   } catch (e) { toast(e.message, "err"); }
   finally { btn.disabled = false; btn.textContent = "Simpan Stok Fisik"; }
+}
+
+/* Revisi 2: Riwayat Stok Fisik gabungan (Akhir + On-Hand) */
+function renderRiwayatStokFisik() {
+  const tb = $("tbodyRiwayatStokFisik");
+  if (!tb) return;
+  const merged = [
+    ...stokAkhir.map(s => ({ ...s, _jenis: "akhir" })),
+    ...stokDaerah.map(s => ({ ...s, _jenis: "onhand" }))
+  ].sort((a, b) => new Date(String(b.waktu).replace(" ", "T")) - new Date(String(a.waktu).replace(" ", "T")));
+
+  if (!merged.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">Belum ada catatan stok fisik.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = merged.map(s => `
+    <tr>
+      <td class="sub">${esc(s.waktu)}</td>
+      <td><b>${esc(s.nama)}</b></td>
+      <td style="text-align:center">
+        <span class="badge ${s._jenis === "akhir" ? "info" : "ok"}">
+          ${s._jenis === "akhir" ? "Stok Akhir" : "On-Hand"}
+        </span>
+      </td>
+      <td style="text-align:center"><span class="qty">${s.jumlah}</span></td>
+      <td>${esc(s.nama_pencatat || "-")}</td>
+      <td class="sub">${esc(s.keterangan || "-")}</td>
+      <td style="text-align:center">
+        <button class="small ghost" data-sf-del="${s.id}" data-sf-jenis="${s._jenis}">×</button>
+      </td>
+    </tr>`).join("");
+  tb.querySelectorAll("[data-sf-del]").forEach(b => b.addEventListener("click", async () => {
+    if (!confirm("Hapus catatan ini?")) return;
+    const action = b.dataset.sfJenis === "akhir" ? "delete_stok_akhir" : "delete_stok_daerah";
+    const res = await api({ action, id: b.dataset.sfDel }, "POST");
+    if (res.ok) { toast(res.message, "ok"); await load(); renderRiwayatStokFisik(); }
+    else toast(res.message, "err");
+  }));
 }
 
 /* ===================== EDIT BARANG ===================== */
@@ -1699,7 +1716,6 @@ function renderLaporan() {
     <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
 
   const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
-  /* Revisi 3: persediaan pakai on-hand */
   const persediaan = items.reduce((s, i) => s + getEffectiveStock(i) * getHargaBeli(i), 0);
   const asetNeto = aset.reduce((s, a) => s + depreciation(a, posisi).nilaiBuku, 0);
   const totalMasuk = keuangan.filter(k => ["modal","pendapatan_lain","utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
