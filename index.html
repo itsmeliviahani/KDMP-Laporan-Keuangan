@@ -121,6 +121,47 @@
   .preview{margin-top:14px;padding:12px 14px;border-radius:8px;background:#f4f8fb;border:1px solid #d0e1f9;font-size:13px;color:#2c3e50}
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
 
+  /* ============ SCANNER BAR (REVISI 1) ============ */
+  .scan-bar{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:linear-gradient(135deg,#1565c0,#0d47a1);
+    color:#fff;padding:16px 18px;border-radius:12px;margin-bottom:18px;
+    box-shadow:0 6px 20px rgba(21,101,192,.35);
+    border:2px solid #0d47a1;
+  }
+  .scan-bar .ico{font-size:32px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+  .scan-bar .scan-info{flex:1;min-width:160px}
+  .scan-bar .scan-info strong{font-size:15px;display:block;letter-spacing:.3px}
+  .scan-bar .scan-info small{font-size:11.5px;opacity:.85;display:block;margin-top:2px}
+  .scan-bar input#scanInput{
+    flex:2;min-width:220px;padding:14px 16px;border-radius:10px;
+    border:2px solid #fff;font-size:16px;font-weight:700;
+    background:#fff;color:#0d47a1;letter-spacing:1px;
+    font-family:ui-monospace,"Courier New",monospace;
+  }
+  .scan-bar input#scanInput:focus{outline:none;box-shadow:0 0 0 4px rgba(255,255,255,.45)}
+  .scan-bar input#scanInput::placeholder{font-weight:500;letter-spacing:0;color:#90a4ae;font-family:inherit}
+  .scan-status{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:800;
+    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+    letter-spacing:.4px;
+  }
+  .scan-status.ready::before{content:"●";color:#69f0ae;font-size:14px;animation:blink 1.4s infinite}
+  .scan-status.busy::before{content:"●";color:#ffd54f;font-size:14px}
+  .scan-status.error::before{content:"●";color:#ff5252;font-size:14px}
+  @keyframes blink{50%{opacity:.3}}
+  .scan-flash{animation:flashGreen .5s}
+  @keyframes flashGreen{0%{background:#fff}50%{background:#c8e6c9}100%{background:#fff}}
+
+  /* ============ PRINT 80mm DI KERTAS A4 (REVISI 1) ============ */
+  @page { size: A4 portrait; margin: 8mm; }
+  @media print {
+    body { background:#fff !important; padding:0 !important; margin:0 !important; }
+    .receipt-wrap { width: 80mm !important; margin: 0 auto !important; }
+    .modal-backdrop { position:static !important; display:block !important; background:none !important; padding:0 !important; }
+  }
+
   #toast{position:fixed;bottom:20px;right:20px;background:#222;color:#fff;padding:12px 16px;border-radius:8px;font-size:13.5px;display:none;max-width:340px;z-index:99999;box-shadow:0 10px 30px rgba(0,0,0,.2)}
   #toast.ok{background:#2e7d32}
   #toast.err{background:#c62828}
@@ -196,17 +237,21 @@
 
   .kode-tag{font-family:ui-monospace,"Courier New",monospace;font-size:11.5px;background:#f5f5f5;padding:2px 6px;border-radius:4px;color:#555;border:1px solid #e0e0e0;font-weight:600}
 
-  /* RECEIPT / NOTA */
-  .receipt-wrap{background:#fff;padding:24px;border-radius:8px;font-family:'Courier New',ui-monospace,monospace;font-size:12px;max-width:380px;margin:0 auto;color:#000}
-  .receipt-wrap h3{margin:0 0 2px;font-size:15px;text-align:center;letter-spacing:.5px}
-  .receipt-wrap .sub{text-align:center;font-size:11px;color:#444}
-  .receipt-wrap hr{border:none;border-top:1px dashed #333;margin:8px 0}
-  .receipt-wrap .row{display:flex;justify-content:space-between;margin:2px 0}
-  .receipt-wrap table{width:100%;border-collapse:collapse;margin:4px 0}
-  .receipt-wrap th{text-align:left;font-size:11px;padding:4px 0;border-bottom:1px dashed #333;border-top:none!important;border-left:none!important;border-right:none!important;background:none!important;color:#000!important;text-transform:none;letter-spacing:0}
-  .receipt-wrap td{padding:4px 0;font-size:11px;vertical-align:top;border:none!important}
-  .receipt-wrap .total{font-size:14px;font-weight:800;border-top:1px solid #333;padding-top:6px;margin-top:4px}
-  .receipt-wrap .thanks{text-align:center;font-size:10.5px;color:#555;line-height:1.4}
+  /* ============ RECEIPT (80mm COMPACT) ============ */
+  .receipt-wrap{
+    background:#fff;padding:16px 14px;border-radius:8px;
+    font-family:'Courier New',ui-monospace,monospace;font-size:11px;
+    width:80mm;max-width:100%;margin:0 auto;color:#000;line-height:1.35;
+  }
+  .receipt-wrap h3{margin:0 0 2px;font-size:13px;text-align:center;letter-spacing:.4px}
+  .receipt-wrap .sub{text-align:center;font-size:10px;color:#444;line-height:1.2}
+  .receipt-wrap hr{border:none;border-top:1px dashed #333;margin:6px 0}
+  .receipt-wrap .row{display:flex;justify-content:space-between;margin:1px 0;font-size:10.5px}
+  .receipt-wrap table{width:100%;border-collapse:collapse;margin:3px 0}
+  .receipt-wrap th{text-align:left;font-size:10px;padding:3px 0;border-bottom:1px dashed #333;border-top:none!important;border-left:none!important;border-right:none!important;background:none!important;color:#000!important;text-transform:none;letter-spacing:0}
+  .receipt-wrap td{padding:3px 0;font-size:10.5px;vertical-align:top;border:none!important}
+  .receipt-wrap .total{font-size:12.5px;font-weight:800;border-top:1px solid #333;padding-top:4px;margin-top:2px}
+  .receipt-wrap .thanks{text-align:center;font-size:9.5px;color:#555;line-height:1.35;margin-top:4px}
 
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
   .modal-backdrop.show{display:flex}
@@ -223,6 +268,7 @@
     .summary-input{width:100%!important}
     .money-input-wrap{width:100%}
     #userInfo{font-size:15px}
+    .scan-bar .scan-info strong{font-size:13.5px}
   }
 </style>
 </head>
@@ -356,6 +402,14 @@
           <div class="field" id="bSatuanWrap" style="display:none"><label>Satuan <span class="req">*</span></label>
             <select id="bSatuan"><option value="pcs">pcs</option><option value="box">box</option><option value="bungkus">bungkus</option><option value="botol">botol</option><option value="karung">karung</option><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="ml">ml</option><option value="sachet">sachet</option><option value="pack">pack</option><option value="dus">dus</option><option value="roll">roll</option><option value="lembar">lembar</option><option value="cup">cup</option><option value="kotak">kotak</option><option value="kaleng">kaleng</option><option value="tube">tube</option><option value="lusin">lusin</option><option value="unit">unit</option><option value="set">set</option><option value="rim">rim</option></select>
           </div>
+
+          <!-- REVISI 1: Barcode field untuk stok awal -->
+          <div class="field" id="bBarcodeWrap" style="display:none">
+            <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
+            <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
+            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan alat scanner</small>
+          </div>
+
           <div class="field" id="bHargaWrap" style="display:none"><label>Harga beli (Rp)</label><input type="text" id="bHarga" inputmode="numeric" value="0"></div>
           <div class="field" id="bHargaJualWrap" style="display:none"><label>Harga jual (Rp)</label><input type="text" id="bHargaJual" inputmode="numeric" value="0"></div>
           <div class="field" id="bExpiredWrap" style="display:none"><label>Expired</label><input type="date" id="bExpired"></div>
@@ -367,14 +421,26 @@
       </div>
     </section>
 
-    <!-- PENJUALAN -->
+    <!-- PENJUALAN — DENGAN SCANNER BAR -->
     <section id="view-jual" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Penjualan Kasir</h2>
+
+      <!-- ============ SCANNER BAR (REVISI 1) ============ -->
+      <div class="scan-bar" id="scanBar">
+        <div class="ico">📷</div>
+        <div class="scan-info">
+          <strong>Scan Barcode Barang</strong>
+          <small>Arahkan alat scanner ke barcode — barang otomatis masuk keranjang</small>
+        </div>
+        <input type="text" id="scanInput" placeholder="Arahkan scanner atau ketik barcode…" autocomplete="off" autofocus>
+        <span class="scan-status ready" id="scanStatus">SCANNER READY</span>
+      </div>
+
       <div class="pos-container">
         <div>
           <div class="form-card" style="margin-bottom:15px;">
-            <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah Barang</h3>
+            <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah Barang Manual</h3>
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
               <div class="field" style="flex:2;min-width:200px"><label>Cari & Pilih Barang</label>
                 <div class="searchable-select">
@@ -571,6 +637,14 @@
           </div>
           <div class="field"><label>Harga Beli (Rp)</label><input type="text" id="eHargaBeli" inputmode="numeric"></div>
           <div class="field"><label>Harga Jual (Rp)</label><input type="text" id="eHargaJual" inputmode="numeric"></div>
+
+          <!-- REVISI 1: Barcode field untuk edit -->
+          <div class="field full">
+            <label>Barcode / SKU</label>
+            <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
+            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
+          </div>
+
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir"></div>
         </div>
         <div class="actions-row"><button id="btnSaveEdit">Simpan Data Master</button></div>
@@ -743,12 +817,12 @@
   <footer>Aplikasi ini dikembangkan oleh Politeknik Keuangan Negara STAN</footer>
 </div>
 
-<!-- MODAL NOTA -->
+<!-- MODAL NOTA (80mm Compact — dirender di dalam area print A4) -->
 <div class="modal-backdrop" id="receiptModal">
-  <div style="background:#fff;border-radius:12px;padding:16px;max-width:440px;width:100%;max-height:92vh;overflow-y:auto;">
+  <div style="background:#fff;border-radius:12px;padding:16px;max-width:420px;width:100%;max-height:92vh;overflow-y:auto;">
     <div id="receiptContent"></div>
     <div class="modal-actions">
-      <button onclick="printReceipt()" style="background:#1976d2;border-color:#1976d2;">🖨️ Cetak</button>
+      <button onclick="printReceipt()" style="background:#1976d2;border-color:#1976d2;">🖨️ Cetak (80mm)</button>
       <button onclick="closeReceipt()" class="ghost">Tutup</button>
     </div>
   </div>
@@ -757,7 +831,9 @@
 <div id="toast"></div>
 
 <script>
-/* ===================== KONFIG ===================== */
+/* ============================================================
+   KONFIG
+   ============================================================ */
 const API_URL = "https://script.google.com/macros/s/AKfycbylhD4pESU-4L39o9d0zXIxxrBvDMC4wYUD478MbKU1Dqgb-rxOvXqPvBU2U_Jcb6Cn/exec";
 const K_KASIR = "kdmpkapas_kasir";
 const K_SUPPLIER = "kdmpkapas_supplier";
@@ -780,8 +856,12 @@ let beliMode = "existing";
 let chartSalesInstance = null, chartProfitInstance = null;
 let cart = [];
 let currentReceiptData = null;
+let scanBuffer = "";      // untuk scanner mode keyboard-wedge
+let scanTimer = null;
 
-/* ===================== HELPERS ===================== */
+/* ============================================================
+   HELPERS
+   ============================================================ */
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rp = n => "Rp " + (Number(n) || 0).toLocaleString("id-ID");
@@ -793,8 +873,6 @@ function getHargaBeli(it) {
   const hb = Number(it.harga) || 0;
   return hb > 0 ? hb : (Number(it.harga_jual) || 0);
 }
-
-/* Revisi 3: stok tersedia = on-hand + transaksi setelahnya */
 function getLatestOnHand(nama) {
   const n = norm(nama);
   const entries = stokDaerah
@@ -802,7 +880,6 @@ function getLatestOnHand(nama) {
     .sort((a, b) => new Date(String(b.waktu).replace(" ", "T")) - new Date(String(a.waktu).replace(" ", "T")));
   return entries.length > 0 ? entries[0] : null;
 }
-
 function getEffectiveStock(item) {
   if (!item) return 0;
   const latest = getLatestOnHand(item.nama);
@@ -818,14 +895,13 @@ function getEffectiveStock(item) {
   });
   return Math.max(0, eff);
 }
-
 function formatRupiah(el) {
   let v = String(el.value).replace(/\D/g, "");
   if (v === "") { el.value = ""; return 0; }
   el.value = parseInt(v, 10).toLocaleString("id-ID");
   return parseInt(v, 10);
 }
-function getMoneyValue(id) { return parseInt(String($(id).value).replace(/\./g, "").replace(/\D/g, ""), 10) || 0; }
+function getMoneyValue(id) { const el = $(id); if (!el) return 0; return parseInt(String(el.value).replace(/\./g, "").replace(/\D/g, ""), 10) || 0; }
 function val(id) { const el = $(id); return el ? String(el.value || "").trim() : ""; }
 function attachRupiahInputs() {
   ["posDiskon","posTunai","bHarga","bHargaJual","bHargaBaru","eHargaBeli","eHargaJual","aHarga","kfJumlah"].forEach(id => {
@@ -852,7 +928,39 @@ function setStatus(text, ok = true) {
   el.style.color = ok ? "#166534" : "#991b1b";
 }
 
-/* ===================== PENYUSUTAN ===================== */
+/* ============================================================
+   ▸ BEEP (Web Audio) — untuk feedback scanner
+   ============================================================ */
+let audioCtx = null;
+function getAudioCtx() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  } catch (e) { return null; }
+}
+function playBeep(freq, dur, type = "sine", vol = 0.15) {
+  const ctx = getAudioCtx(); if (!ctx) return;
+  try {
+    if (ctx.state === "suspended") ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.value = freq;
+    const t0 = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur / 1000);
+    osc.start(t0);
+    osc.stop(t0 + dur / 1000 + 0.02);
+  } catch (e) {}
+}
+function beepOK()   { playBeep(1400, 90, "sine");     setTimeout(() => playBeep(1900, 110, "sine"),     95); }
+function beepFail() { playBeep(220, 200, "sawtooth", .12); setTimeout(() => playBeep(160, 240, "sawtooth", .12), 210); }
+
+/* ============================================================
+   PENYUSUTAN
+   ============================================================ */
 function depreciation(a, posisiDate) {
   const harga = Number(a.harga) || 0;
   const umur = Number(a.umur_ekonomis) || 0;
@@ -871,7 +979,9 @@ function depreciation(a, posisiDate) {
   return { perTahun, umurBerjalan, akumulasi, nilaiBuku: Math.max(0, harga - akumulasi), total: harga };
 }
 
-/* ===================== AUTH ===================== */
+/* ============================================================
+   AUTH
+   ============================================================ */
 function checkAuth() {
   const auth = localStorage.getItem("kdmp_auth");
   if (auth) showApp(JSON.parse(auth));
@@ -947,7 +1057,7 @@ function showApp(user) {
   });
   if (user.role === "karyawan") beliMode = "existing";
   const kw = $("sdKoreksiWrap"); if (kw) kw.style.display = user.role === "manajer" ? "flex" : "none";
-  const sw = $("sdSyncWrap"); if (sw) sw.style.display = user.role === "manajer" ? "flex" : "none";
+  const sw = $("sdSyncWrap");   if (sw) sw.style.display = user.role === "manajer" ? "flex" : "none";
 
   initAsetOptions();
   switchTab("menu");
@@ -957,7 +1067,9 @@ function showApp(user) {
 }
 function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
 
-/* ===================== LOAD NAMES ===================== */
+/* ============================================================
+   LOAD NAMES
+   ============================================================ */
 function loadNames() {
   const sup = (localStorage.getItem(K_SUPPLIER) || "").trim();
   const kas = (localStorage.getItem(K_KASIR) || "").trim();
@@ -965,9 +1077,11 @@ function loadNames() {
   if (kas) ["kNote","eKasir","kfNama","aPencatat","sdPencatat"].forEach(id => { if ($(id)) $(id).value = kas; });
 }
 function saveSupplier(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_SUPPLIER, n); }
-function saveKasir(v) { const n = String(v || "").trim(); if (n) localStorage.setItem(K_KASIR, n); }
+function saveKasir(v)     { const n = String(v || "").trim(); if (n) localStorage.setItem(K_KASIR, n); }
 
-/* ===================== TAB SWITCH ===================== */
+/* ============================================================
+   TAB SWITCH
+   ============================================================ */
 function switchTab(name) {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
   if (auth.role !== "manajer" && ["edit","laporan","riwayat","penjualan","aset"].includes(name)) {
@@ -981,10 +1095,20 @@ function switchTab(name) {
   if (name === "penjualan") loadPenjualan();
   if (name === "aset") renderAset();
   if (name === "stokdaerah") populateStokFisikView();
+  // REVISI 1: auto-focus scan input saat buka kasir
+  if (name === "jual") {
+    setTimeout(() => {
+      const si = $("scanInput");
+      if (si) { si.value = ""; si.focus(); }
+      setScanStatus("ready", "SCANNER READY");
+    }, 250);
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ===================== LOAD DATA ===================== */
+/* ============================================================
+   LOAD DATA
+   ============================================================ */
 async function load() {
   try {
     setStatus("Memuat data...");
@@ -1019,7 +1143,9 @@ async function loadPenjualan() {
   catch (e) { toast("Gagal memuat riwayat penjualan.", "err"); }
 }
 
-/* ===================== STOK BARANG ===================== */
+/* ============================================================
+   STOK BARANG
+   ============================================================ */
 function renderTable() {
   const q = $("search").value.toLowerCase().trim(), f = $("filter").value;
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
@@ -1038,7 +1164,7 @@ function renderTable() {
     const badge = stok === 0 ? '<span class="badge zero">Kosong</span>' : '<span class="badge tersedia">Tersedia</span>';
     const restock = isM ? `<button class="small" data-act="in" data-id="${i.id}" title="Pembelian">+</button>` : "";
     const editBtn = isM ? `<button class="small ghost" data-act="edit" data-id="${i.id}" title="Edit">✎</button>` : "";
-    const delBtn = isM ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : "";
+    const delBtn  = isM ? `<button class="small ghost" data-act="del" data-id="${i.id}" title="Hapus">×</button>` : "";
     return `<tr>
       <td><div class="name">${esc(i.nama)}</div></td>
       <td>${esc(i.kategori || "-")}</td>
@@ -1058,7 +1184,7 @@ async function handleTbodyClick(e) {
     beliMode = "existing"; switchTab("beli"); applyBeliMode();
     $("bExistingSearch").value = it.nama; $("bExisting").value = it.id; updateBeliPreview();
   } else if (act === "edit") { switchTab("edit"); populateEditFields(id); }
-  else if (act === "out") { switchTab("jual"); $("kItemSearch").value = it.nama; $("kItem").value = it.id; }
+  else if (act === "out")    { switchTab("jual"); $("kItemSearch").value = it.nama; $("kItem").value = it.id; }
   else if (act === "del") {
     if (!confirm(`Hapus "${it.nama}"?`)) return;
     const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
@@ -1070,7 +1196,9 @@ async function handleTbodyClick(e) {
   }
 }
 
-/* ===================== SEARCHABLE ===================== */
+/* ============================================================
+   SEARCHABLE SELECT
+   ============================================================ */
 function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
   const sEl = $(searchId), hEl = $(hiddenId), dd = $(dropdownId);
   if (!sEl || !hEl || !dd) return;
@@ -1095,7 +1223,7 @@ function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
   }
   sEl.addEventListener("input", e => { hEl.value = ""; render(e.target.value); });
   sEl.addEventListener("focus", e => render(e.target.value));
-  sEl.addEventListener("blur", () => setTimeout(() => dd.classList.remove("show"), 180));
+  sEl.addEventListener("blur",  () => setTimeout(() => dd.classList.remove("show"), 180));
   sEl.addEventListener("keydown", e => {
     const list = dd.querySelectorAll(".ss-item");
     if (e.key === "ArrowDown") { e.preventDefault(); if (!list.length) return; highlighted = (highlighted + 1) % list.length; list.forEach((el, i) => el.classList.toggle("highlight", i === highlighted)); }
@@ -1108,7 +1236,9 @@ function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
   });
 }
 
-/* ===================== BELI ===================== */
+/* ============================================================
+   BELI (Pembelian)
+   ============================================================ */
 function applyBeliMode() {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
   if (auth.role === "karyawan" && beliMode === "new") beliMode = "existing";
@@ -1117,6 +1247,7 @@ function applyBeliMode() {
   show("bExistingWrap", !isNew); show("bQtyExistingWrap", !isNew);
   show("bHargaBaruWrap", !isNew); show("bExpiredBaruWrap", !isNew);
   show("bNewWrap", isNew); show("bKategoriWrap", isNew); show("bSatuanWrap", isNew);
+  show("bBarcodeWrap", isNew);       // REVISI 1: barcode di stok awal
   show("bHargaWrap", isNew); show("bHargaJualWrap", isNew);
   show("bExpiredWrap", isNew); show("bQtyNewWrap", isNew);
   $("btnModeExisting").classList.toggle("active", !isNew);
@@ -1137,7 +1268,8 @@ function updateBeliPreview() {
   } else {
     const nama = val("bNama");
     if (!nama) { el.textContent = "Isi nama barang baru."; el.className = "preview"; return; }
-    el.innerHTML = `<b>${esc(nama)}</b> — stok awal ${Number($("bQtyNew").value) || 0}.`;
+    const bc = val("bBarcode");
+    el.innerHTML = `<b>${esc(nama)}</b> — stok awal ${Number($("bQtyNew").value) || 0}${bc ? ` · Barcode: <code>${esc(bc)}</code>` : ""}.`;
     el.className = "preview ok";
   }
 }
@@ -1159,7 +1291,13 @@ async function handleBeli() {
       $("bQtyExisting").value = 1; $("bHargaBaru").value = ""; $("bExpiredBaru").value = "";
     } else {
       const nama = val("bNama"); if (!nama) throw new Error("Nama wajib.");
-      const data = { nama, kategori: $("bKategori").value, satuan: $("bSatuan").value, stok: Number($("bQtyNew").value) || 0, harga: getMoneyValue("bHarga"), harga_jual: getMoneyValue("bHargaJual"), expired: val("bExpired"), note: val("bNote") || "stok awal" };
+      const data = {
+        nama, kategori: $("bKategori").value, satuan: $("bSatuan").value,
+        stok: Number($("bQtyNew").value) || 0,
+        harga: getMoneyValue("bHarga"), harga_jual: getMoneyValue("bHargaJual"),
+        expired: val("bExpired"), note: val("bNote") || "stok awal",
+        barcode: val("bBarcode")   // REVISI 1: kirim barcode
+      };
       const res = await api({ action: "add", data }, "POST");
       if (res.duplicate) {
         if (confirm(`Barang "${res.existingNama}" sudah ada. Tambah sebagai pembelian?`)) {
@@ -1169,7 +1307,7 @@ async function handleBeli() {
         }
       } else if (res.ok) {
         toast(res.message, "ok"); await load();
-        ["bNama","bHarga","bHargaJual","bExpired","bQtyNew"].forEach(id => { if ($(id)) $(id).value = ""; });
+        ["bNama","bHarga","bHargaJual","bExpired","bQtyNew","bBarcode"].forEach(id => { if ($(id)) $(id).value = ""; });
         $("bQtyNew").value = 1; $("bHarga").value = "0"; $("bHargaJual").value = "0";
       } else throw new Error(res.message);
     }
@@ -1177,7 +1315,9 @@ async function handleBeli() {
   finally { btn.disabled = false; btn.textContent = "Simpan"; }
 }
 
-/* ===================== POS ===================== */
+/* ============================================================
+   POS — Penjualan Kasir (dengan scanner)
+   ============================================================ */
 function addToCart() {
   const id = $("kItem").value;
   if (!id) { toast("Pilih barang.", "err"); return; }
@@ -1193,6 +1333,20 @@ function addToCart() {
   $("kItemSearch").value = ""; $("kItem").value = ""; $("kQty").value = 1;
   renderCart(); updatePosSummary();
 }
+
+/* ——— REVISI 1: Tambah ke keranjang 1 unit dari scanner ——— */
+function addScannedItemToCart(item, qty = 1) {
+  const stok = getEffectiveStock(item);
+  const exist = cart.find(c => c.id === item.id);
+  const currentQty = exist ? exist.qty : 0;
+  if (currentQty + qty > stok) {
+    return { ok: false, reason: "stok", stok, message: `Stok ${item.nama} tersedia: ${stok} ${item.satuan}.` };
+  }
+  if (exist) exist.qty += qty;
+  else cart.push({ id: item.id, nama: item.nama, harga: item.harga_jual || 0, qty, satuan: item.satuan });
+  return { ok: true };
+}
+
 function renderCart() {
   const tb = $("cartBody");
   if (!cart.length) { tb.innerHTML = '<tr><td colspan="5" class="empty" style="border:none">Keranjang kosong.</td></tr>'; return; }
@@ -1224,7 +1378,7 @@ async function handleCheckout() {
   const kasir = val("kNote"); if (!kasir) { toast("Nama kasir wajib.", "err"); return; }
   saveKasir(kasir);
   const diskon = getMoneyValue("posDiskon");
-  const tunai = getMoneyValue("posTunai");
+  const tunai  = getMoneyValue("posTunai");
   const subtotal = cart.reduce((s, c) => s + c.qty * c.harga, 0);
   const total = subtotal - diskon;
   if (tunai < total) { toast("Tunai kurang.", "err"); return; }
@@ -1246,14 +1400,129 @@ async function handleCheckout() {
     showReceipt(receiptData);
     await load();
   } catch (e) { toast(e.message, "err"); }
-  finally { btn.disabled = false; btn.textContent = "Proses Pembayaran"; }
+  finally {
+    btn.disabled = false; btn.textContent = "Proses Pembayaran";
+    // REVISI 1: fokus kembali ke scanner
+    const si = $("scanInput"); if (si) si.focus();
+  }
 }
 
-/* ===================== NOTA ===================== */
+/* ============================================================
+   ▸ SCANNER — REVISI 1
+   ============================================================
+   Alat scanner USB/Bluetooth umumnya bekerja sebagai "keyboard wedge":
+   mengirim karakter cepat → diakhiri ENTER. Kita tangkap ENTER di
+   input khusus (#scanInput) supaya tidak bentrok dengan input lain.
+   ============================================================ */
+function setScanStatus(state, text) {
+  const s = $("scanStatus"); if (!s) return;
+  s.className = "scan-status " + (state || "ready");
+  s.textContent = text || "SCANNER READY";
+}
+function flashScanBar() {
+  const bar = $("scanBar");
+  if (!bar) return;
+  bar.classList.remove("scan-flash");
+  // force reflow
+  void bar.offsetWidth;
+  bar.classList.add("scan-flash");
+}
+
+async function handleScanCode(codeRaw) {
+  const code = String(codeRaw || "").trim();
+  if (!code) return;
+  setScanStatus("busy", "MENCARI…");
+  try {
+    // Fast-path backend
+    const res = await api({ action: "barcode_lookup", barcode: code }, "POST");
+    if (!res || !res.ok) {
+      beepFail();
+      const msg = (res && res.message) ? res.message : `"${code}" tidak ditemukan.`;
+      toast(msg, "err");
+      setScanStatus("error", "TIDAK DITEMUKAN");
+      setTimeout(() => setScanStatus("ready", "SCANNER READY"), 2200);
+      return;
+    }
+    const item = res.item;
+    const r = addScannedItemToCart(item, 1);
+    if (!r.ok) {
+      beepFail();
+      toast(r.message || `Stok ${item.nama} tidak cukup.`, "err");
+      setScanStatus("error", "STOK KOSONG");
+      setTimeout(() => setScanStatus("ready", "SCANNER READY"), 2200);
+      return;
+    }
+    renderCart(); updatePosSummary();
+    beepOK(); flashScanBar();
+    toast(`✓ ${item.nama} ditambahkan (${res.match || "barcode"})`, "ok");
+    setScanStatus("ready", "OK · " + item.nama.slice(0, 18) + (item.nama.length > 18 ? "…" : ""));
+    setTimeout(() => setScanStatus("ready", "SCANNER READY"), 1800);
+  } catch (err) {
+    beepFail();
+    toast("Gagal scan: " + err.message, "err");
+    setScanStatus("error", "ERROR");
+    setTimeout(() => setScanStatus("ready", "SCANNER READY"), 2200);
+  }
+}
+
+function initScanner() {
+  const input = $("scanInput");
+  if (!input) return;
+
+  // Enter → proses
+  input.addEventListener("keydown", async e => {
+    if (e.key !== "Enter" && e.key !== "Tab") return;
+    if (e.key === "Tab") return; // biarkan tab normal
+    e.preventDefault();
+    clearTimeout(scanTimer); scanTimer = null;
+    const code = input.value.trim();
+    input.value = "";
+    if (!code) return;
+    await handleScanCode(code);
+  });
+
+  // Fallback: beberapa scanner tidak mengirim ENTER → auto-submit setelah jeda.
+  // Syarat: panjang ≥ 6 karakter, hanya alnum/-/_ , dan jeda ≥ 250ms.
+  input.addEventListener("input", () => {
+    clearTimeout(scanTimer);
+    const v = input.value;
+    if (v.length >= 6 && /^[A-Za-z0-9\-_]+$/.test(v)) {
+      scanTimer = setTimeout(async () => {
+        if (!input.value) return;
+        const code = input.value.trim();
+        input.value = "";
+        await handleScanCode(code);
+      }, 300);
+    }
+  });
+
+  // Klik di mana saja pada scan bar → fokus lagi (kalau user lepas fokus)
+  const bar = $("scanBar");
+  if (bar) bar.addEventListener("click", e => { if (e.target !== input) input.focus(); });
+
+  // Kembalikan fokus setelah blur, hanya saat view jual aktif
+  input.addEventListener("blur", () => {
+    const jual = $("view-jual");
+    if (jual && jual.classList.contains("active")) {
+      setTimeout(() => {
+        if (jual.classList.contains("active") && document.activeElement !== input) {
+          const active = document.activeElement;
+          const tag = active ? active.tagName : "";
+          // jangan rebut fokus dari input/select lain yang valid
+          if (tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") input.focus();
+        }
+      }, 400);
+    }
+  });
+}
+
+/* ============================================================
+   NOTA — Print 80mm di kertas A4
+   ============================================================ */
 function buildReceiptHTML(d) {
   const itemsHTML = d.items.map(it => `
     <tr>
-      <td style="width:55%">${esc(it.nama)}<br><span style="color:#666;font-size:10px;">@ ${rp(it.harga)}</span></td>
+      <td style="width:55%">${esc(it.nama)}<br><span style="color:#666;font-size:9.5px;">@ ${rp(it.harga)}</span></td>
       <td style="text-align:center;width:15%">${it.qty}</td>
       <td style="text-align:right;width:30%;font-weight:600;">${rp(it.qty * it.harga)}</td>
     </tr>
@@ -1295,31 +1564,40 @@ function closeReceipt() {
   $("receiptModal").classList.remove("show");
   currentReceiptData = null;
 }
+
+/* ——— REVISI 1: cetak 80mm di A4 portrait, centered, kecil ——— */
 function printReceipt() {
   if (!currentReceiptData) return;
   const html = buildReceiptHTML(currentReceiptData);
-  const w = window.open("", "_blank", "width=420,height=650");
+  const w = window.open("", "_blank", "width=460,height=700");
   if (!w) { toast("Izinkan popup untuk mencetak nota.", "err"); return; }
-  w.document.write(`<!DOCTYPE html><html><head><title>Nota Pembayaran</title>
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Nota Pembayaran</title>
     <style>
-      body{margin:0;padding:12px;font-family:'Courier New',monospace}
-      .receipt-wrap{max-width:340px;margin:0 auto;font-size:12px}
-      .receipt-wrap h3{margin:0 0 2px;font-size:15px;text-align:center}
-      .receipt-wrap .sub{text-align:center;font-size:11px;color:#444}
-      .receipt-wrap hr{border:none;border-top:1px dashed #333;margin:8px 0}
-      .receipt-wrap .row{display:flex;justify-content:space-between;margin:2px 0}
-      .receipt-wrap table{width:100%;border-collapse:collapse;margin:4px 0}
-      .receipt-wrap th{text-align:left;font-size:11px;padding:4px 0;border-bottom:1px dashed #333}
-      .receipt-wrap td{padding:4px 0;font-size:11px;vertical-align:top}
-      .receipt-wrap .total{font-size:14px;font-weight:800;border-top:1px solid #333;padding-top:6px;margin-top:4px}
-      .receipt-wrap .thanks{text-align:center;font-size:10.5px;color:#555;line-height:1.4}
-      @media print{body{padding:0}}
-    </style></head><body>${html}</body></html>`);
+      @page { size: A4 portrait; margin: 10mm; }
+      *{box-sizing:border-box}
+      html,body{margin:0;padding:0;background:#fff;font-family:'Courier New',ui-monospace,monospace;color:#000}
+      .print-wrapper{width:80mm;margin:0 auto;padding:0}
+      .receipt-wrap{width:80mm;font-size:11px;line-height:1.35;color:#000}
+      .receipt-wrap h3{margin:0 0 2px;font-size:13px;text-align:center;letter-spacing:.4px}
+      .receipt-wrap .sub{text-align:center;font-size:10px;color:#444;line-height:1.2}
+      .receipt-wrap hr{border:none;border-top:1px dashed #333;margin:6px 0}
+      .receipt-wrap .row{display:flex;justify-content:space-between;margin:1px 0;font-size:10.5px}
+      .receipt-wrap table{width:100%;border-collapse:collapse;margin:3px 0}
+      .receipt-wrap th{text-align:left;font-size:10px;padding:3px 0;border-bottom:1px dashed #333}
+      .receipt-wrap td{padding:3px 0;font-size:10.5px;vertical-align:top}
+      .receipt-wrap .total{font-size:12.5px;font-weight:800;border-top:1px solid #333;padding-top:4px;margin-top:2px}
+      .receipt-wrap .thanks{text-align:center;font-size:9.5px;color:#555;line-height:1.35;margin-top:4px}
+      @media print{ html,body{padding:0;margin:0} }
+    </style></head><body>
+      <div class="print-wrapper">${html}</div>
+    </body></html>`);
   w.document.close();
-  setTimeout(() => { w.focus(); w.print(); }, 300);
+  setTimeout(() => { w.focus(); w.print(); }, 350);
 }
 
-/* ===================== ASET ===================== */
+/* ============================================================
+   ASET
+   ============================================================ */
 function initAsetOptions() {
   $("aKategori").innerHTML = REF_KATEGORI.map(k => `<option value="${esc(k.nama)}">${esc(k.nama)}</option>`).join("");
   $("aUnit").innerHTML = REF_UNIT.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
@@ -1466,12 +1744,14 @@ function renderRekapAset() {
     }).join("");
     tb.innerHTML += `<tr class="total"><td>Total</td><td class="center">${tot.rows}</td><td class="center">${tot.unit}</td><td class="num">${rp(tot.harga)}</td><td class="num">${rp(tot.akumulasi)}</td><td class="num">${rp(tot.nilaiBuku)}</td></tr>`;
   }
-  buildRekap("kategori", REF_KATEGORI.map(k => k.nama), "rekapKategori");
+  buildRekap("kategori",  REF_KATEGORI.map(k => k.nama), "rekapKategori");
   buildRekap("unit_usaha", REF_UNIT, "rekapUnit");
-  buildRekap("kondisi", REF_KONDISI, "rekapKondisi");
+  buildRekap("kondisi",    REF_KONDISI, "rekapKondisi");
 }
 
-/* ===================== STOK FISIK ===================== */
+/* ============================================================
+   STOK FISIK
+   ============================================================ */
 function populateStokFisikView() {
   $("sdItemSearch").value = ""; $("sdItemSelect").value = "";
   $("sdStokSistem").value = ""; $("sdStokAkhir").value = "";
@@ -1511,22 +1791,18 @@ async function handleSaveStokFisik() {
     toast(res.message, "ok");
     if (res.koreksiInfo) {
       const k = res.koreksiInfo;
-      $("sdPreview").innerHTML = `<b>Koreksi (Stok Akhir) diterapkan:</b><br>
-        Stok sistem: ${k.stokSistem} → ${k.stokFisik}<br>Selisih: ${k.selisih} (nilai ${rp(k.nilai)})`;
+      $("sdPreview").innerHTML = `<b>Koreksi (Stok Akhir) diterapkan:</b><br>Stok sistem: ${k.stokSistem} → ${k.stokFisik}<br>Selisih: ${k.selisih} (nilai ${rp(k.nilai)})`;
       $("sdPreview").className = "preview ok";
     }
     if (res.syncInfo) {
       const k = res.syncInfo;
-      $("sdPreview").innerHTML = `<b>Sistem disinkronkan ke On-Hand:</b><br>
-        Stok sistem: ${k.stokSistem} → ${k.stokOnHand}<br>Selisih: ${k.selisih} (nilai ${rp(k.nilai)})`;
+      $("sdPreview").innerHTML = `<b>Sistem disinkronkan ke On-Hand:</b><br>Stok sistem: ${k.stokSistem} → ${k.stokOnHand}<br>Selisih: ${k.selisih} (nilai ${rp(k.nilai)})`;
       $("sdPreview").className = "preview ok";
     }
     await load();
   } catch (e) { toast(e.message, "err"); }
   finally { btn.disabled = false; btn.textContent = "Simpan Stok Fisik"; }
 }
-
-/* Revisi 2: Riwayat Stok Fisik gabungan (Akhir + On-Hand) */
 function renderRiwayatStokFisik() {
   const tb = $("tbodyRiwayatStokFisik");
   if (!tb) return;
@@ -1564,7 +1840,9 @@ function renderRiwayatStokFisik() {
   }));
 }
 
-/* ===================== EDIT BARANG ===================== */
+/* ============================================================
+   EDIT BARANG
+   ============================================================ */
 function populateEditView() {
   if (!items.length) return;
   $("editItemSearch").value = ""; $("editItemSelect").value = ""; $("eNama").value = "";
@@ -1577,6 +1855,7 @@ function populateEditFields(id) {
   $("eSatuan").value = it.satuan || "pcs";
   $("eHargaBeli").value = (Number(it.harga) || 0).toLocaleString("id-ID");
   $("eHargaJual").value = (Number(it.harga_jual) || 0).toLocaleString("id-ID");
+  if ($("eBarcode")) $("eBarcode").value = it.barcode || "";  // REVISI 1
   renderBatch(it.nama);
 }
 function renderBatch(nama) {
@@ -1609,7 +1888,12 @@ async function handleSaveEdit() {
   const id = $("editItemSelect").value;
   if (!id) { toast("Pilih barang.", "err"); return; }
   const nama = val("eNama"); if (!nama) { toast("Nama wajib.", "err"); return; }
-  const data = { nama, kategori: $("eKategori").value, satuan: $("eSatuan").value, harga: getMoneyValue("eHargaBeli"), harga_jual: getMoneyValue("eHargaJual"), note: val("eKasir") || "edit data master" };
+  const data = {
+    nama, kategori: $("eKategori").value, satuan: $("eSatuan").value,
+    harga: getMoneyValue("eHargaBeli"), harga_jual: getMoneyValue("eHargaJual"),
+    barcode: val("eBarcode"),                    // REVISI 1: kirim barcode (atau "" jika kosong)
+    note: val("eKasir") || "edit data master"
+  };
   if (data.note && data.note !== "edit data master") saveKasir(data.note);
   const btn = $("btnSaveEdit"); btn.disabled = true; btn.textContent = "Menyimpan...";
   try {
@@ -1620,7 +1904,9 @@ async function handleSaveEdit() {
   finally { btn.disabled = false; btn.textContent = "Simpan Data Master"; }
 }
 
-/* ===================== KEUANGAN ===================== */
+/* ============================================================
+   KEUANGAN
+   ============================================================ */
 const KATEGORI_MAP = {
   pendapatan_lain: ["Penjualan Lain", "Bunga Bank", "Sewa Diterima", "Lainnya"],
   beban_lain: ["Listrik", "Air", "Gaji", "Sewa", "Transport", "ATK", "Pemeliharaan", "Lainnya"],
@@ -1671,7 +1957,9 @@ async function handleKeuangan() {
   finally { btn.disabled = false; btn.textContent = "Simpan"; }
 }
 
-/* ===================== LAPORAN ===================== */
+/* ============================================================
+   LAPORAN
+   ============================================================ */
 function initPeriod() {
   const now = new Date();
   const start = new Date(); start.setMonth(start.getMonth() - 11);
@@ -1771,7 +2059,9 @@ async function renderRekap(start, end) {
   } catch (e) {}
 }
 
-/* ===================== CHARTS ===================== */
+/* ============================================================
+   CHARTS
+   ============================================================ */
 function fillChartItemDropdown() {
   const sel = $("chartItemFilter"); if (!sel) return;
   const cur = sel.value;
@@ -1830,7 +2120,9 @@ function renderProfitChart() {
 }
 function renderCharts() { fillLabaYearOptions(); renderSalesChart(); renderProfitChart(); }
 
-/* ===================== RIWAYAT ===================== */
+/* ============================================================
+   RIWAYAT
+   ============================================================ */
 function renderPenjualan() {
   const tb = $("tbodyPenjualan");
   if (!penjualan.length) { tb.innerHTML = '<tr><td colspan="6"><div class="empty">Belum ada.</div></td></tr>'; return; }
@@ -1855,7 +2147,9 @@ function renderRiwayat() {
     <td class="sub">${esc(r.catatan || "-")}</td></tr>`).join("");
 }
 
-/* ===================== GANTI SANDI ===================== */
+/* ============================================================
+   GANTI SANDI
+   ============================================================ */
 async function handleGantiSandi() {
   const oldP = val("gsOld"), newP = val("gsNew");
   if (!oldP || !newP) { toast("Isi kedua field.", "err"); return; }
@@ -1876,7 +2170,9 @@ function fillSelects() {
   updateBeliPreview();
 }
 
-/* ===================== INIT ===================== */
+/* ============================================================
+   INIT
+   ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
 
@@ -1888,7 +2184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("btnModeExisting").addEventListener("click", () => { beliMode = "existing"; applyBeliMode(); });
   $("btnModeNew").addEventListener("click", () => { beliMode = "new"; applyBeliMode(); });
   $("btnBeli").addEventListener("click", handleBeli);
-  ["bQtyExisting","bHargaBaru","bExpiredBaru","bNama","bKategori","bSatuan","bHarga","bHargaJual","bExpired","bQtyNew"].forEach(id => {
+  ["bQtyExisting","bHargaBaru","bExpiredBaru","bNama","bKategori","bSatuan","bBarcode","bHarga","bHargaJual","bExpired","bQtyNew"].forEach(id => {
     if ($(id)) { $(id).addEventListener("input", updateBeliPreview); $(id).addEventListener("change", updateBeliPreview); }
   });
 
@@ -1896,6 +2192,9 @@ document.addEventListener("DOMContentLoaded", () => {
   $("btnCheckout").addEventListener("click", handleCheckout);
   $("posDiskon").addEventListener("input", updatePosSummary);
   $("posTunai").addEventListener("input", updatePosSummary);
+
+  // REVISI 1: inisialisasi scanner
+  initScanner();
 
   $("btnSaveAset").addEventListener("click", handleSaveAset);
   $("btnCancelAset").addEventListener("click", resetAsetForm);
@@ -1945,17 +2244,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   $("btnGS").addEventListener("click", handleGantiSandi);
 
-  setupSearchable("bExistingSearch", "bExisting", "bExistingDropdown", () => updateBeliPreview());
-  setupSearchable("kItemSearch", "kItem", "kItemDropdown", null);
-  setupSearchable("sdItemSearch", "sdItemSelect", "sdItemDropdown", (id) => {
+  setupSearchable("bExistingSearch",  "bExisting",      "bExistingDropdown",  () => updateBeliPreview());
+  setupSearchable("kItemSearch",      "kItem",          "kItemDropdown",      null);
+  setupSearchable("sdItemSearch",     "sdItemSelect",   "sdItemDropdown",     (id) => {
     const it = items.find(i => i.id === id);
     if (it) $("sdStokSistem").value = `${getEffectiveStock(it)} ${it.satuan}`;
     updateSdPreview();
   });
-  setupSearchable("editItemSearch", "editItemSelect", "editItemDropdown", (id) => populateEditFields(id));
+  setupSearchable("editItemSearch",   "editItemSelect", "editItemDropdown",   (id) => populateEditFields(id));
 
   $("receiptModal").addEventListener("click", (e) => {
     if (e.target === $("receiptModal")) closeReceipt();
+  });
+
+  // Global shortcut: scan bar tetap fokus kalau user klik di area jual
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "F2") {
+      // F2 = shortcut paksa fokus ke scanner (opsional)
+      const jual = $("view-jual");
+      if (jual && jual.classList.contains("active")) {
+        e.preventDefault();
+        const si = $("scanInput"); if (si) si.focus();
+      }
+    }
   });
 });
 </script>
