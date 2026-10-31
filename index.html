@@ -344,10 +344,13 @@
             <select id="bSatuan"><option value="pcs">pcs</option><option value="box">box</option><option value="bungkus">bungkus</option><option value="botol">botol</option><option value="karung">karung</option><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="ml">ml</option><option value="sachet">sachet</option><option value="pack">pack</option><option value="dus">dus</option><option value="roll">roll</option><option value="lembar">lembar</option><option value="cup">cup</option><option value="kotak">kotak</option><option value="kaleng">kaleng</option><option value="tube">tube</option><option value="lusin">lusin</option><option value="unit">unit</option><option value="set">set</option><option value="rim">rim</option></select>
           </div>
           <div class="field" id="bBarcodeWrap" style="display:none">
-            <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
-            <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
-            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan alat scanner</small>
-          </div>
+         <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
+         <div style="display:flex;gap:6px;">
+         <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
+         <button type="button" id="btnScanBarcodeStokAwal" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
+         </div>
+         <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan kamera HP</small>
+         </div>
           <div class="field" id="bHargaWrap" style="display:none"><label>Harga beli (Rp)</label><input type="text" id="bHarga" inputmode="numeric" value="0"></div>
           <div class="field" id="bHargaJualWrap" style="display:none"><label>Harga jual (Rp)</label><input type="text" id="bHargaJual" inputmode="numeric" value="0"></div>
           <div class="field" id="bExpiredWrap" style="display:none"><label>Expired</label><input type="date" id="bExpired"></div>
@@ -582,10 +585,13 @@
           <div class="field"><label>Harga Beli (Rp)</label><input type="text" id="eHargaBeli" inputmode="numeric"></div>
           <div class="field"><label>Harga Jual (Rp)</label><input type="text" id="eHargaJual" inputmode="numeric"></div>
           <div class="field full">
-            <label>Barcode / SKU</label>
-            <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
-            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
-          </div>
+         <label>Barcode / SKU</label>
+         <div style="display:flex;gap:6px;">
+         <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
+         <button type="button" id="btnScanEditBarcode" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
+         </div>
+         <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
+         </div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir"></div>
         </div>
         <div class="actions-row"><button id="btnSaveEdit">Simpan Data Master</button></div>
@@ -774,7 +780,8 @@
     </div>
   </div>
 </div>
-
+<input type="file" accept="image/*" capture="environment" id="fileScanInput" style="display:none;">
+<div id="fileScanPreview" style="position:absolute;left:-9999px;top:-9999px;width:10px;height:10px;"></div>
 <div id="toast"></div>
 
 <script>
@@ -1460,96 +1467,75 @@ function printReceipt() {
 }
 
 /* ============================================================
-   CAMERA SCANNER (html5-qrcode) — v2 robust
+   CAMERA SCANNER — File capture (paling andal untuk HP & GAS)
    ============================================================ */
 let html5QrCode = null;
 let cameraCallback = null;
 
-async function openCameraScanner(callback, title) {
+function openCameraScanner(callback, title, targetInputId) {
   cameraCallback = callback;
   if (title) $("cameraTitle").textContent = title;
 
-  // Reset dulu — pastikan tidak ada instance nyangkut dari pemakaian sebelumnya
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent);
+  const isSecure = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+
+  // Di HP → pakai kamera native via <input file capture> (paling andal, tanpa izin)
+  if (isMobile) {
+    $("fileScanInput").click();
+    return;
+  }
+
+  // Di desktop → coba kamera live (html5-qrcode)
+  if (!isSecure) {
+    toast("Kamera live butuh HTTPS. Di HP, kamera otomatis pakai kamera native.", "err");
+    return;
+  }
+  startLiveCamera(title, targetInputId);
+}
+
+async function startLiveCamera(title, targetInputId) {
   await stopCameraSilently();
   $("cameraReader").innerHTML = "";
   $("cameraModal").classList.add("show");
-
-  // Buat instance BARU setiap kali (bukan di-cache)
   html5QrCode = new Html5Qrcode("cameraReader", { verbose: false });
 
-  // Cek environment dulu — kalau bukan HTTPS/localhost, langsung kasih pesan jelas
-  const isSecure = location.protocol === "https:"
-                || location.hostname === "localhost"
-                || location.hostname === "127.0.0.1";
-  if (!isSecure) {
-    toast("Kamera butuh HTTPS. Buka aplikasi via https:// atau localhost, bukan file://.", "err");
-    console.error("[Camera] blocked: insecure context. protocol =", location.protocol);
-    closeCameraScanner();
-    return;
-  }
-
-  // Cek dukungan API
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    toast("Browser tidak mendukung akses kamera. Coba Chrome / Safari terbaru.", "err");
-    closeCameraScanner();
-    return;
-  }
-
   try {
-    // Dapatkan daftar kamera — pilih yang belakang kalau ada
     const cameras = await Html5Qrcode.getCameras();
-    if (!cameras || cameras.length === 0) {
-      throw new Error("Tidak ada kamera terdeteksi di perangkat ini");
-    }
+    if (!cameras || !cameras.length) throw new Error("Tidak ada kamera terdeteksi");
     const back = cameras.find(c => /back|rear|environment|belakang/i.test(c.label || ""));
     const cameraId = (back || cameras[cameras.length - 1]).id;
-    console.log("[Camera] using:", (back || cameras[cameras.length - 1]).label, cameraId);
 
     await html5QrCode.start(
       cameraId,
-      {
-        fps: 10,
-        qrbox: (vw, vh) => {
+      { fps: 10, qrbox: (vw, vh) => {
           const s = Math.min(vw, vh) * 0.75;
           return { width: Math.floor(s), height: Math.floor(s * 0.7) };
-        },
-        aspectRatio: 1.7
-      },
+        }, aspectRatio: 1.7 },
       (decodedText) => {
-        // Frame decoded
         if (cameraCallback) {
-          const cb = cameraCallback;
-          cameraCallback = null; // cegah double fire
-          try { cb(decodedText); }
-          finally { closeCameraScanner(); }
+          const cb = cameraCallback; cameraCallback = null;
+          try { cb(decodedText); } finally { closeCameraScanner(); }
         }
       },
-      (/* ignore per-frame decode failures */) => {}
+      () => {}
     );
-    console.log("[Camera] started OK");
   } catch (err) {
-    console.error("[Camera] START FAILED:", err);
-    const raw = (err && (err.message || err.name)) ? (err.message || err.name) : String(err);
+    const raw = String((err && (err.message || err.name)) || err);
     let msg = raw;
     if (/permission|denied|NotAllowed/i.test(raw))
-      msg = "Izin kamera ditolak. Klik ikon 🔒 di address bar → Camera → Allow, lalu reload.";
+      msg = "Izin kamera ditolak. Klik 🔒 di address bar → Camera → Allow, lalu reload.";
     else if (/notfound|NotFound|devices/i.test(raw))
-      msg = "Kamera tidak terdeteksi. Cek apakah perangkat punya kamera.";
-    else if (/NotReadable|in use|TrackStart/i.test(raw))
-      msg = "Kamera sedang dipakai aplikasi lain. Tutup aplikasi lain yang pakai kamera.";
-    else if (/secure|https/i.test(raw))
-      msg = "Kamera butuh HTTPS.";
-    toast("Gagal akses kamera: " + msg, "err");
+      msg = "Tidak ada kamera. Gunakan HP atau colok webcam.";
+    else if (/NotReadable|in use/i.test(raw))
+      msg = "Kamera sedang dipakai aplikasi lain.";
+    toast("Kamera live gagal: " + msg + " — Di HP, coba lagi (kamera otomatis pakai native).", "err");
     closeCameraScanner();
   }
 }
 
 async function stopCameraSilently() {
   if (html5QrCode) {
-    try {
-      if (html5QrCode.isScanning) await html5QrCode.stop();
-      await html5QrCode.clear();
-    } catch (e) { /* ignore */ }
+    try { if (html5QrCode.isScanning) await html5QrCode.stop(); await html5QrCode.clear(); } catch (e) {}
   }
   html5QrCode = null;
 }
@@ -1560,6 +1546,28 @@ async function closeCameraScanner() {
   $("cameraReader").innerHTML = "";
   cameraCallback = null;
 }
+
+/* Handler file input — decode foto barcode */
+async function handleFileScanChange(e) {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = ""; // reset supaya bisa scan lagi
+  if (!file) return;
+  toast("Membaca barcode…", "");
+  try {
+    const tempQr = new Html5Qrcode("fileScanPreview", { verbose: false });
+    const result = await tempQr.scanFile(file, false);
+    await tempQr.clear();
+    if (cameraCallback) {
+      const cb = cameraCallback; cameraCallback = null;
+      try { cb(result); } finally {}
+    }
+  } catch (err) {
+    console.error("[FileScan] decode failed:", err);
+    toast("Barcode tidak terbaca di foto. Pastikan barcode jelas, tidak blur, dan pencahayaan cukup. Coba lagi.", "err");
+    cameraCallback = null;
+  }
+}
+ 
 /* ============================================================
    ASET
    ============================================================ */
@@ -2346,19 +2354,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // KAMERA — Kasir
   if ($("btnScanCamera")) {
-    $("btnScanCamera").addEventListener("click", () => {
-      openCameraScanner(async (code) => { beepOK(); await handleScanCode(code); }, "📷 Scan Barcode Barang");
-    });
-  }
-  // KAMERA — Kode Aset
-  if ($("btnScanKodeAset")) {
-    $("btnScanKodeAset").addEventListener("click", () => {
-      openCameraScanner((code) => {
-        $("aKode").value = code;
-        toast("Kode aset terisi: " + code, "ok");
-      }, "📷 Scan Kode Aset");
-    });
-  }
+  $("btnScanCamera").addEventListener("click", () => {
+    openCameraScanner(async (code) => { beepOK(); await handleScanCode(code); }, "📷 Scan Barcode Barang");
+  });
+}
+if ($("btnScanKodeAset")) {
+  $("btnScanKodeAset").addEventListener("click", () => {
+    openCameraScanner((code) => {
+      $("aKode").value = code;
+      toast("Kode aset terisi: " + code, "ok");
+    }, "📷 Scan Kode Aset", "aKode");
+  });
+}
+ // File input handler
+$("fileScanInput").addEventListener("change", handleFileScanChange);
+
+// Tombol kamera di Edit Barang
+if ($("btnScanEditBarcode")) {
+  $("btnScanEditBarcode").addEventListener("click", () => {
+    openCameraScanner((code) => {
+      $("eBarcode").value = code;
+      toast("Barcode terisi: " + code, "ok");
+    }, "📷 Scan Barcode Barang", "eBarcode");
+  });
+}
+
+// Tombol kamera di Stok Awal (Pembelian mode new)
+if ($("btnScanBarcodeStokAwal")) {
+  $("btnScanBarcodeStokAwal").addEventListener("click", () => {
+    openCameraScanner((code) => {
+      $("bBarcode").value = code;
+      toast("Barcode terisi: " + code, "ok");
+    }, "📷 Scan Barcode Barang", "bBarcode");
+  });
+}
+ 
   if ($("cameraModal")) {
     $("cameraModal").addEventListener("click", (e) => { if (e.target === $("cameraModal")) closeCameraScanner(); });
   }
