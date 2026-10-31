@@ -1973,7 +1973,8 @@ function filterByPeriod(list, start, end, key = "waktu") {
   const e = new Date(end + "-01T23:59:59");
   e.setMonth(e.getMonth() + 1); e.setDate(0); e.setHours(23,59,59);
   return list.filter(x => { const d = new Date(String(x[key]).replace(" ", "T")); return !isNaN(d) && d >= s && d <= e; });
-function computeLabaRugi(start, end) {
+}
+ function computeLabaRugi(start, end) {
   const p = filterByPeriod(penjualan, start, end);
   const k = filterByPeriod(keuangan, start, end);
   const pendapatan = p.reduce((s, x) => s + (Number(x.subtotal) || 0), 0);
