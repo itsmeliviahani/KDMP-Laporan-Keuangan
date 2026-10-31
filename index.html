@@ -7,13 +7,37 @@
 <link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f0f4f8;color:#222;font-size:14px;line-height:1.5;display:flex;flex-direction:column;min-height:100vh}
   #appContent{display:flex;flex-direction:column;flex:1}
   main{flex:1;max-width:1250px;margin:0 auto;padding:24px 18px 60px;width:100%}
   footer{text-align:center;padding:20px;font-size:13px;color:#6b7392;border-top:1px solid #e0e0e0;background:#fff;margin-top:auto}
+
+  /* ============ LOGIN SCREEN ============ */
+  .auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;overflow-y:auto;}
+  .auth-card{background:#fff;padding:32px 30px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.25);border-top:6px solid #c62828;margin:auto;}
+  .auth-header{text-align:center;margin-bottom:24px}
+  .auth-header h2{margin:0;color:#b71c1c;font-size:22px;font-weight:800}
+  .auth-header p{margin:6px 0 0;color:#555;font-size:13px}
+  .auth-header a{color:#c62828;text-decoration:none;font-weight:700;cursor:pointer}
+  .auth-header a:hover{text-decoration:underline}
+  .auth-field{margin-bottom:16px}
+  .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
+  .auth-field input,.auth-field select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#333}
+  .auth-field input:focus,.auth-field select:focus{border-color:#c62828;box-shadow:0 0 0 3px rgba(198,40,40,.15)}
+  .password-wrap{position:relative}
+  .password-wrap input{padding-right:45px!important}
+  .toggle-eye{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:18px;user-select:none}
+  .auth-btn{width:100%;padding:12px;font-size:15px;border-radius:8px;background:#c62828;color:#fff;border:none;font-weight:700;cursor:pointer;margin-top:8px}
+  .auth-btn:hover{background:#b71c1c}
+  .auth-btn:disabled{background:#e57373;cursor:not-allowed}
+  .auth-msg{display:none;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px;text-align:center;font-weight:600}
+  .auth-msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ffcdd2}
+  .auth-msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+  .auth-backlink{display:inline-block;margin-bottom:15px;cursor:pointer;color:#888;font-size:12px;font-weight:600;text-decoration:none}
+  .auth-backlink:hover{color:#c62828}
 
   header{background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);color:#fff;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.15)}
   header h1{margin:0;font-size:28px;font-weight:800}
@@ -92,38 +116,17 @@
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
 
   /* ============ SCANNER BAR ============ */
-  .scan-bar{
-    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-    background:linear-gradient(135deg,#1565c0,#0d47a1);
-    color:#fff;padding:16px 18px;border-radius:12px;margin-bottom:18px;
-    box-shadow:0 6px 20px rgba(21,101,192,.35);
-    border:2px solid #0d47a1;
-  }
+  .scan-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:16px 18px;border-radius:12px;margin-bottom:18px;box-shadow:0 6px 20px rgba(21,101,192,.35);border:2px solid #0d47a1;}
   .scan-bar .ico{font-size:32px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
   .scan-bar .scan-info{flex:1;min-width:160px}
   .scan-bar .scan-info strong{font-size:15px;display:block;letter-spacing:.3px}
   .scan-bar .scan-info small{font-size:11.5px;opacity:.85;display:block;margin-top:2px}
-  .scan-bar input#scanInput{
-    flex:2;min-width:220px;padding:14px 16px;border-radius:10px;
-    border:2px solid #fff;font-size:16px;font-weight:700;
-    background:#fff;color:#0d47a1;letter-spacing:1px;
-    font-family:ui-monospace,"Courier New",monospace;
-  }
+  .scan-bar input#scanInput{flex:2;min-width:220px;padding:14px 16px;border-radius:10px;border:2px solid #fff;font-size:16px;font-weight:700;background:#fff;color:#0d47a1;letter-spacing:1px;font-family:ui-monospace,"Courier New",monospace;}
   .scan-bar input#scanInput:focus{outline:none;box-shadow:0 0 0 4px rgba(255,255,255,.45)}
   .scan-bar input#scanInput::placeholder{font-weight:500;letter-spacing:0;color:#90a4ae;font-family:inherit}
-  .scan-bar #btnScanCamera{
-    padding:12px 16px;background:rgba(255,255,255,.22);color:#fff;
-    border:2px solid rgba(255,255,255,.55);border-radius:10px;
-    font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;
-    transition:.15s;
-  }
+  .scan-bar #btnScanCamera{padding:12px 16px;background:rgba(255,255,255,.22);color:#fff;border:2px solid rgba(255,255,255,.55);border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;transition:.15s;}
   .scan-bar #btnScanCamera:hover{background:rgba(255,255,255,.4);transform:translateY(-1px)}
-  .scan-status{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:800;
-    background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
-    letter-spacing:.4px;
-  }
+  .scan-status{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:800;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);letter-spacing:.4px;}
   .scan-status.ready::before{content:"●";color:#69f0ae;font-size:14px;animation:blink 1.4s infinite}
   .scan-status.busy::before{content:"●";color:#ffd54f;font-size:14px}
   .scan-status.error::before{content:"●";color:#ff5252;font-size:14px}
@@ -131,7 +134,6 @@
   .scan-flash{animation:flashGreen .5s}
   @keyframes flashGreen{0%{background:#fff}50%{background:#c8e6c9}100%{background:#fff}}
 
-  /* ============ PRINT 80mm DI KERTAS A4 ============ */
   @page { size: A4 portrait; margin: 8mm; }
   @media print {
     body { background:#fff !important; padding:0 !important; margin:0 !important; }
@@ -214,12 +216,7 @@
 
   .kode-tag{font-family:ui-monospace,"Courier New",monospace;font-size:11.5px;background:#f5f5f5;padding:2px 6px;border-radius:4px;color:#555;border:1px solid #e0e0e0;font-weight:600}
 
-  /* ============ RECEIPT (80mm COMPACT) ============ */
-  .receipt-wrap{
-    background:#fff;padding:16px 14px;border-radius:8px;
-    font-family:'Courier New',ui-monospace,monospace;font-size:11px;
-    width:80mm;max-width:100%;margin:0 auto;color:#000;line-height:1.35;
-  }
+  .receipt-wrap{background:#fff;padding:16px 14px;border-radius:8px;font-family:'Courier New',ui-monospace,monospace;font-size:11px;width:80mm;max-width:100%;margin:0 auto;color:#000;line-height:1.35;}
   .receipt-wrap h3{margin:0 0 2px;font-size:13px;text-align:center;letter-spacing:.4px}
   .receipt-wrap .sub{text-align:center;font-size:10px;color:#444;line-height:1.2}
   .receipt-wrap hr{border:none;border-top:1px dashed #333;margin:6px 0}
@@ -235,13 +232,11 @@
   .modal-actions{display:flex;gap:8px;margin-top:16px}
   .modal-actions button{flex:1;padding:12px;font-size:14px}
 
-  /* ============ CAMERA MODAL ============ */
   #cameraReader video{width:100%!important;border-radius:8px;}
   #cameraReader img[alt="Info icon"]{display:none!important;}
   #cameraReader__dashboard_section_csr span{color:#b71c1c;font-weight:700;}
   #cameraReader__scan_region{border-radius:8px;}
 
-  /* ============ EXPORT BUTTONS ============ */
   .btn-excel{background:#2e7d32!important;color:#fff!important;border-color:#2e7d32!important;font-weight:800!important}
   .btn-excel:hover{background:#1b5e20!important}
   .btn-pdf{background:#c62828!important;color:#fff!important;border-color:#c62828!important;font-weight:800!important}
@@ -258,15 +253,16 @@
     #userInfo{font-size:15px}
     .scan-bar .scan-info strong{font-size:13.5px}
     .scan-bar #btnScanCamera{font-size:13px;padding:10px 12px}
+    .auth-card{padding:25px 20px}
   }
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN (tanpa landing, langsung form login) -->
+<!-- ============ LOGIN SCREEN (default: form login) ============ -->
 <div id="loginScreen" class="auth-screen" style="display:none;">
 
-  <!-- FORM LOGIN (default tampil) -->
+  <!-- FORM LOGIN -->
   <div class="auth-card" id="formLogin">
     <div class="auth-header">
       <h2>Login KDMP Kapas</h2>
@@ -274,12 +270,12 @@
     </div>
     <div class="auth-field">
       <label>Username <span style="color:#c62828">*</span></label>
-      <input type="text" id="loginUsername" autocomplete="username">
+      <input type="text" id="loginUsername" autocomplete="username" placeholder="Masukkan username">
     </div>
     <div class="auth-field">
       <label>Password <span style="color:#c62828">*</span></label>
       <div class="password-wrap">
-        <input type="password" id="loginPassword" autocomplete="current-password">
+        <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Masukkan password">
         <span class="toggle-eye" onclick="togglePassword('loginPassword', this)">👁️</span>
       </div>
     </div>
@@ -287,7 +283,7 @@
     <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
   </div>
 
-  <!-- FORM REGISTER / SPS (daftar username & password) -->
+  <!-- FORM REGISTER -->
   <div class="auth-card" id="formRegister" style="display:none;">
     <a class="auth-backlink" onclick="toggleAuth('login')">← Kembali ke Login</a>
     <div class="auth-header">
@@ -305,12 +301,12 @@
     </div>
     <div class="auth-field">
       <label>Username <span style="color:#c62828">*</span></label>
-      <input type="text" id="regEmail" autocomplete="username">
+      <input type="text" id="regEmail" autocomplete="username" placeholder="Masukkan username">
     </div>
     <div class="auth-field">
       <label>Password <span style="color:#c62828">*</span></label>
       <div class="password-wrap">
-        <input type="password" id="regPassword" autocomplete="new-password">
+        <input type="password" id="regPassword" autocomplete="new-password" placeholder="Masukkan password">
         <span class="toggle-eye" onclick="togglePassword('regPassword', this)">👁️</span>
       </div>
     </div>
@@ -333,7 +329,7 @@
     <div class="auth-field">
       <label>Password Baru <span style="color:#c62828">*</span></label>
       <div class="password-wrap">
-        <input type="password" id="resetPasswordInput" autocomplete="new-password">
+        <input type="password" id="resetPasswordInput" autocomplete="new-password" placeholder="Masukkan password baru">
         <span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span>
       </div>
     </div>
@@ -341,8 +337,8 @@
   </div>
 
 </div>
- 
-<!-- APP (login screen dihapus total) -->
+
+<!-- ============ APP ============ -->
 <div id="appContent" style="display:none;">
   <header>
     <div>
@@ -376,7 +372,6 @@
       </div>
     </section>
 
-    <!-- STOK BARANG -->
     <section id="view-stok" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Stok Barang</h2>
@@ -395,7 +390,6 @@
       </div>
     </section>
 
-    <!-- PEMBELIAN -->
     <section id="view-beli" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Pembelian</h2>
@@ -423,13 +417,13 @@
             <select id="bSatuan"><option value="pcs">pcs</option><option value="box">box</option><option value="bungkus">bungkus</option><option value="botol">botol</option><option value="karung">karung</option><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="ml">ml</option><option value="sachet">sachet</option><option value="pack">pack</option><option value="dus">dus</option><option value="roll">roll</option><option value="lembar">lembar</option><option value="cup">cup</option><option value="kotak">kotak</option><option value="kaleng">kaleng</option><option value="tube">tube</option><option value="lusin">lusin</option><option value="unit">unit</option><option value="set">set</option><option value="rim">rim</option></select>
           </div>
           <div class="field" id="bBarcodeWrap" style="display:none">
-         <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
-         <div style="display:flex;gap:6px;">
-         <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
-         <button type="button" id="btnScanBarcodeStokAwal" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
-         </div>
-         <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan kamera HP</small>
-         </div>
+            <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
+              <button type="button" id="btnScanBarcodeStokAwal" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
+            </div>
+            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan kamera HP</small>
+          </div>
           <div class="field" id="bHargaWrap" style="display:none"><label>Harga beli (Rp)</label><input type="text" id="bHarga" inputmode="numeric" value="0"></div>
           <div class="field" id="bHargaJualWrap" style="display:none"><label>Harga jual (Rp)</label><input type="text" id="bHargaJual" inputmode="numeric" value="0"></div>
           <div class="field" id="bExpiredWrap" style="display:none"><label>Expired</label><input type="date" id="bExpired"></div>
@@ -441,11 +435,9 @@
       </div>
     </section>
 
-    <!-- PENJUALAN — SCANNER + KAMERA -->
     <section id="view-jual" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Penjualan Kasir</h2>
-
       <div class="scan-bar" id="scanBar">
         <div class="ico">📷</div>
         <div class="scan-info">
@@ -456,7 +448,6 @@
         <button type="button" id="btnScanCamera" title="Buka kamera HP">📷 Kamera</button>
         <span class="scan-status ready" id="scanStatus">SCANNER READY</span>
       </div>
-
       <div class="pos-container">
         <div>
           <div class="form-card" style="margin-bottom:15px;">
@@ -498,17 +489,14 @@
       </div>
     </section>
 
-    <!-- INVENTARIS ASET -->
     <section id="view-aset" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Inventaris Aset Tetap</h2>
-
       <div class="bar">
         <label style="font-size:12.5px;font-weight:700">📅 Tanggal Posisi:</label>
         <input type="date" id="aPosisi" style="width:auto">
         <small style="color:#666;font-size:12px">Penyusutan dihitung sampai tanggal ini</small>
       </div>
-
       <div class="form-card" style="margin-bottom:20px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah / Edit Aset</h3>
         <div class="grid">
@@ -549,7 +537,6 @@
           <button class="ghost" id="btnCancelAset" style="display:none;">Batal Edit</button>
         </div>
       </div>
-
       <div class="bar">
         <input type="text" id="searchAset" placeholder="Cari kode / nama aset…" style="flex:1;min-width:180px;">
         <select id="filterAsetKategori"><option value="all">Semua Kategori</option></select>
@@ -558,7 +545,6 @@
         <button class="small btn-excel" onclick="exportAset('excel')">📊 Excel</button>
         <button class="small btn-pdf" onclick="exportAset('pdf')">📄 PDF</button>
       </div>
-
       <div class="table-wrap">
         <table style="min-width:2000px;">
           <thead><tr>
@@ -573,9 +559,7 @@
           <tbody id="tbodyAset"></tbody>
         </table>
       </div>
-
       <h3 style="margin:32px 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #ffcdd2;padding-bottom:8px;text-align:center;">📊 Rekapitulasi Aset</h3>
-
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 12px;font-size:14px;color:#b71c1c;text-align:center;">Per Kategori</h3>
         <table class="aset-mini-table">
@@ -583,7 +567,6 @@
           <tbody id="rekapKategori"></tbody>
         </table>
       </div>
-
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 12px;font-size:14px;color:#b71c1c;text-align:center;">Per Unit Usaha / Lokasi</h3>
         <table class="aset-mini-table">
@@ -591,7 +574,6 @@
           <tbody id="rekapUnit"></tbody>
         </table>
       </div>
-
       <div class="form-card" style="margin-bottom:16px;">
         <h3 style="margin:0 0 12px;font-size:14px;color:#b71c1c;text-align:center;">Per Kondisi</h3>
         <table class="aset-mini-table">
@@ -601,7 +583,6 @@
       </div>
     </section>
 
-    <!-- STOK FISIK -->
     <section id="view-stokdaerah" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Stok Fisik</h2>
@@ -641,7 +622,6 @@
       </div>
     </section>
 
-    <!-- EDIT BARANG -->
     <section id="view-edit" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Edit Barang</h2>
@@ -664,13 +644,13 @@
           <div class="field"><label>Harga Beli (Rp)</label><input type="text" id="eHargaBeli" inputmode="numeric"></div>
           <div class="field"><label>Harga Jual (Rp)</label><input type="text" id="eHargaJual" inputmode="numeric"></div>
           <div class="field full">
-         <label>Barcode / SKU</label>
-         <div style="display:flex;gap:6px;">
-         <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
-         <button type="button" id="btnScanEditBarcode" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
-         </div>
-         <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
-         </div>
+            <label>Barcode / SKU</label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="flex:1;font-family:ui-monospace,monospace;letter-spacing:.5px;">
+              <button type="button" id="btnScanEditBarcode" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
+            </div>
+            <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
+          </div>
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir"></div>
         </div>
         <div class="actions-row"><button id="btnSaveEdit">Simpan Data Master</button></div>
@@ -686,7 +666,6 @@
       </div>
     </section>
 
-    <!-- KEUANGAN -->
     <section id="view-keuangan" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Keuangan Lain</h2>
@@ -713,11 +692,9 @@
       </div>
     </section>
 
-    <!-- LAPORAN -->
     <section id="view-laporan" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Laporan Keuangan</h2>
-
       <div class="report-card">
         <h3>Grafik Penjualan</h3>
         <div class="chart-filters">
@@ -735,7 +712,6 @@
         </div>
         <div class="chart-wrap"><canvas id="chartPenjualan"></canvas></div>
       </div>
-
       <div class="report-card">
         <h3>Grafik Laba Rugi Bulanan</h3>
         <div class="chart-filters">
@@ -744,7 +720,6 @@
         </div>
         <div class="chart-wrap"><canvas id="chartLaba"></canvas></div>
       </div>
-
       <div class="bar" style="margin-top:20px;">
         <label style="font-size:12.5px;font-weight:700">Periode Laporan:</label>
         <input type="month" id="periodStart" style="width:auto">
@@ -755,7 +730,6 @@
         <button class="ghost small" data-quick="6">6 bln</button>
         <button class="ghost small" data-quick="12">12 bln</button>
       </div>
-
       <div class="report-grid">
         <div class="report-card">
           <h3>Laporan Laba Rugi</h3>
@@ -772,7 +746,6 @@
           </table>
         </div>
       </div>
-
       <div class="report-card">
         <h3>Laporan Perubahan Ekuitas</h3>
         <table class="report-kas">
@@ -780,7 +753,6 @@
           <tbody id="tableEkuitas"></tbody>
         </table>
       </div>
-
       <div class="report-card">
         <h3 style="text-align:center">Rekap Barang (Persediaan)</h3>
         <div class="rekap-wrap">
@@ -792,7 +764,6 @@
       </div>
     </section>
 
-    <!-- RIWAYAT PENJUALAN -->
     <section id="view-penjualan" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Riwayat Penjualan</h2>
@@ -801,14 +772,12 @@
       </div>
     </section>
 
-    <!-- RIWAYAT UMUM -->
     <section id="view-riwayat" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Riwayat Umum</h2>
       <div class="table-wrap">
         <table><thead><tr><th>Waktu</th><th>Tipe</th><th>Barang</th><th>Jumlah</th><th>Satuan</th><th>Harga Satuan</th><th>Total</th><th>Catatan</th></tr></thead><tbody id="tbodyRiwayat"></tbody></table>
       </div>
-
       <h3 style="margin:32px 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #ffcdd2;padding-bottom:8px;">📋 Riwayat Stok Fisik (Stok Akhir & On-Hand)</h3>
       <div class="table-wrap">
         <table>
@@ -818,7 +787,6 @@
       </div>
     </section>
 
-    <!-- GANTI SANDI -->
     <section id="view-ganti-sandi" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Ganti Sandi</h2>
@@ -835,7 +803,6 @@
   <footer>Aplikasi ini dikembangkan oleh Mahasiswa Politeknik Keuangan Negara STAN</footer>
 </div>
 
-<!-- MODAL NOTA -->
 <div class="modal-backdrop" id="receiptModal">
   <div style="background:#fff;border-radius:12px;padding:16px;max-width:420px;width:100%;max-height:92vh;overflow-y:auto;">
     <div id="receiptContent"></div>
@@ -846,7 +813,6 @@
   </div>
 </div>
 
-<!-- MODAL KAMERA SCANNER -->
 <div class="modal-backdrop" id="cameraModal">
   <div style="background:#fff;border-radius:12px;padding:16px;max-width:480px;width:100%;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
@@ -859,8 +825,9 @@
     </div>
   </div>
 </div>
-<input type="file" accept="image/*" capture="environment" id="fileScanInput" style="display:none;">
-<div id="fileScanPreview" style="position:absolute;left:-9999px;top:-9999px;width:10px;height:10px;"></div>
+
+<input type="file" accept="image/*" capture="environment" id="fileScanInput" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;">
+<div id="fileScanPreview" style="position:absolute;left:-9999px;top:-9999px;width:500px;height:500px;opacity:0;"></div>
 <div id="toast"></div>
 
 <script>
@@ -900,6 +867,7 @@ const rp = n => "Rp " + (Number(n) || 0).toLocaleString("id-ID");
 const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const pad2 = n => String(n).padStart(2, "0");
 const dateStr = () => { const d = new Date(); return d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate()); };
+function val(id) { const el = $(id); return el ? String(el.value || "").trim() : ""; }
 
 function getHargaBeli(it) {
   if (!it) return 0;
@@ -935,7 +903,6 @@ function formatRupiah(el) {
   return parseInt(v, 10);
 }
 function getMoneyValue(id) { const el = $(id); if (!el) return 0; return parseInt(String(el.value).replace(/\./g, "").replace(/\D/g, ""), 10) || 0; }
-function val(id) { const el = $(id); return el ? String(el.value || "").trim() : ""; }
 function attachRupiahInputs() {
   ["posDiskon","posTunai","bHarga","bHargaJual","bHargaBaru","eHargaBeli","eHargaJual","aHarga","kfJumlah"].forEach(id => {
     const el = $(id); if (el) el.addEventListener("input", () => formatRupiah(el));
@@ -1010,48 +977,106 @@ function depreciation(a, posisiDate) {
   return { perTahun, umurBerjalan, akumulasi, nilaiBuku: Math.max(0, harga - akumulasi), total: harga };
 }
 
-  /* ============ LOGIN SCREEN ============ */
-  .auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-  .auth-card{background:#fff;padding:32px 30px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.25);border-top:6px solid #c62828;}
-  .auth-header{text-align:center;margin-bottom:24px}
-  .auth-header h2{margin:0;color:#b71c1c;font-size:22px;font-weight:800}
-  .auth-header p{margin:6px 0 0;color:#555;font-size:13px}
-  .auth-header a{color:#c62828;text-decoration:none;font-weight:700;cursor:pointer}
-  .auth-header a:hover{text-decoration:underline}
-  .auth-field{margin-bottom:16px}
-  .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
-  .auth-field input,.auth-field select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#333}
-  .auth-field input:focus,.auth-field select:focus{border-color:#c62828;box-shadow:0 0 0 3px rgba(198,40,40,.15)}
-  .password-wrap{position:relative}
-  .password-wrap input{padding-right:45px!important}
-  .toggle-eye{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:18px;user-select:none}
-  .auth-btn{width:100%;padding:12px;font-size:15px;border-radius:8px;background:#c62828;color:#fff;border:none;font-weight:700;cursor:pointer;margin-top:8px}
-  .auth-btn:hover{background:#b71c1c}
-  .auth-btn:disabled{background:#e57373;cursor:not-allowed}
-  .auth-msg{display:none;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px;text-align:center;font-weight:600}
-  .auth-msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ffcdd2}
-  .auth-msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
-  .auth-backlink{display:inline-block;margin-bottom:15px;cursor:pointer;color:#888;font-size:12px;font-weight:600;text-decoration:none}
-  .auth-backlink:hover{color:#c62828}
-
 /* ============================================================
-   AUTH — AUTO-LOGIN (login UI dihapus)
+   AUTH — LOGIN MANUAL (form login sebagai default)
    ============================================================ */
 function checkAuth() {
-  let auth = localStorage.getItem("kdmp_auth");
-  if (!auth) {
-    const def = { username: "manajer", role: "manajer" };
-    localStorage.setItem("kdmp_auth", JSON.stringify(def));
-    auth = JSON.stringify(def);
+  const auth = localStorage.getItem("kdmp_auth");
+  if (auth) {
+    try {
+      const user = JSON.parse(auth);
+      if (user && user.username) { showApp(user); return; }
+    } catch (e) {}
   }
-  showApp(JSON.parse(auth));
+  $("appContent").style.display = "none";
+  $("loginScreen").style.display = "flex";
+  toggleAuth("login");
 }
+
+function toggleAuth(mode) {
+  ["formLogin","formRegister","formResetPassword"].forEach(id => {
+    const el = $(id); if (el) el.style.display = "none";
+  });
+  ["loginError","regError","regSuccess","resetError","resetSuccess"].forEach(id => {
+    const el = $(id); if (el) { el.className = "auth-msg"; el.textContent = ""; }
+  });
+  if (mode === "register") $("formRegister").style.display = "block";
+  else if (mode === "reset") $("formResetPassword").style.display = "block";
+  else $("formLogin").style.display = "block";
+}
+
+function togglePassword(id, el) {
+  const inp = $(id); if (!inp) return;
+  if (inp.type === "password") { inp.type = "text"; el.textContent = "🙈"; }
+  else { inp.type = "password"; el.textContent = "👁️"; }
+}
+
+async function handleLogin() {
+  const u = val("loginUsername"), p = $("loginPassword").value;
+  const err = $("loginError"), btn = $("btnLogin");
+  if (!u || !p) { err.className = "auth-msg error"; err.textContent = "Isi username & password."; return; }
+  err.className = "auth-msg"; btn.disabled = true; btn.textContent = "Memproses...";
+  try {
+    const res = await api({ action: "login", username: u, password: p }, "POST");
+    if (res.ok) {
+      localStorage.setItem("kdmp_auth", JSON.stringify({ username: u, role: res.role }));
+      showApp({ username: u, role: res.role });
+    } else {
+      err.className = "auth-msg error";
+      let link = "";
+      if (res.status === "user_not_found") link = ` <a onclick="toggleAuth('register')" style="cursor:pointer;color:#c62828;text-decoration:underline;">Daftar</a>`;
+      else if (res.status === "wrong_password") link = ` <a onclick="openResetForm('${esc(u)}')" style="cursor:pointer;color:#c62828;text-decoration:underline;">Ubah password</a>`;
+      err.innerHTML = (res.message || "Login gagal.") + link;
+    }
+  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
+  finally { btn.textContent = "Masuk"; btn.disabled = false; }
+}
+
+async function handleRegister() {
+  const email = val("regEmail"), pass = $("regPassword").value, role = $("regRole").value;
+  const err = $("regError"), ok = $("regSuccess"), btn = $("btnRegister");
+  err.className = "auth-msg"; ok.className = "auth-msg";
+  if (!email || !pass) { err.className = "auth-msg error"; err.textContent = "Isi semua field."; return; }
+  btn.disabled = true; btn.textContent = "Memproses...";
+  try {
+    const res = await api({ action: "register", data: { email, password: pass, role } }, "POST");
+    if (res.ok) {
+      ok.className = "auth-msg success"; ok.textContent = res.message;
+      setTimeout(() => { toggleAuth("login"); $("loginUsername").value = email; }, 2000);
+    } else { err.className = "auth-msg error"; err.textContent = res.message; }
+  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
+  finally { btn.textContent = "Daftar Sekarang"; btn.disabled = false; }
+}
+
+function openResetForm(email) {
+  $("resetEmail").value = email;
+  toggleAuth("reset");
+}
+
+async function handleResetPassword() {
+  const email = $("resetEmail").value.trim(), np = $("resetPasswordInput").value.trim();
+  const err = $("resetError"), ok = $("resetSuccess"), btn = $("btnReset");
+  err.className = "auth-msg"; ok.className = "auth-msg";
+  if (!np) { err.className = "auth-msg error"; err.textContent = "Password baru wajib."; return; }
+  btn.disabled = true; btn.textContent = "Memproses...";
+  try {
+    const res = await api({ action: "reset_password", username: email, newPassword: np }, "POST");
+    if (res.ok) {
+      ok.className = "auth-msg success"; ok.textContent = res.message;
+      setTimeout(() => { toggleAuth("login"); $("loginUsername").value = email; }, 2000);
+    } else { err.className = "auth-msg error"; err.textContent = res.message; }
+  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
+  finally { btn.textContent = "Simpan Password Baru"; btn.disabled = false; }
+}
+
 function logout() {
-  if (!confirm("Keluar dari aplikasi? (Login otomatis akan aktif lagi saat dibuka ulang)")) return;
+  if (!confirm("Keluar dari aplikasi?")) return;
   localStorage.removeItem("kdmp_auth");
   location.reload();
 }
+
 function showApp(user) {
+  $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
   $("userInfo").innerHTML = `Halo, <b>${esc(user.username)}</b>`;
   document.querySelectorAll(".menu-btn[data-role='manajer'], .mode-switch button[data-role='manajer']").forEach(el => {
@@ -1570,7 +1595,7 @@ function printReceipt() {
 }
 
 /* ============================================================
-   CAMERA SCANNER — File capture (paling andal untuk HP & GAS)
+   CAMERA SCANNER — File capture (HP) + Live camera (Desktop)
    ============================================================ */
 let html5QrCode = null;
 let cameraCallback = null;
@@ -1582,15 +1607,9 @@ function openCameraScanner(callback, title, targetInputId) {
   const isMobile = /Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent);
   const isSecure = location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
-  // Di HP → pakai kamera native via <input file capture> (paling andal, tanpa izin)
-  if (isMobile) {
-    $("fileScanInput").click();
-    return;
-  }
-
-  // Di desktop → coba kamera live (html5-qrcode)
+  if (isMobile) { $("fileScanInput").click(); return; }
   if (!isSecure) {
-    toast("Kamera live butuh HTTPS. Di HP, kamera otomatis pakai kamera native.", "err");
+    toast("Kamera live butuh HTTPS. Di HP, kamera otomatis pakai native.", "err");
     return;
   }
   startLiveCamera(title, targetInputId);
@@ -1625,13 +1644,10 @@ async function startLiveCamera(title, targetInputId) {
   } catch (err) {
     const raw = String((err && (err.message || err.name)) || err);
     let msg = raw;
-    if (/permission|denied|NotAllowed/i.test(raw))
-      msg = "Izin kamera ditolak. Klik 🔒 di address bar → Camera → Allow, lalu reload.";
-    else if (/notfound|NotFound|devices/i.test(raw))
-      msg = "Tidak ada kamera. Gunakan HP atau colok webcam.";
-    else if (/NotReadable|in use/i.test(raw))
-      msg = "Kamera sedang dipakai aplikasi lain.";
-    toast("Kamera live gagal: " + msg + " — Di HP, coba lagi (kamera otomatis pakai native).", "err");
+    if (/permission|denied|NotAllowed/i.test(raw)) msg = "Izin kamera ditolak. Klik 🔒 di address bar → Camera → Allow.";
+    else if (/notfound|NotFound|devices/i.test(raw)) msg = "Tidak ada kamera terdeteksi.";
+    else if (/NotReadable|in use/i.test(raw)) msg = "Kamera dipakai aplikasi lain.";
+    toast("Kamera gagal: " + msg, "err");
     closeCameraScanner();
   }
 }
@@ -1650,10 +1666,9 @@ async function closeCameraScanner() {
   cameraCallback = null;
 }
 
-/* Handler file input — decode foto barcode */
 async function handleFileScanChange(e) {
   const file = e.target.files && e.target.files[0];
-  e.target.value = ""; // reset supaya bisa scan lagi
+  e.target.value = "";
   if (!file) return;
   toast("Membaca barcode…", "");
   try {
@@ -1666,11 +1681,11 @@ async function handleFileScanChange(e) {
     }
   } catch (err) {
     console.error("[FileScan] decode failed:", err);
-    toast("Barcode tidak terbaca di foto. Pastikan barcode jelas, tidak blur, dan pencahayaan cukup. Coba lagi.", "err");
+    toast("Barcode tidak terbaca. Pastikan foto jelas, tidak blur, dan pencahayaan cukup.", "err");
     cameraCallback = null;
   }
 }
- 
+
 /* ============================================================
    ASET
    ============================================================ */
@@ -2346,7 +2361,7 @@ function exportToExcel(sheetTitle, headers, rows, filename) {
     toast("Excel berhasil diunduh.", "ok");
   } catch (e) { toast("Gagal ekspor Excel: " + e.message, "err"); }
 }
-function exportToPDF(title, headers, rows, filename) {
+function exportToPDF(title, headers, rows) {
   try {
     const w = window.open("", "_blank");
     if (!w) { toast("Izinkan popup untuk PDF.", "err"); return; }
@@ -2386,7 +2401,7 @@ function exportStokBarang(format) {
     Number(i.harga) || 0, Number(i.harga_jual) || 0, i.barcode || ""
   ]);
   if (format === "excel") exportToExcel("Stok Barang", headers, rows, `stok-barang-${dateStr()}`);
-  else exportToPDF("Daftar Stok Barang", headers, rows, `stok-barang-${dateStr()}`);
+  else exportToPDF("Daftar Stok Barang", headers, rows);
 }
 function exportAset(format) {
   const q = val("searchAset").toLowerCase();
@@ -2415,7 +2430,7 @@ function exportAset(format) {
     ];
   });
   if (format === "excel") exportToExcel("Inventaris Aset", headers, rows, `inventaris-aset-${dateStr()}`);
-  else exportToPDF(`Inventaris Aset Tetap — Posisi ${posisi}`, headers, rows, `inventaris-aset-${dateStr()}`);
+  else exportToPDF(`Inventaris Aset Tetap — Posisi ${posisi}`, headers, rows);
 }
 function exportKeuangan(format) {
   const f = $("filterKeuangan").value;
@@ -2427,7 +2442,7 @@ function exportKeuangan(format) {
     k.nama || "-", Number(k.jumlah) || 0
   ]);
   if (format === "excel") exportToExcel("Keuangan Lain", headers, rows, `keuangan-lain-${dateStr()}`);
-  else exportToPDF("Daftar Keuangan Lain", headers, rows, `keuangan-lain-${dateStr()}`);
+  else exportToPDF("Daftar Keuangan Lain", headers, rows);
 }
 
 /* ============================================================
@@ -2457,41 +2472,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // KAMERA — Kasir
   if ($("btnScanCamera")) {
-  $("btnScanCamera").addEventListener("click", () => {
-    openCameraScanner(async (code) => { beepOK(); await handleScanCode(code); }, "📷 Scan Barcode Barang");
-  });
-}
-if ($("btnScanKodeAset")) {
-  $("btnScanKodeAset").addEventListener("click", () => {
-    openCameraScanner((code) => {
-      $("aKode").value = code;
-      toast("Kode aset terisi: " + code, "ok");
-    }, "📷 Scan Kode Aset", "aKode");
-  });
-}
- // File input handler
-$("fileScanInput").addEventListener("change", handleFileScanChange);
+    $("btnScanCamera").addEventListener("click", () => {
+      openCameraScanner(async (code) => { beepOK(); await handleScanCode(code); }, "📷 Scan Barcode Barang");
+    });
+  }
+  // KAMERA — Kode Aset
+  if ($("btnScanKodeAset")) {
+    $("btnScanKodeAset").addEventListener("click", () => {
+      openCameraScanner((code) => {
+        $("aKode").value = code;
+        toast("Kode aset terisi: " + code, "ok");
+      }, "📷 Scan Kode Aset", "aKode");
+    });
+  }
+  // FILE SCAN HANDLER
+  $("fileScanInput").addEventListener("change", handleFileScanChange);
 
-// Tombol kamera di Edit Barang
-if ($("btnScanEditBarcode")) {
-  $("btnScanEditBarcode").addEventListener("click", () => {
-    openCameraScanner((code) => {
-      $("eBarcode").value = code;
-      toast("Barcode terisi: " + code, "ok");
-    }, "📷 Scan Barcode Barang", "eBarcode");
-  });
-}
+  // KAMERA — Edit Barang
+  if ($("btnScanEditBarcode")) {
+    $("btnScanEditBarcode").addEventListener("click", () => {
+      openCameraScanner((code) => {
+        $("eBarcode").value = code;
+        toast("Barcode terisi: " + code, "ok");
+      }, "📷 Scan Barcode Barang", "eBarcode");
+    });
+  }
+  // KAMERA — Stok Awal
+  if ($("btnScanBarcodeStokAwal")) {
+    $("btnScanBarcodeStokAwal").addEventListener("click", () => {
+      openCameraScanner((code) => {
+        $("bBarcode").value = code;
+        toast("Barcode terisi: " + code, "ok");
+      }, "📷 Scan Barcode Barang", "bBarcode");
+    });
+  }
 
-// Tombol kamera di Stok Awal (Pembelian mode new)
-if ($("btnScanBarcodeStokAwal")) {
-  $("btnScanBarcodeStokAwal").addEventListener("click", () => {
-    openCameraScanner((code) => {
-      $("bBarcode").value = code;
-      toast("Barcode terisi: " + code, "ok");
-    }, "📷 Scan Barcode Barang", "bBarcode");
-  });
-}
- 
   if ($("cameraModal")) {
     $("cameraModal").addEventListener("click", (e) => { if (e.target === $("cameraModal")) closeCameraScanner(); });
   }
@@ -2568,5 +2583,7 @@ if ($("btnScanBarcodeStokAwal")) {
   });
 });
 </script>
+</body>
+</html>
 </body>
 </html>
