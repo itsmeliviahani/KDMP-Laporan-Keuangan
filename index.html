@@ -263,6 +263,85 @@
 </head>
 <body>
 
+<!-- LOGIN SCREEN (tanpa landing, langsung form login) -->
+<div id="loginScreen" class="auth-screen" style="display:none;">
+
+  <!-- FORM LOGIN (default tampil) -->
+  <div class="auth-card" id="formLogin">
+    <div class="auth-header">
+      <h2>Login KDMP Kapas</h2>
+      <p>Belum punya akun? <a onclick="toggleAuth('register')">Daftar di sini</a></p>
+    </div>
+    <div class="auth-field">
+      <label>Username <span style="color:#c62828">*</span></label>
+      <input type="text" id="loginUsername" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label>Password <span style="color:#c62828">*</span></label>
+      <div class="password-wrap">
+        <input type="password" id="loginPassword" autocomplete="current-password">
+        <span class="toggle-eye" onclick="togglePassword('loginPassword', this)">👁️</span>
+      </div>
+    </div>
+    <div id="loginError" class="auth-msg error"></div>
+    <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
+  </div>
+
+  <!-- FORM REGISTER / SPS (daftar username & password) -->
+  <div class="auth-card" id="formRegister" style="display:none;">
+    <a class="auth-backlink" onclick="toggleAuth('login')">← Kembali ke Login</a>
+    <div class="auth-header">
+      <h2>Daftar Akun Baru</h2>
+      <p>Sudah punya akun? <a onclick="toggleAuth('login')">Masuk di sini</a></p>
+    </div>
+    <div id="regError" class="auth-msg error"></div>
+    <div id="regSuccess" class="auth-msg success"></div>
+    <div class="auth-field">
+      <label>Daftar Sebagai</label>
+      <select id="regRole">
+        <option value="karyawan">Karyawan</option>
+        <option value="manajer">Manajer</option>
+      </select>
+    </div>
+    <div class="auth-field">
+      <label>Username <span style="color:#c62828">*</span></label>
+      <input type="text" id="regEmail" autocomplete="username">
+    </div>
+    <div class="auth-field">
+      <label>Password <span style="color:#c62828">*</span></label>
+      <div class="password-wrap">
+        <input type="password" id="regPassword" autocomplete="new-password">
+        <span class="toggle-eye" onclick="togglePassword('regPassword', this)">👁️</span>
+      </div>
+    </div>
+    <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
+  </div>
+
+  <!-- FORM RESET PASSWORD -->
+  <div class="auth-card" id="formResetPassword" style="display:none;">
+    <a class="auth-backlink" onclick="toggleAuth('login')">← Kembali ke Login</a>
+    <div class="auth-header">
+      <h2>Ubah Password</h2>
+      <p>Masukkan password baru Anda</p>
+    </div>
+    <div id="resetError" class="auth-msg error"></div>
+    <div id="resetSuccess" class="auth-msg success"></div>
+    <div class="auth-field">
+      <label>Username</label>
+      <input type="text" id="resetEmail" readonly style="background:#f5f5f5;">
+    </div>
+    <div class="auth-field">
+      <label>Password Baru <span style="color:#c62828">*</span></label>
+      <div class="password-wrap">
+        <input type="password" id="resetPasswordInput" autocomplete="new-password">
+        <span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span>
+      </div>
+    </div>
+    <button class="auth-btn" id="btnReset" onclick="handleResetPassword()">Simpan Password Baru</button>
+  </div>
+
+</div>
+ 
 <!-- APP (login screen dihapus total) -->
 <div id="appContent" style="display:none;">
   <header>
@@ -930,6 +1009,30 @@ function depreciation(a, posisiDate) {
   }
   return { perTahun, umurBerjalan, akumulasi, nilaiBuku: Math.max(0, harga - akumulasi), total: harga };
 }
+
+  /* ============ LOGIN SCREEN ============ */
+  .auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .auth-card{background:#fff;padding:32px 30px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.25);border-top:6px solid #c62828;}
+  .auth-header{text-align:center;margin-bottom:24px}
+  .auth-header h2{margin:0;color:#b71c1c;font-size:22px;font-weight:800}
+  .auth-header p{margin:6px 0 0;color:#555;font-size:13px}
+  .auth-header a{color:#c62828;text-decoration:none;font-weight:700;cursor:pointer}
+  .auth-header a:hover{text-decoration:underline}
+  .auth-field{margin-bottom:16px}
+  .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
+  .auth-field input,.auth-field select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#333}
+  .auth-field input:focus,.auth-field select:focus{border-color:#c62828;box-shadow:0 0 0 3px rgba(198,40,40,.15)}
+  .password-wrap{position:relative}
+  .password-wrap input{padding-right:45px!important}
+  .toggle-eye{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:18px;user-select:none}
+  .auth-btn{width:100%;padding:12px;font-size:15px;border-radius:8px;background:#c62828;color:#fff;border:none;font-weight:700;cursor:pointer;margin-top:8px}
+  .auth-btn:hover{background:#b71c1c}
+  .auth-btn:disabled{background:#e57373;cursor:not-allowed}
+  .auth-msg{display:none;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px;text-align:center;font-weight:600}
+  .auth-msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ffcdd2}
+  .auth-msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+  .auth-backlink{display:inline-block;margin-bottom:15px;cursor:pointer;color:#888;font-size:12px;font-weight:600;text-decoration:none}
+  .auth-backlink:hover{color:#c62828}
 
 /* ============================================================
    AUTH — AUTO-LOGIN (login UI dihapus)
