@@ -6,44 +6,14 @@
 <title>KDMP Kapas — Stok & Laporan</title>
 <link rel="icon" href="data:,">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f0f4f8;color:#222;font-size:14px;line-height:1.5;display:flex;flex-direction:column;min-height:100vh}
   #appContent{display:flex;flex-direction:column;flex:1}
   main{flex:1;max-width:1250px;margin:0 auto;padding:24px 18px 60px;width:100%}
   footer{text-align:center;padding:20px;font-size:13px;color:#6b7392;border-top:1px solid #e0e0e0;background:#fff;margin-top:auto}
-
-  @keyframes bgSlideUp{0%{background-position:center 100%}100%{background-position:center center}}
-  @keyframes slideUpFade{0%{transform:translateY(30px);opacity:0}100%{transform:translateY(0);opacity:1}}
-
-  .auth-screen{position:fixed;inset:0;background-image:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),url('bg-koperasi.jpg');background-size:cover;background-position:center;background-repeat:no-repeat;display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;animation:bgSlideUp 1.5s ease-out forwards}
-  .auth-landing{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;text-align:center;color:#fff;animation:slideUpFade 1s cubic-bezier(.2,.8,.2,1) forwards}
-  .landing-content{background:rgba(0,0,0,.4);padding:40px;border-radius:20px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);box-shadow:0 20px 50px rgba(0,0,0,.5);max-width:600px;width:90%}
-  .auth-landing h1{font-size:32px;margin:0 0 10px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.5)}
-  .auth-landing p{font-size:16px;margin:0 0 30px;color:#ddd}
-  .landing-buttons{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
-  .landing-buttons button{padding:15px 30px;font-size:16px;border-radius:50px;border:none;cursor:pointer;font-weight:700;transition:.3s;min-width:200px;font-family:inherit}
-  .btn-primary{background:#c62828;color:#fff;box-shadow:0 4px 15px rgba(198,40,40,.4)}
-  .btn-primary:hover{background:#b71c1c;transform:translateY(-3px)}
-  .btn-secondary{background:rgba(255,255,255,.2);color:#fff;border:2px solid #fff!important}
-  .btn-secondary:hover{background:#fff;color:#333;transform:translateY(-3px)}
-  .auth-card{background:#fff!important;padding:32px 30px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.2);border-top:6px solid #c62828;animation:slideUpFade .5s ease-out forwards}
-  .auth-header{text-align:center;margin-bottom:24px}
-  .auth-header h2{margin:0;color:#b71c1c;font-size:22px;font-weight:800}
-  .auth-header p{margin:6px 0 0;color:#555;font-size:13px}
-  .auth-header a{color:#c62828;text-decoration:none;font-weight:700;cursor:pointer}
-  .auth-field{margin-bottom:16px}
-  .auth-field label{display:block;font-size:12px;font-weight:700;color:#444;margin-bottom:6px}
-  .auth-field input,.auth-field select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#333}
-  .auth-field input:focus,.auth-field select:focus{border-color:#c62828;box-shadow:0 0 0 3px rgba(198,40,40,.15)}
-  .password-wrap{position:relative}
-  .password-wrap input{padding-right:45px!important}
-  .toggle-eye{position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:18px;user-select:none}
-  .auth-btn{width:100%;padding:12px;font-size:15px;border-radius:8px;background:#c62828;color:#fff;border:none;font-weight:700;cursor:pointer;margin-top:8px}
-  .auth-btn:disabled{background:#e57373;cursor:not-allowed}
-  .auth-msg{display:none;padding:10px;border-radius:6px;font-size:13px;margin-bottom:15px;text-align:center;font-weight:600}
-  .auth-msg.error{display:block;background:#ffebee;color:#c62828;border:1px solid #ffcdd2}
-  .auth-msg.success{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
 
   header{background:linear-gradient(135deg,#b71c1c 0%,#c62828 100%);color:#fff;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.15)}
   header h1{margin:0;font-size:28px;font-weight:800}
@@ -121,7 +91,7 @@
   .preview{margin-top:14px;padding:12px 14px;border-radius:8px;background:#f4f8fb;border:1px solid #d0e1f9;font-size:13px;color:#2c3e50}
   .preview.ok{background:#f1f8e9;border-color:#c5e1a5;color:#33691e}
 
-  /* ============ SCANNER BAR (REVISI 1) ============ */
+  /* ============ SCANNER BAR ============ */
   .scan-bar{
     display:flex;align-items:center;gap:12px;flex-wrap:wrap;
     background:linear-gradient(135deg,#1565c0,#0d47a1);
@@ -141,6 +111,13 @@
   }
   .scan-bar input#scanInput:focus{outline:none;box-shadow:0 0 0 4px rgba(255,255,255,.45)}
   .scan-bar input#scanInput::placeholder{font-weight:500;letter-spacing:0;color:#90a4ae;font-family:inherit}
+  .scan-bar #btnScanCamera{
+    padding:12px 16px;background:rgba(255,255,255,.22);color:#fff;
+    border:2px solid rgba(255,255,255,.55);border-radius:10px;
+    font-size:15px;font-weight:800;cursor:pointer;white-space:nowrap;
+    transition:.15s;
+  }
+  .scan-bar #btnScanCamera:hover{background:rgba(255,255,255,.4);transform:translateY(-1px)}
   .scan-status{
     display:inline-flex;align-items:center;gap:6px;
     padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:800;
@@ -154,7 +131,7 @@
   .scan-flash{animation:flashGreen .5s}
   @keyframes flashGreen{0%{background:#fff}50%{background:#c8e6c9}100%{background:#fff}}
 
-  /* ============ PRINT 80mm DI KERTAS A4 (REVISI 1) ============ */
+  /* ============ PRINT 80mm DI KERTAS A4 ============ */
   @page { size: A4 portrait; margin: 8mm; }
   @media print {
     body { background:#fff !important; padding:0 !important; margin:0 !important; }
@@ -258,73 +235,35 @@
   .modal-actions{display:flex;gap:8px;margin-top:16px}
   .modal-actions button{flex:1;padding:12px;font-size:14px}
 
+  /* ============ CAMERA MODAL ============ */
+  #cameraReader video{width:100%!important;border-radius:8px;}
+  #cameraReader img[alt="Info icon"]{display:none!important;}
+  #cameraReader__dashboard_section_csr span{color:#b71c1c;font-weight:700;}
+  #cameraReader__scan_region{border-radius:8px;}
+
+  /* ============ EXPORT BUTTONS ============ */
+  .btn-excel{background:#2e7d32!important;color:#fff!important;border-color:#2e7d32!important;font-weight:800!important}
+  .btn-excel:hover{background:#1b5e20!important}
+  .btn-pdf{background:#c62828!important;color:#fff!important;border-color:#c62828!important;font-weight:800!important}
+  .btn-pdf:hover{background:#b71c1c!important}
+
   @media(max-width:600px){
     header h1{font-size:20px}
     header small{font-size:13px}
     .grid{grid-template-columns:1fr}
     .menu-grid{grid-template-columns:1fr}
-    .auth-card{padding:25px}
     .summary-row{flex-direction:column;align-items:flex-start;gap:5px}
     .summary-input{width:100%!important}
     .money-input-wrap{width:100%}
     #userInfo{font-size:15px}
     .scan-bar .scan-info strong{font-size:13.5px}
+    .scan-bar #btnScanCamera{font-size:13px;padding:10px 12px}
   }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="auth-screen" style="display:none;">
-  <div id="authLanding" class="auth-landing">
-    <div class="landing-content">
-      <h1>Koperasi Desa Merah Putih Kapas</h1>
-      <p>Sistem Informasi Pelaporan Keuangan</p>
-      <div class="landing-buttons">
-        <button class="btn-primary" onclick="showAuthForm('login')">Masuk</button>
-        <button class="btn-secondary" onclick="showAuthForm('register')">Daftar Akun</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="auth-card" id="formLogin" style="display:none;">
-    <div style="margin-bottom:15px;"><a onclick="showLanding()" style="cursor:pointer;color:#888;font-size:12px;font-weight:600;">← Kembali</a></div>
-    <div class="auth-header"><h2>Login KDMP Kapas</h2><p>Belum punya akun? <a onclick="toggleAuth('register')">Daftar di sini</a></p></div>
-    <div class="auth-field"><label>Username <span class="req">*</span></label><input type="text" id="loginUsername" autocomplete="username"></div>
-    <div class="auth-field"><label>Password <span class="req">*</span></label>
-      <div class="password-wrap"><input type="password" id="loginPassword" autocomplete="current-password"><span class="toggle-eye" onclick="togglePassword('loginPassword', this)">👁️</span></div>
-    </div>
-    <div id="loginError" class="auth-msg error"></div>
-    <button class="auth-btn" id="btnLogin" onclick="handleLogin()">Masuk</button>
-  </div>
-
-  <div class="auth-card" id="formRegister" style="display:none;">
-    <div style="margin-bottom:15px;"><a onclick="showLanding()" style="cursor:pointer;color:#888;font-size:12px;font-weight:600;">← Kembali</a></div>
-    <div class="auth-header"><h2>Daftar Akun Baru</h2><p>Sudah punya akun? <a onclick="toggleAuth('login')">Masuk di sini</a></p></div>
-    <div id="regError" class="auth-msg error"></div>
-    <div id="regSuccess" class="auth-msg success"></div>
-    <div class="auth-field"><label>Daftar Sebagai</label><select id="regRole"><option value="karyawan">Karyawan</option><option value="manajer">Manajer</option></select></div>
-    <div class="auth-field"><label>Username <span class="req">*</span></label><input type="text" id="regEmail"></div>
-    <div class="auth-field"><label>Password <span class="req">*</span></label>
-      <div class="password-wrap"><input type="password" id="regPassword"><span class="toggle-eye" onclick="togglePassword('regPassword', this)">👁️</span></div>
-    </div>
-    <button class="auth-btn" id="btnRegister" onclick="handleRegister()">Daftar Sekarang</button>
-  </div>
-
-  <div class="auth-card" id="formResetPassword" style="display:none;">
-    <div style="margin-bottom:15px;"><a onclick="toggleAuth('login')" style="cursor:pointer;color:#888;font-size:12px;font-weight:600;">← Kembali ke Login</a></div>
-    <div class="auth-header"><h2>Ubah Password</h2><p>Masukkan password baru Anda</p></div>
-    <div id="resetError" class="auth-msg error"></div>
-    <div id="resetSuccess" class="auth-msg success"></div>
-    <div class="auth-field"><label>Username</label><input type="text" id="resetEmail" readonly style="background:#f5f5f5;"></div>
-    <div class="auth-field"><label>Password Baru <span class="req">*</span></label>
-      <div class="password-wrap"><input type="password" id="resetPasswordInput"><span class="toggle-eye" onclick="togglePassword('resetPasswordInput', this)">👁️</span></div>
-    </div>
-    <button class="auth-btn" id="btnReset" onclick="handleResetPassword()">Simpan Password Baru</button>
-  </div>
-</div>
-
-<!-- APP -->
+<!-- APP (login screen dihapus total) -->
 <div id="appContent" style="display:none;">
   <header>
     <div>
@@ -366,6 +305,8 @@
         <input type="text" id="search" placeholder="Cari barang…">
         <select id="filter"><option value="all">Semua</option><option value="zero">Kosong</option><option value="available">Tersedia</option></select>
         <button class="ghost" id="btnReload">Muat Ulang</button>
+        <button class="small btn-excel" onclick="exportStokBarang('excel')">📊 Excel</button>
+        <button class="small btn-pdf" onclick="exportStokBarang('pdf')">📄 PDF</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -402,14 +343,11 @@
           <div class="field" id="bSatuanWrap" style="display:none"><label>Satuan <span class="req">*</span></label>
             <select id="bSatuan"><option value="pcs">pcs</option><option value="box">box</option><option value="bungkus">bungkus</option><option value="botol">botol</option><option value="karung">karung</option><option value="kg">kg</option><option value="gram">gram</option><option value="liter">liter</option><option value="ml">ml</option><option value="sachet">sachet</option><option value="pack">pack</option><option value="dus">dus</option><option value="roll">roll</option><option value="lembar">lembar</option><option value="cup">cup</option><option value="kotak">kotak</option><option value="kaleng">kaleng</option><option value="tube">tube</option><option value="lusin">lusin</option><option value="unit">unit</option><option value="set">set</option><option value="rim">rim</option></select>
           </div>
-
-          <!-- REVISI 1: Barcode field untuk stok awal -->
           <div class="field" id="bBarcodeWrap" style="display:none">
             <label>Barcode / SKU <small style="color:#888;font-size:11px;">(opsional)</small></label>
             <input type="text" id="bBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
             <small style="color:#888;font-size:10.5px">Bisa di-scan langsung dengan alat scanner</small>
           </div>
-
           <div class="field" id="bHargaWrap" style="display:none"><label>Harga beli (Rp)</label><input type="text" id="bHarga" inputmode="numeric" value="0"></div>
           <div class="field" id="bHargaJualWrap" style="display:none"><label>Harga jual (Rp)</label><input type="text" id="bHargaJual" inputmode="numeric" value="0"></div>
           <div class="field" id="bExpiredWrap" style="display:none"><label>Expired</label><input type="date" id="bExpired"></div>
@@ -421,19 +359,19 @@
       </div>
     </section>
 
-    <!-- PENJUALAN — DENGAN SCANNER BAR -->
+    <!-- PENJUALAN — SCANNER + KAMERA -->
     <section id="view-jual" class="view">
       <button class="ghost small back-btn" onclick="switchTab('menu')">← Kembali ke Menu</button>
       <h2 class="panel-title">Penjualan Kasir</h2>
 
-      <!-- ============ SCANNER BAR (REVISI 1) ============ -->
       <div class="scan-bar" id="scanBar">
         <div class="ico">📷</div>
         <div class="scan-info">
           <strong>Scan Barcode Barang</strong>
-          <small>Arahkan alat scanner ke barcode —> barang otomatis masuk keranjang</small>
+          <small>Gunakan scanner fisik atau kamera HP</small>
         </div>
-        <input type="text" id="scanInput" placeholder="Arahkan scanner atau ketik barcode…" autocomplete="off" autofocus>
+        <input type="text" id="scanInput" placeholder="Arahkan scanner / ketik barcode…" autocomplete="off" autofocus>
+        <button type="button" id="btnScanCamera" title="Buka kamera HP">📷 Kamera</button>
         <span class="scan-status ready" id="scanStatus">SCANNER READY</span>
       </div>
 
@@ -492,8 +430,12 @@
       <div class="form-card" style="margin-bottom:20px;">
         <h3 style="margin:0 0 15px;font-size:14px;color:#b71c1c">Tambah / Edit Aset</h3>
         <div class="grid">
-          <div class="field"><label>Kode Aset</label>
-            <input type="text" id="aKode" readonly placeholder="Otomatis" style="background:#f5f5f5;font-family:ui-monospace,monospace;">
+          <div class="field">
+            <label>Kode Aset <small style="color:#888;font-size:10.5px;">(kosongkan untuk otomatis)</small></label>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="aKode" placeholder="Otomatis / scan barcode" style="flex:1;font-family:ui-monospace,monospace;">
+              <button type="button" id="btnScanKodeAset" title="Scan dengan kamera" style="padding:8px 14px;background:#1976d2;border-color:#1976d2;font-size:18px;">📷</button>
+            </div>
           </div>
           <div class="field full"><label>Nama Aset <span class="req">*</span></label><input type="text" id="aNama"></div>
           <div class="field"><label>Kategori <span class="req">*</span></label><select id="aKategori"></select></div>
@@ -531,6 +473,8 @@
         <select id="filterAsetKategori"><option value="all">Semua Kategori</option></select>
         <select id="filterAsetUnit"><option value="all">Semua Unit Usaha</option></select>
         <select id="filterAsetKondisi"><option value="all">Semua Kondisi</option></select>
+        <button class="small btn-excel" onclick="exportAset('excel')">📊 Excel</button>
+        <button class="small btn-pdf" onclick="exportAset('pdf')">📄 PDF</button>
       </div>
 
       <div class="table-wrap">
@@ -637,14 +581,11 @@
           </div>
           <div class="field"><label>Harga Beli (Rp)</label><input type="text" id="eHargaBeli" inputmode="numeric"></div>
           <div class="field"><label>Harga Jual (Rp)</label><input type="text" id="eHargaJual" inputmode="numeric"></div>
-
-          <!-- REVISI 1: Barcode field untuk edit -->
           <div class="field full">
             <label>Barcode / SKU</label>
             <input type="text" id="eBarcode" placeholder="Scan atau ketik barcode…" autocomplete="off" style="font-family:ui-monospace,monospace;letter-spacing:.5px;">
             <small style="color:#888;font-size:10.5px">Bisa di-scan langsung · kosongkan jika belum ada</small>
           </div>
-
           <div class="field full"><label>Nama Pencatat</label><input type="text" id="eKasir"></div>
         </div>
         <div class="actions-row"><button id="btnSaveEdit">Simpan Data Master</button></div>
@@ -679,6 +620,8 @@
       <h3 style="margin:24px 0 12px;font-size:15px;color:#b71c1c;">Daftar Keuangan</h3>
       <div class="bar">
         <select id="filterKeuangan"><option value="all">Semua</option><option value="pendapatan_lain">Pendapatan Lain</option><option value="beban_lain">Beban Lain</option><option value="modal">Modal</option><option value="prive">Prive</option><option value="utang">Utang</option><option value="bayar_utang">Bayar Utang</option></select>
+        <button class="small btn-excel" onclick="exportKeuangan('excel')">📊 Excel</button>
+        <button class="small btn-pdf" onclick="exportKeuangan('pdf')">📄 PDF</button>
       </div>
       <div class="table-wrap">
         <table><thead><tr><th>Tanggal</th><th>Tipe</th><th>Kategori</th><th>Keterangan</th><th>Nama</th><th style="text-align:center">Jumlah</th><th style="text-align:center">Aksi</th></tr></thead><tbody id="tbodyKeuangan"></tbody></table>
@@ -784,17 +727,7 @@
       <h3 style="margin:32px 0 12px;font-size:15px;color:#b71c1c;border-bottom:1px solid #ffcdd2;padding-bottom:8px;">📋 Riwayat Stok Fisik (Stok Akhir & On-Hand)</h3>
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Waktu</th>
-              <th>Nama Barang</th>
-              <th style="text-align:center">Jenis</th>
-              <th style="text-align:center">Jumlah</th>
-              <th>Pencatat</th>
-              <th>Keterangan</th>
-              <th style="text-align:center">Aksi</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Waktu</th><th>Nama Barang</th><th style="text-align:center">Jenis</th><th style="text-align:center">Jumlah</th><th>Pencatat</th><th>Keterangan</th><th style="text-align:center">Aksi</th></tr></thead>
           <tbody id="tbodyRiwayatStokFisik"></tbody>
         </table>
       </div>
@@ -817,13 +750,27 @@
   <footer>Aplikasi ini dikembangkan oleh Mahasiswa Politeknik Keuangan Negara STAN</footer>
 </div>
 
-<!-- MODAL NOTA (80mm Compact — dirender di dalam area print A4) -->
+<!-- MODAL NOTA -->
 <div class="modal-backdrop" id="receiptModal">
   <div style="background:#fff;border-radius:12px;padding:16px;max-width:420px;width:100%;max-height:92vh;overflow-y:auto;">
     <div id="receiptContent"></div>
     <div class="modal-actions">
       <button onclick="printReceipt()" style="background:#1976d2;border-color:#1976d2;">🖨️ Cetak (80mm)</button>
       <button onclick="closeReceipt()" class="ghost">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KAMERA SCANNER -->
+<div class="modal-backdrop" id="cameraModal">
+  <div style="background:#fff;border-radius:12px;padding:16px;max-width:480px;width:100%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <b style="color:#b71c1c;font-size:15px;" id="cameraTitle">📷 Arahkan Kamera ke Barcode</b>
+      <button onclick="closeCameraScanner()" class="ghost small" style="padding:6px 12px;">✕</button>
+    </div>
+    <div id="cameraReader" style="width:100%;border-radius:8px;overflow:hidden;background:#000;min-height:280px;"></div>
+    <div style="margin-top:12px;font-size:12px;color:#666;text-align:center;">
+      Posisikan barcode di dalam kotak. Otomatis terdeteksi.
     </div>
   </div>
 </div>
@@ -856,7 +803,6 @@ let beliMode = "existing";
 let chartSalesInstance = null, chartProfitInstance = null;
 let cart = [];
 let currentReceiptData = null;
-let scanBuffer = "";      // untuk scanner mode keyboard-wedge
 let scanTimer = null;
 
 /* ============================================================
@@ -867,6 +813,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const rp = n => "Rp " + (Number(n) || 0).toLocaleString("id-ID");
 const norm = s => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 const pad2 = n => String(n).padStart(2, "0");
+const dateStr = () => { const d = new Date(); return d.getFullYear() + pad2(d.getMonth()+1) + pad2(d.getDate()); };
 
 function getHargaBeli(it) {
   if (!it) return 0;
@@ -929,7 +876,7 @@ function setStatus(text, ok = true) {
 }
 
 /* ============================================================
-   ▸ BEEP (Web Audio) — untuk feedback scanner
+   BEEP
    ============================================================ */
 let audioCtx = null;
 function getAudioCtx() {
@@ -945,17 +892,15 @@ function playBeep(freq, dur, type = "sine", vol = 0.15) {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.value = freq;
+    osc.type = type; osc.frequency.value = freq;
     const t0 = ctx.currentTime;
     gain.gain.setValueAtTime(0.0001, t0);
     gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur / 1000);
-    osc.start(t0);
-    osc.stop(t0 + dur / 1000 + 0.02);
+    osc.start(t0); osc.stop(t0 + dur / 1000 + 0.02);
   } catch (e) {}
 }
-function beepOK()   { playBeep(1400, 90, "sine");     setTimeout(() => playBeep(1900, 110, "sine"),     95); }
+function beepOK()   { playBeep(1400, 90, "sine"); setTimeout(() => playBeep(1900, 110, "sine"), 95); }
 function beepFail() { playBeep(220, 200, "sawtooth", .12); setTimeout(() => playBeep(160, 240, "sawtooth", .12), 210); }
 
 /* ============================================================
@@ -980,76 +925,23 @@ function depreciation(a, posisiDate) {
 }
 
 /* ============================================================
-   AUTH
+   AUTH — AUTO-LOGIN (login UI dihapus)
    ============================================================ */
 function checkAuth() {
-  const auth = localStorage.getItem("kdmp_auth");
-  if (auth) showApp(JSON.parse(auth));
-  else { $("loginScreen").style.display = "flex"; $("appContent").style.display = "none"; showLanding(); }
+  let auth = localStorage.getItem("kdmp_auth");
+  if (!auth) {
+    const def = { username: "manajer", role: "manajer" };
+    localStorage.setItem("kdmp_auth", JSON.stringify(def));
+    auth = JSON.stringify(def);
+  }
+  showApp(JSON.parse(auth));
 }
-function showLanding() {
-  $("authLanding").style.display = "flex";
-  ["formLogin","formRegister","formResetPassword"].forEach(id => { $(id).style.display = "none"; });
-}
-function showAuthForm(mode) { $("authLanding").style.display = "none"; toggleAuth(mode); }
-function toggleAuth(mode) {
-  $("authLanding").style.display = "none";
-  ["formLogin","formRegister","formResetPassword"].forEach(id => { $(id).style.display = "none"; });
-  if (mode === "register") $("formRegister").style.display = "block";
-  else if (mode === "reset") $("formResetPassword").style.display = "block";
-  else $("formLogin").style.display = "block";
-  ["loginError","regError","regSuccess","resetError","resetSuccess"].forEach(id => { if ($(id)) $(id).className = "auth-msg"; });
-}
-function togglePassword(id, el) {
-  const i = $(id);
-  if (i.type === "password") { i.type = "text"; el.textContent = "🙈"; }
-  else { i.type = "password"; el.textContent = "👁️"; }
-}
-async function handleLogin() {
-  const u = $("loginUsername").value.trim(), p = $("loginPassword").value;
-  const btn = $("btnLogin"), err = $("loginError");
-  if (!u || !p) { err.className = "auth-msg error"; err.textContent = "Isi username & password."; return; }
-  err.className = "auth-msg"; btn.disabled = true; btn.textContent = "Memproses...";
-  try {
-    const res = await api({ action: "login", username: u, password: p }, "POST");
-    if (res.ok) {
-      localStorage.setItem("kdmp_auth", JSON.stringify({ username: u, role: res.role }));
-      showApp({ username: u, role: res.role });
-    } else {
-      err.className = "auth-msg error";
-      let link = "";
-      if (res.status === "user_not_found") link = `<br><a onclick="toggleAuth('register')" style="cursor:pointer;color:#c62828;text-decoration:underline;font-size:12px;">Daftar di sini</a>`;
-      else if (res.status === "wrong_password") link = `<br><a onclick="openResetForm('${esc(u)}')" style="cursor:pointer;color:#c62828;text-decoration:underline;font-size:12px;">Ubah password</a>`;
-      err.innerHTML = `${res.message} ${link}`;
-    }
-  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
-  finally { btn.textContent = "Masuk"; btn.disabled = false; }
-}
-function openResetForm(email) { $("resetEmail").value = email; toggleAuth("reset"); }
-async function handleResetPassword() {
-  const email = $("resetEmail").value.trim(), np = $("resetPasswordInput").value.trim();
-  const err = $("resetError"), ok = $("resetSuccess");
-  err.className = "auth-msg"; ok.className = "auth-msg";
-  if (!np) { err.className = "auth-msg error"; err.textContent = "Password baru wajib."; return; }
-  try {
-    const res = await api({ action: "reset_password", username: email, newPassword: np }, "POST");
-    if (res.ok) { ok.className = "auth-msg success"; ok.textContent = res.message; setTimeout(() => { toggleAuth("login"); $("loginUsername").value = email; }, 2000); }
-    else { err.className = "auth-msg error"; err.textContent = res.message; }
-  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
-}
-async function handleRegister() {
-  const email = $("regEmail").value.trim(), pass = $("regPassword").value.trim(), role = $("regRole").value;
-  const err = $("regError"), ok = $("regSuccess");
-  err.className = "auth-msg"; ok.className = "auth-msg";
-  if (!email || !pass) { err.className = "auth-msg error"; err.textContent = "Isi semua field."; return; }
-  try {
-    const res = await api({ action: "register", data: { email, password: pass, role } }, "POST");
-    if (res.ok) { ok.className = "auth-msg success"; ok.textContent = res.message; setTimeout(() => { toggleAuth("login"); $("loginUsername").value = email; }, 2000); }
-    else { err.className = "auth-msg error"; err.textContent = res.message; }
-  } catch (e) { err.className = "auth-msg error"; err.textContent = "Gagal terhubung."; }
+function logout() {
+  if (!confirm("Keluar dari aplikasi? (Login otomatis akan aktif lagi saat dibuka ulang)")) return;
+  localStorage.removeItem("kdmp_auth");
+  location.reload();
 }
 function showApp(user) {
-  $("loginScreen").style.display = "none";
   $("appContent").style.display = "block";
   $("userInfo").innerHTML = `Halo, <b>${esc(user.username)}</b>`;
   document.querySelectorAll(".menu-btn[data-role='manajer'], .mode-switch button[data-role='manajer']").forEach(el => {
@@ -1065,7 +957,6 @@ function showApp(user) {
   initPeriod(); attachRupiahInputs(); initPosisiAset();
   load().then(() => { renderLaporan(); renderCharts(); });
 }
-function logout() { localStorage.removeItem("kdmp_auth"); location.reload(); }
 
 /* ============================================================
    LOAD NAMES
@@ -1095,7 +986,6 @@ function switchTab(name) {
   if (name === "penjualan") loadPenjualan();
   if (name === "aset") renderAset();
   if (name === "stokdaerah") populateStokFisikView();
-  // REVISI 1: auto-focus scan input saat buka kasir
   if (name === "jual") {
     setTimeout(() => {
       const si = $("scanInput");
@@ -1237,7 +1127,7 @@ function setupSearchable(searchId, hiddenId, dropdownId, onSelect) {
 }
 
 /* ============================================================
-   BELI (Pembelian)
+   PEMBELIAN
    ============================================================ */
 function applyBeliMode() {
   const auth = JSON.parse(localStorage.getItem("kdmp_auth") || "{}");
@@ -1247,8 +1137,7 @@ function applyBeliMode() {
   show("bExistingWrap", !isNew); show("bQtyExistingWrap", !isNew);
   show("bHargaBaruWrap", !isNew); show("bExpiredBaruWrap", !isNew);
   show("bNewWrap", isNew); show("bKategoriWrap", isNew); show("bSatuanWrap", isNew);
-  show("bBarcodeWrap", isNew);       // REVISI 1: barcode di stok awal
-  show("bHargaWrap", isNew); show("bHargaJualWrap", isNew);
+  show("bBarcodeWrap", isNew); show("bHargaWrap", isNew); show("bHargaJualWrap", isNew);
   show("bExpiredWrap", isNew); show("bQtyNewWrap", isNew);
   $("btnModeExisting").classList.toggle("active", !isNew);
   $("btnModeNew").classList.toggle("active", isNew);
@@ -1296,7 +1185,7 @@ async function handleBeli() {
         stok: Number($("bQtyNew").value) || 0,
         harga: getMoneyValue("bHarga"), harga_jual: getMoneyValue("bHargaJual"),
         expired: val("bExpired"), note: val("bNote") || "stok awal",
-        barcode: val("bBarcode")   // REVISI 1: kirim barcode
+        barcode: val("bBarcode")
       };
       const res = await api({ action: "add", data }, "POST");
       if (res.duplicate) {
@@ -1316,7 +1205,7 @@ async function handleBeli() {
 }
 
 /* ============================================================
-   POS — Penjualan Kasir (dengan scanner)
+   POS — Penjualan Kasir
    ============================================================ */
 function addToCart() {
   const id = $("kItem").value;
@@ -1333,8 +1222,6 @@ function addToCart() {
   $("kItemSearch").value = ""; $("kItem").value = ""; $("kQty").value = 1;
   renderCart(); updatePosSummary();
 }
-
-/* ——— REVISI 1: Tambah ke keranjang 1 unit dari scanner ——— */
 function addScannedItemToCart(item, qty = 1) {
   const stok = getEffectiveStock(item);
   const exist = cart.find(c => c.id === item.id);
@@ -1346,7 +1233,6 @@ function addScannedItemToCart(item, qty = 1) {
   else cart.push({ id: item.id, nama: item.nama, harga: item.harga_jual || 0, qty, satuan: item.satuan });
   return { ok: true };
 }
-
 function renderCart() {
   const tb = $("cartBody");
   if (!cart.length) { tb.innerHTML = '<tr><td colspan="5" class="empty" style="border:none">Keranjang kosong.</td></tr>'; return; }
@@ -1402,17 +1288,12 @@ async function handleCheckout() {
   } catch (e) { toast(e.message, "err"); }
   finally {
     btn.disabled = false; btn.textContent = "Proses Pembayaran";
-    // REVISI 1: fokus kembali ke scanner
     const si = $("scanInput"); if (si) si.focus();
   }
 }
 
 /* ============================================================
-   ▸ SCANNER — REVISI 1
-   ============================================================
-   Alat scanner USB/Bluetooth umumnya bekerja sebagai "keyboard wedge":
-   mengirim karakter cepat → diakhiri ENTER. Kita tangkap ENTER di
-   input khusus (#scanInput) supaya tidak bentrok dengan input lain.
+   SCANNER (keyboard-wedge)
    ============================================================ */
 function setScanStatus(state, text) {
   const s = $("scanStatus"); if (!s) return;
@@ -1423,17 +1304,14 @@ function flashScanBar() {
   const bar = $("scanBar");
   if (!bar) return;
   bar.classList.remove("scan-flash");
-  // force reflow
   void bar.offsetWidth;
   bar.classList.add("scan-flash");
 }
-
 async function handleScanCode(codeRaw) {
   const code = String(codeRaw || "").trim();
   if (!code) return;
   setScanStatus("busy", "MENCARI…");
   try {
-    // Fast-path backend
     const res = await api({ action: "barcode_lookup", barcode: code }, "POST");
     if (!res || !res.ok) {
       beepFail();
@@ -1464,15 +1342,11 @@ async function handleScanCode(codeRaw) {
     setTimeout(() => setScanStatus("ready", "SCANNER READY"), 2200);
   }
 }
-
 function initScanner() {
   const input = $("scanInput");
   if (!input) return;
-
-  // Enter → proses
   input.addEventListener("keydown", async e => {
-    if (e.key !== "Enter" && e.key !== "Tab") return;
-    if (e.key === "Tab") return; // biarkan tab normal
+    if (e.key !== "Enter") return;
     e.preventDefault();
     clearTimeout(scanTimer); scanTimer = null;
     const code = input.value.trim();
@@ -1480,9 +1354,6 @@ function initScanner() {
     if (!code) return;
     await handleScanCode(code);
   });
-
-  // Fallback: beberapa scanner tidak mengirim ENTER → auto-submit setelah jeda.
-  // Syarat: panjang ≥ 6 karakter, hanya alnum/-/_ , dan jeda ≥ 250ms.
   input.addEventListener("input", () => {
     clearTimeout(scanTimer);
     const v = input.value;
@@ -1495,12 +1366,8 @@ function initScanner() {
       }, 300);
     }
   });
-
-  // Klik di mana saja pada scan bar → fokus lagi (kalau user lepas fokus)
   const bar = $("scanBar");
-  if (bar) bar.addEventListener("click", e => { if (e.target !== input) input.focus(); });
-
-  // Kembalikan fokus setelah blur, hanya saat view jual aktif
+  if (bar) bar.addEventListener("click", e => { if (e.target !== input && e.target.id !== "btnScanCamera") input.focus(); });
   input.addEventListener("blur", () => {
     const jual = $("view-jual");
     if (jual && jual.classList.contains("active")) {
@@ -1508,7 +1375,6 @@ function initScanner() {
         if (jual.classList.contains("active") && document.activeElement !== input) {
           const active = document.activeElement;
           const tag = active ? active.tagName : "";
-          // jangan rebut fokus dari input/select lain yang valid
           if (tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") input.focus();
         }
       }, 400);
@@ -1517,7 +1383,7 @@ function initScanner() {
 }
 
 /* ============================================================
-   NOTA — Print 80mm di kertas A4
+   NOTA
    ============================================================ */
 function buildReceiptHTML(d) {
   const itemsHTML = d.items.map(it => `
@@ -1564,8 +1430,6 @@ function closeReceipt() {
   $("receiptModal").classList.remove("show");
   currentReceiptData = null;
 }
-
-/* ——— REVISI 1: cetak 80mm di A4 portrait, centered, kecil ——— */
 function printReceipt() {
   if (!currentReceiptData) return;
   const html = buildReceiptHTML(currentReceiptData);
@@ -1593,6 +1457,42 @@ function printReceipt() {
     </body></html>`);
   w.document.close();
   setTimeout(() => { w.focus(); w.print(); }, 350);
+}
+
+/* ============================================================
+   CAMERA SCANNER (html5-qrcode)
+   ============================================================ */
+let html5QrCode = null;
+let cameraCallback = null;
+
+async function openCameraScanner(callback, title) {
+  cameraCallback = callback;
+  if (title) $("cameraTitle").textContent = title;
+  $("cameraModal").classList.add("show");
+  if (!html5QrCode) html5QrCode = new Html5Qrcode("cameraReader");
+  try {
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 260, height: 180 } },
+      (decodedText) => {
+        if (cameraCallback) {
+          try { cameraCallback(decodedText); }
+          finally { closeCameraScanner(); }
+        }
+      },
+      () => {}
+    );
+  } catch (err) {
+    toast("Gagal akses kamera: " + err.message, "err");
+    closeCameraScanner();
+  }
+}
+async function closeCameraScanner() {
+  $("cameraModal").classList.remove("show");
+  if (html5QrCode && html5QrCode.isScanning) {
+    try { await html5QrCode.stop(); } catch (e) {}
+  }
+  cameraCallback = null;
 }
 
 /* ============================================================
@@ -1810,7 +1710,6 @@ function renderRiwayatStokFisik() {
     ...stokAkhir.map(s => ({ ...s, _jenis: "akhir" })),
     ...stokDaerah.map(s => ({ ...s, _jenis: "onhand" }))
   ].sort((a, b) => new Date(String(b.waktu).replace(" ", "T")) - new Date(String(a.waktu).replace(" ", "T")));
-
   if (!merged.length) {
     tb.innerHTML = '<tr><td colspan="7"><div class="empty">Belum ada catatan stok fisik.</div></td></tr>';
     return;
@@ -1855,7 +1754,7 @@ function populateEditFields(id) {
   $("eSatuan").value = it.satuan || "pcs";
   $("eHargaBeli").value = (Number(it.harga) || 0).toLocaleString("id-ID");
   $("eHargaJual").value = (Number(it.harga_jual) || 0).toLocaleString("id-ID");
-  if ($("eBarcode")) $("eBarcode").value = it.barcode || "";  // REVISI 1
+  if ($("eBarcode")) $("eBarcode").value = it.barcode || "";
   renderBatch(it.nama);
 }
 function renderBatch(nama) {
@@ -1891,7 +1790,7 @@ async function handleSaveEdit() {
   const data = {
     nama, kategori: $("eKategori").value, satuan: $("eSatuan").value,
     harga: getMoneyValue("eHargaBeli"), harga_jual: getMoneyValue("eHargaJual"),
-    barcode: val("eBarcode"),                    // REVISI 1: kirim barcode (atau "" jika kosong)
+    barcode: val("eBarcode"),
     note: val("eKasir") || "edit data master"
   };
   if (data.note && data.note !== "edit data master") saveKasir(data.note);
@@ -1958,7 +1857,7 @@ async function handleKeuangan() {
 }
 
 /* ============================================================
-   LAPORAN
+   LAPORAN + FIFO ENGINE
    ============================================================ */
 function initPeriod() {
   const now = new Date();
@@ -1974,61 +1873,6 @@ function filterByPeriod(list, start, end, key = "waktu") {
   e.setMonth(e.getMonth() + 1); e.setDate(0); e.setHours(23,59,59);
   return list.filter(x => { const d = new Date(String(x[key]).replace(" ", "T")); return !isNaN(d) && d >= s && d <= e; });
 }
- function computeLabaRugi(start, end) {
-  const p = filterByPeriod(penjualan, start, end);
-  const k = filterByPeriod(keuangan, start, end);
-  const pendapatan = p.reduce((s, x) => s + (Number(x.subtotal) || 0), 0);
-
-  // FIFO untuk HPP & opname periode
-  const fifo = computeFIFO(start, end);
-  const hpp = fifo.hpp;
-  const opnameNet = fifo.opnameNet;
-
-  const beban = k.filter(x => x.tipe === "beban_lain")
-    .reduce((s, x) => s + Number(x.jumlah || 0), 0);
-  const pendLain = k.filter(x => x.tipe === "pendapatan_lain")
-    .reduce((s, x) => s + Number(x.jumlah || 0), 0);
-
-  // Penyusutan untuk periode = akumulasi(end) − akumulasi(awal)
-  const depStart = aset.reduce((s, a) => s + depreciation(a, start + "-01").akumulasi, 0);
-  const [y, m] = end.split("-").map(Number);
-  const lastDay = new Date(y, m, 0).getDate();
-  const depEnd = aset.reduce((s, a) =>
-    s + depreciation(a, `${end}-${String(lastDay).padStart(2, "0")}`).akumulasi, 0);
-  const depresiasi = Math.max(0, depEnd - depStart);
-
-  const labaKotor = pendapatan - hpp;
-  const labaBersih = labaKotor + pendLain + opnameNet - beban - depresiasi;
-
-  return { pendapatan, hpp, labaKotor, beban, pendLain, opnameNet, depresiasi, labaBersih };
-}
-function hitungLabaKumulatif() {
-  const totalPenjualan = penjualan.reduce((s, p) => s + (Number(p.subtotal) || 0), 0);
-  const fifo = computeFIFO(); // full history
-  const beban = keuangan.filter(k => k.tipe === "beban_lain")
-    .reduce((s, k) => s + Number(k.jumlah || 0), 0);
-  const pend = keuangan.filter(k => k.tipe === "pendapatan_lain")
-    .reduce((s, k) => s + Number(k.jumlah || 0), 0);
-  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
-  const akumDep = aset.reduce((s, a) => s + depreciation(a, posisi).akumulasi, 0);
-
-  return totalPenjualan - fifo.hpp - beban + pend + fifo.opnameNet - akumDep;
-}
-/* ============================================================
-   FIFO ENGINE — rekonstruksi batch dari riwayat transaksi
-   ============================================================
-   - "baru"/"masuk"  → tambah batch (qty, harga)
-   - "keluar"        → konsumsi dari batch tertua (FIFO)
-   - "opname" (+)    → tambah batch @ harga saat opname
-   - "opname" (−)    → konsumsi dari batch tertua (FIFO) → loss
-   - "edit"          → diabaikan (tidak mengubah nilai stok)
-
-   Return:
-     persediaan : nilai batch tersisa (state akhir periode)
-     hpp        : total HPP dari penjualan (periode bila start/end diberi)
-     opnameNet  : gain − loss dari opname (periode bila start/end diberi)
-     byItem     : detail per barang
-   ============================================================ */
 function computeFIFO(startDate, endDate) {
   const s = startDate ? new Date(startDate + "T00:00:00") : null;
   let e = null;
@@ -2037,33 +1881,27 @@ function computeFIFO(startDate, endDate) {
     const last = new Date(y, m, 0).getDate();
     e = new Date(y, m - 1, last, 23, 59, 59);
   }
-
   const byItem = {};
   riwayat.forEach(r => {
     const k = norm(r.nama);
     if (!byItem[k]) byItem[k] = [];
     byItem[k].push(r);
   });
-
   let totalHPP = 0, totalOpnameNet = 0;
   const itemState = {};
-
   Object.keys(byItem).forEach(k => {
     const events = byItem[k].slice().sort((a, b) =>
-      new Date(String(a.waktu).replace(" ", "T")) -
-      new Date(String(b.waktu).replace(" ", "T"))
+      new Date(String(a.waktu).replace(" ", "T")) - new Date(String(b.waktu).replace(" ", "T"))
     );
-    const batches = []; // queue FIFO: {qty, harga}
+    const batches = [];
     let hpp = 0, opnameNet = 0;
-
     events.forEach(ev => {
       const d = new Date(String(ev.waktu).replace(" ", "T"));
       if (isNaN(d)) return;
-      if (e && d > e) return;                    // state berhenti di endDate
+      if (e && d > e) return;
       const qty = Number(ev.jumlah) || 0;
       const harga = Number(ev.harga_satuan) || 0;
-      const inPeriod = !s || d >= s;             // hanya hitung HPP/opname di periode
-
+      const inPeriod = !s || d >= s;
       if (ev.tipe === "baru" || ev.tipe === "masuk") {
         if (qty > 0) batches.push({ qty, harga });
       } else if (ev.tipe === "keluar") {
@@ -2072,11 +1910,10 @@ function computeFIFO(startDate, endDate) {
           const b = batches[0];
           const take = Math.min(remaining, b.qty);
           cost += take * b.harga;
-          b.qty -= take;
-          remaining -= take;
+          b.qty -= take; remaining -= take;
           if (b.qty <= 0) batches.shift();
         }
-        if (remaining > 0) cost += remaining * harga; // fallback data lama
+        if (remaining > 0) cost += remaining * harga;
         if (inPeriod) hpp += cost;
       } else if (ev.tipe === "opname") {
         if (qty > 0) {
@@ -2088,29 +1925,50 @@ function computeFIFO(startDate, endDate) {
             const b = batches[0];
             const take = Math.min(remaining, b.qty);
             cost += take * b.harga;
-            b.qty -= take;
-            remaining -= take;
+            b.qty -= take; remaining -= take;
             if (b.qty <= 0) batches.shift();
           }
           if (remaining > 0) cost += remaining * harga;
-          if (inPeriod) opnameNet -= cost; // loss @ FIFO cost
+          if (inPeriod) opnameNet -= cost;
         }
       }
     });
-
     const nilai = batches.reduce((acc, b) => acc + b.qty * b.harga, 0);
     const qtySisa = batches.reduce((acc, b) => acc + b.qty, 0);
     itemState[k] = { qty: qtySisa, nilai, hpp, opnameNet, batches };
-    totalHPP += hpp;
-    totalOpnameNet += opnameNet;
+    totalHPP += hpp; totalOpnameNet += opnameNet;
   });
-
   return {
     persediaan: Object.values(itemState).reduce((acc, x) => acc + x.nilai, 0),
-    hpp: totalHPP,
-    opnameNet: totalOpnameNet,
-    byItem: itemState
+    hpp: totalHPP, opnameNet: totalOpnameNet, byItem: itemState
   };
+}
+function computeLabaRugi(start, end) {
+  const p = filterByPeriod(penjualan, start, end);
+  const k = filterByPeriod(keuangan, start, end);
+  const pendapatan = p.reduce((s, x) => s + (Number(x.subtotal) || 0), 0);
+  const fifo = computeFIFO(start, end);
+  const hpp = fifo.hpp;
+  const opnameNet = fifo.opnameNet;
+  const beban = k.filter(x => x.tipe === "beban_lain").reduce((s, x) => s + Number(x.jumlah || 0), 0);
+  const pendLain = k.filter(x => x.tipe === "pendapatan_lain").reduce((s, x) => s + Number(x.jumlah || 0), 0);
+  const depStart = aset.reduce((s, a) => s + depreciation(a, start + "-01").akumulasi, 0);
+  const [y, m] = end.split("-").map(Number);
+  const lastDay = new Date(y, m, 0).getDate();
+  const depEnd = aset.reduce((s, a) => s + depreciation(a, `${end}-${String(lastDay).padStart(2, "0")}`).akumulasi, 0);
+  const depresiasi = Math.max(0, depEnd - depStart);
+  const labaKotor = pendapatan - hpp;
+  const labaBersih = labaKotor + pendLain + opnameNet - beban - depresiasi;
+  return { pendapatan, hpp, labaKotor, beban, pendLain, opnameNet, depresiasi, labaBersih };
+}
+function hitungLabaKumulatif() {
+  const totalPenjualan = penjualan.reduce((s, p) => s + (Number(p.subtotal) || 0), 0);
+  const fifo = computeFIFO();
+  const beban = keuangan.filter(k => k.tipe === "beban_lain").reduce((s, k) => s + Number(k.jumlah || 0), 0);
+  const pend = keuangan.filter(k => k.tipe === "pendapatan_lain").reduce((s, k) => s + Number(k.jumlah || 0), 0);
+  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  const akumDep = aset.reduce((s, a) => s + depreciation(a, posisi).akumulasi, 0);
+  return totalPenjualan - fifo.hpp - beban + pend + fifo.opnameNet - akumDep;
 }
 function renderLaporan() {
   const s = $("periodStart").value, e = $("periodEnd").value;
@@ -2118,19 +1976,18 @@ function renderLaporan() {
   const lr = computeLabaRugi(s, e);
 
   $("tableLabaRugi").innerHTML = `
-  <tr><td style="text-align:left">Pendapatan Penjualan</td><td style="text-align:right">${rp(lr.pendapatan)}</td></tr>
-  <tr><td style="text-align:left">Harga Pokok Penjualan (FIFO)</td><td style="text-align:right">(${rp(lr.hpp)})</td></tr>
-  <tr class="laba-kotor"><td style="text-align:left">Laba Kotor</td><td style="text-align:right">${rp(lr.labaKotor)}</td></tr>
-  <tr><td style="text-align:left">Pendapatan Lain-lain</td><td style="text-align:right">${rp(lr.pendLain)}</td></tr>
-  <tr><td style="text-align:left">Pendapatan/(Beban) Opname Stok</td><td style="text-align:right">${rp(lr.opnameNet)}</td></tr>
-  <tr><td style="text-align:left">Beban Lain-lain</td><td style="text-align:right">(${rp(lr.beban)})</td></tr>
-  <tr><td style="text-align:left">Beban Penyusutan Aset</td><td style="text-align:right">(${rp(lr.depresiasi)})</td></tr>
-  <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
+    <tr><td style="text-align:left">Pendapatan Penjualan</td><td style="text-align:right">${rp(lr.pendapatan)}</td></tr>
+    <tr><td style="text-align:left">Harga Pokok Penjualan (FIFO)</td><td style="text-align:right">(${rp(lr.hpp)})</td></tr>
+    <tr class="laba-kotor"><td style="text-align:left">Laba Kotor</td><td style="text-align:right">${rp(lr.labaKotor)}</td></tr>
+    <tr><td style="text-align:left">Pendapatan Lain-lain</td><td style="text-align:right">${rp(lr.pendLain)}</td></tr>
+    <tr><td style="text-align:left">Pendapatan/(Beban) Opname Stok</td><td style="text-align:right">${rp(lr.opnameNet)}</td></tr>
+    <tr><td style="text-align:left">Beban Lain-lain</td><td style="text-align:right">(${rp(lr.beban)})</td></tr>
+    <tr><td style="text-align:left">Beban Penyusutan Aset</td><td style="text-align:right">(${rp(lr.depresiasi)})</td></tr>
+    <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
 
- const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
-  // Persediaan = nilai batch FIFO yang tersisa (state saat ini)
-const fifo = computeFIFO();
-const persediaan = fifo.persediaan;
+  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  const fifo = computeFIFO();
+  const persediaan = fifo.persediaan;
   const asetNeto = aset.reduce((s, a) => s + depreciation(a, posisi).nilaiBuku, 0);
   const totalMasuk = keuangan.filter(k => ["modal","pendapatan_lain","utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
   const totalKeluar = keuangan.filter(k => ["beban_lain","prive","bayar_utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
@@ -2148,7 +2005,7 @@ const persediaan = fifo.persediaan;
   $("tableNeraca").innerHTML = `
     <tr class="section"><td style="text-align:left" colspan="2">ASET</td></tr>
     <tr><td style="text-align:left">Kas</td><td style="text-align:right">${rp(kas)}</td></tr>
-    <tr><td style="text-align:left">Persediaan (On-Hand)</td><td style="text-align:right">${rp(persediaan)}</td></tr>
+    <tr><td style="text-align:left">Persediaan (FIFO)</td><td style="text-align:right">${rp(persediaan)}</td></tr>
     <tr><td style="text-align:left">Aset Tetap (neto)</td><td style="text-align:right">${rp(asetNeto)}</td></tr>
     <tr class="total-aset"><td style="text-align:left">Total Aset</td><td style="text-align:right">${rp(totalAset)}</td></tr>
     <tr class="section"><td style="text-align:left" colspan="2">KEWAJIBAN</td></tr>
@@ -2297,6 +2154,107 @@ function fillSelects() {
 }
 
 /* ============================================================
+   EXPORT EXCEL / PDF
+   ============================================================ */
+function exportToExcel(sheetTitle, headers, rows, filename) {
+  try {
+    if (typeof XLSX === "undefined") { toast("Library Excel belum dimuat. Cek koneksi internet.", "err"); return; }
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    ws['!cols'] = headers.map((h, i) => {
+      const maxLen = Math.max(String(h).length, ...rows.map(r => String(r[i] || "").length));
+      return { wch: Math.min(Math.max(maxLen + 2, 10), 40) };
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetTitle);
+    XLSX.writeFile(wb, filename + ".xlsx");
+    toast("Excel berhasil diunduh.", "ok");
+  } catch (e) { toast("Gagal ekspor Excel: " + e.message, "err"); }
+}
+function exportToPDF(title, headers, rows, filename) {
+  try {
+    const w = window.open("", "_blank");
+    if (!w) { toast("Izinkan popup untuk PDF.", "err"); return; }
+    const head = headers.map(h => `<th>${esc(h)}</th>`).join("");
+    const body = rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("");
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
+      <style>
+        body{font-family:system-ui,Arial,sans-serif;padding:24px;color:#222;}
+        h2{color:#b71c1c;margin:0 0 4px;font-size:18px;}
+        .sub{color:#666;font-size:12px;margin-bottom:16px;}
+        table{width:100%;border-collapse:collapse;font-size:12px;}
+        th,td{border:1px solid #999;padding:6px 8px;text-align:left;}
+        th{background:#fff5f5;color:#b71c1c;font-weight:700;}
+        tr:nth-child(even){background:#fafafa;}
+        @media print{ body{padding:0} }
+      </style></head><body>
+      <h2>${esc(title)}</h2>
+      <div class="sub">Dicetak: ${new Date().toLocaleString("id-ID")}</div>
+      <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { w.focus(); w.print(); }, 400);
+  } catch (e) { toast("Gagal ekspor PDF: " + e.message, "err"); }
+}
+function exportStokBarang(format) {
+  const q = $("search").value.toLowerCase().trim(), f = $("filter").value;
+  const list = items.filter(i => {
+    if (q && !(i.nama || "").toLowerCase().includes(q)) return false;
+    const stok = getEffectiveStock(i);
+    if (f === "zero" && stok !== 0) return false;
+    if (f === "available" && stok <= 0) return false;
+    return true;
+  }).sort((a, b) => (a.nama || "").localeCompare(b.nama || "", "id"));
+  const headers = ["Nama Barang", "Kategori", "Stok On-Hand", "Satuan", "Harga Beli (Rp)", "Harga Jual (Rp)", "Barcode"];
+  const rows = list.map(i => [
+    i.nama, i.kategori || "-", getEffectiveStock(i), i.satuan || "pcs",
+    Number(i.harga) || 0, Number(i.harga_jual) || 0, i.barcode || ""
+  ]);
+  if (format === "excel") exportToExcel("Stok Barang", headers, rows, `stok-barang-${dateStr()}`);
+  else exportToPDF("Daftar Stok Barang", headers, rows, `stok-barang-${dateStr()}`);
+}
+function exportAset(format) {
+  const q = val("searchAset").toLowerCase();
+  const fKat = $("filterAsetKategori").value, fUnit = $("filterAsetUnit").value, fKon = $("filterAsetKondisi").value;
+  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  const list = aset.filter(a => {
+    if (q && !(a.nama || "").toLowerCase().includes(q) && !(a.kode_aset || "").toLowerCase().includes(q)) return false;
+    if (fKat !== "all" && a.kategori !== fKat) return false;
+    if (fUnit !== "all" && a.unit_usaha !== fUnit) return false;
+    if (fKon !== "all" && a.kondisi !== fKon) return false;
+    return true;
+  });
+  const headers = ["Kode", "Nama", "Kategori", "Unit Usaha", "Merek", "Jumlah", "Satuan",
+    "Tgl Perolehan", "Sumber", "Harga Perolehan", "Umur (thn)", "Penyusutan/thn",
+    "Umur Berjalan", "Akumulasi", "Nilai Buku", "Kondisi", "Status", "PJ", "Keterangan"];
+  const rows = list.map(a => {
+    const d = depreciation(a, posisi);
+    return [
+      a.kode_aset || "-", a.nama, a.kategori, a.unit_usaha, a.merek || "-",
+      a.jumlah, a.satuan, a.tanggal_perolehan || "-", a.sumber_perolehan || "-",
+      Number(a.harga) || 0, a.umur_ekonomis,
+      Math.round(d.perTahun), d.umurBerjalan.toFixed(2),
+      Math.round(d.akumulasi), Math.round(d.nilaiBuku),
+      a.kondisi, a.status_kepemilikan || "-",
+      a.penanggung_jawab || "-", a.keterangan || "-"
+    ];
+  });
+  if (format === "excel") exportToExcel("Inventaris Aset", headers, rows, `inventaris-aset-${dateStr()}`);
+  else exportToPDF(`Inventaris Aset Tetap — Posisi ${posisi}`, headers, rows, `inventaris-aset-${dateStr()}`);
+}
+function exportKeuangan(format) {
+  const f = $("filterKeuangan").value;
+  const list = keuangan.filter(k => f === "all" || k.tipe === f);
+  const tipeLabel = { pendapatan_lain: "Pendapatan", beban_lain: "Beban", modal: "Modal", prive: "Prive", utang: "Utang", bayar_utang: "Bayar Utang" };
+  const headers = ["Tanggal", "Tipe", "Kategori", "Keterangan", "Nama Pencatat", "Jumlah (Rp)"];
+  const rows = list.slice().reverse().map(k => [
+    k.waktu, tipeLabel[k.tipe] || k.tipe, k.kategori || "-", k.keterangan || "-",
+    k.nama || "-", Number(k.jumlah) || 0
+  ]);
+  if (format === "excel") exportToExcel("Keuangan Lain", headers, rows, `keuangan-lain-${dateStr()}`);
+  else exportToPDF("Daftar Keuangan Lain", headers, rows, `keuangan-lain-${dateStr()}`);
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 document.addEventListener("DOMContentLoaded", () => {
@@ -2319,8 +2277,26 @@ document.addEventListener("DOMContentLoaded", () => {
   $("posDiskon").addEventListener("input", updatePosSummary);
   $("posTunai").addEventListener("input", updatePosSummary);
 
-  // REVISI 1: inisialisasi scanner
   initScanner();
+
+  // KAMERA — Kasir
+  if ($("btnScanCamera")) {
+    $("btnScanCamera").addEventListener("click", () => {
+      openCameraScanner(async (code) => { beepOK(); await handleScanCode(code); }, "📷 Scan Barcode Barang");
+    });
+  }
+  // KAMERA — Kode Aset
+  if ($("btnScanKodeAset")) {
+    $("btnScanKodeAset").addEventListener("click", () => {
+      openCameraScanner((code) => {
+        $("aKode").value = code;
+        toast("Kode aset terisi: " + code, "ok");
+      }, "📷 Scan Kode Aset");
+    });
+  }
+  if ($("cameraModal")) {
+    $("cameraModal").addEventListener("click", (e) => { if (e.target === $("cameraModal")) closeCameraScanner(); });
+  }
 
   $("btnSaveAset").addEventListener("click", handleSaveAset);
   $("btnCancelAset").addEventListener("click", resetAsetForm);
@@ -2383,10 +2359,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === $("receiptModal")) closeReceipt();
   });
 
-  // Global shortcut: scan bar tetap fokus kalau user klik di area jual
   document.addEventListener("keydown", (e) => {
     if (e.key === "F2") {
-      // F2 = shortcut paksa fokus ke scanner (opsional)
       const jual = $("view-jual");
       if (jual && jual.classList.contains("active")) {
         e.preventDefault();
