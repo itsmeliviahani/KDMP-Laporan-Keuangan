@@ -1973,38 +1973,143 @@ function filterByPeriod(list, start, end, key = "waktu") {
   const e = new Date(end + "-01T23:59:59");
   e.setMonth(e.getMonth() + 1); e.setDate(0); e.setHours(23,59,59);
   return list.filter(x => { const d = new Date(String(x[key]).replace(" ", "T")); return !isNaN(d) && d >= s && d <= e; });
-}
 function computeLabaRugi(start, end) {
   const p = filterByPeriod(penjualan, start, end);
   const k = filterByPeriod(keuangan, start, end);
   const pendapatan = p.reduce((s, x) => s + (Number(x.subtotal) || 0), 0);
-  const hpp = p.reduce((s, x) => { const it = items.find(i => i.nama === x.nama); return s + (Number(x.qty) || 0) * getHargaBeli(it); }, 0);
-  const beban = k.filter(x => x.tipe === "beban_lain").reduce((s, x) => s + Number(x.jumlah || 0), 0);
-  const pendLain = k.filter(x => x.tipe === "pendapatan_lain").reduce((s, x) => s + Number(x.jumlah || 0), 0);
-  return { pendapatan, hpp, labaKotor: pendapatan - hpp, beban, pendLain, labaBersih: pendapatan - hpp + pendLain - beban };
+
+  // FIFO untuk HPP & opname periode
+  const fifo = computeFIFO(start, end);
+  const hpp = fifo.hpp;
+  const opnameNet = fifo.opnameNet;
+
+  const beban = k.filter(x => x.tipe === "beban_lain")
+    .reduce((s, x) => s + Number(x.jumlah || 0), 0);
+  const pendLain = k.filter(x => x.tipe === "pendapatan_lain")
+    .reduce((s, x) => s + Number(x.jumlah || 0), 0);
+
+  // Penyusutan untuk periode = akumulasi(end) − akumulasi(awal)
+  const depStart = aset.reduce((s, a) => s + depreciation(a, start + "-01").akumulasi, 0);
+  const [y, m] = end.split("-").map(Number);
+  const lastDay = new Date(y, m, 0).getDate();
+  const depEnd = aset.reduce((s, a) =>
+    s + depreciation(a, `${end}-${String(lastDay).padStart(2, "0")}`).akumulasi, 0);
+  const depresiasi = Math.max(0, depEnd - depStart);
+
+  const labaKotor = pendapatan - hpp;
+  const labaBersih = labaKotor + pendLain + opnameNet - beban - depresiasi;
+
+  return { pendapatan, hpp, labaKotor, beban, pendLain, opnameNet, depresiasi, labaBersih };
 }
 function hitungLabaKumulatif() {
   const totalPenjualan = penjualan.reduce((s, p) => s + (Number(p.subtotal) || 0), 0);
-  const totalHpp = penjualan.reduce((s, p) => {
-    const it = items.find(i => i.nama === p.nama);
-    return s + (Number(p.qty) || 0) * getHargaBeli(it);
-  }, 0);
+  const fifo = computeFIFO(); // full history
   const beban = keuangan.filter(k => k.tipe === "beban_lain")
     .reduce((s, k) => s + Number(k.jumlah || 0), 0);
-  const pend  = keuangan.filter(k => k.tipe === "pendapatan_lain")
+  const pend = keuangan.filter(k => k.tipe === "pendapatan_lain")
     .reduce((s, k) => s + Number(k.jumlah || 0), 0);
-
-  // 🔧 FIX #1: kurangi laba dengan akumulasi penyusutan aset
-  const posisi  = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
   const akumDep = aset.reduce((s, a) => s + depreciation(a, posisi).akumulasi, 0);
 
-  // 🔧 FIX #2: perhitungkan net opname (selisih stok fisik)
-  //   r.jumlah = selisih (bisa +/−), r.harga_satuan = harga beli
-  const opnameNet = riwayat
-    .filter(r => r.tipe === "opname")
-    .reduce((s, r) => s + (Number(r.jumlah) || 0) * (Number(r.harga_satuan) || 0), 0);
+  return totalPenjualan - fifo.hpp - beban + pend + fifo.opnameNet - akumDep;
+}
+/* ============================================================
+   FIFO ENGINE — rekonstruksi batch dari riwayat transaksi
+   ============================================================
+   - "baru"/"masuk"  → tambah batch (qty, harga)
+   - "keluar"        → konsumsi dari batch tertua (FIFO)
+   - "opname" (+)    → tambah batch @ harga saat opname
+   - "opname" (−)    → konsumsi dari batch tertua (FIFO) → loss
+   - "edit"          → diabaikan (tidak mengubah nilai stok)
 
-  return totalPenjualan - totalHpp - beban + pend - akumDep + opnameNet;
+   Return:
+     persediaan : nilai batch tersisa (state akhir periode)
+     hpp        : total HPP dari penjualan (periode bila start/end diberi)
+     opnameNet  : gain − loss dari opname (periode bila start/end diberi)
+     byItem     : detail per barang
+   ============================================================ */
+function computeFIFO(startDate, endDate) {
+  const s = startDate ? new Date(startDate + "T00:00:00") : null;
+  let e = null;
+  if (endDate) {
+    const [y, m] = endDate.split("-").map(Number);
+    const last = new Date(y, m, 0).getDate();
+    e = new Date(y, m - 1, last, 23, 59, 59);
+  }
+
+  const byItem = {};
+  riwayat.forEach(r => {
+    const k = norm(r.nama);
+    if (!byItem[k]) byItem[k] = [];
+    byItem[k].push(r);
+  });
+
+  let totalHPP = 0, totalOpnameNet = 0;
+  const itemState = {};
+
+  Object.keys(byItem).forEach(k => {
+    const events = byItem[k].slice().sort((a, b) =>
+      new Date(String(a.waktu).replace(" ", "T")) -
+      new Date(String(b.waktu).replace(" ", "T"))
+    );
+    const batches = []; // queue FIFO: {qty, harga}
+    let hpp = 0, opnameNet = 0;
+
+    events.forEach(ev => {
+      const d = new Date(String(ev.waktu).replace(" ", "T"));
+      if (isNaN(d)) return;
+      if (e && d > e) return;                    // state berhenti di endDate
+      const qty = Number(ev.jumlah) || 0;
+      const harga = Number(ev.harga_satuan) || 0;
+      const inPeriod = !s || d >= s;             // hanya hitung HPP/opname di periode
+
+      if (ev.tipe === "baru" || ev.tipe === "masuk") {
+        if (qty > 0) batches.push({ qty, harga });
+      } else if (ev.tipe === "keluar") {
+        let remaining = qty, cost = 0;
+        while (remaining > 0 && batches.length > 0) {
+          const b = batches[0];
+          const take = Math.min(remaining, b.qty);
+          cost += take * b.harga;
+          b.qty -= take;
+          remaining -= take;
+          if (b.qty <= 0) batches.shift();
+        }
+        if (remaining > 0) cost += remaining * harga; // fallback data lama
+        if (inPeriod) hpp += cost;
+      } else if (ev.tipe === "opname") {
+        if (qty > 0) {
+          batches.push({ qty, harga });
+          if (inPeriod) opnameNet += qty * harga;
+        } else if (qty < 0) {
+          let remaining = -qty, cost = 0;
+          while (remaining > 0 && batches.length > 0) {
+            const b = batches[0];
+            const take = Math.min(remaining, b.qty);
+            cost += take * b.harga;
+            b.qty -= take;
+            remaining -= take;
+            if (b.qty <= 0) batches.shift();
+          }
+          if (remaining > 0) cost += remaining * harga;
+          if (inPeriod) opnameNet -= cost; // loss @ FIFO cost
+        }
+      }
+    });
+
+    const nilai = batches.reduce((acc, b) => acc + b.qty * b.harga, 0);
+    const qtySisa = batches.reduce((acc, b) => acc + b.qty, 0);
+    itemState[k] = { qty: qtySisa, nilai, hpp, opnameNet, batches };
+    totalHPP += hpp;
+    totalOpnameNet += opnameNet;
+  });
+
+  return {
+    persediaan: Object.values(itemState).reduce((acc, x) => acc + x.nilai, 0),
+    hpp: totalHPP,
+    opnameNet: totalOpnameNet,
+    byItem: itemState
+  };
 }
 function renderLaporan() {
   const s = $("periodStart").value, e = $("periodEnd").value;
@@ -2012,15 +2117,19 @@ function renderLaporan() {
   const lr = computeLabaRugi(s, e);
 
   $("tableLabaRugi").innerHTML = `
-    <tr><td style="text-align:left">Pendapatan Penjualan</td><td style="text-align:right">${rp(lr.pendapatan)}</td></tr>
-    <tr><td style="text-align:left">Harga Pokok Penjualan</td><td style="text-align:right">(${rp(lr.hpp)})</td></tr>
-    <tr class="laba-kotor"><td style="text-align:left">Laba Kotor</td><td style="text-align:right">${rp(lr.labaKotor)}</td></tr>
-    <tr><td style="text-align:left">Pendapatan Lain-lain</td><td style="text-align:right">${rp(lr.pendLain)}</td></tr>
-    <tr><td style="text-align:left">Beban Lain-lain</td><td style="text-align:right">(${rp(lr.beban)})</td></tr>
-    <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
+  <tr><td style="text-align:left">Pendapatan Penjualan</td><td style="text-align:right">${rp(lr.pendapatan)}</td></tr>
+  <tr><td style="text-align:left">Harga Pokok Penjualan (FIFO)</td><td style="text-align:right">(${rp(lr.hpp)})</td></tr>
+  <tr class="laba-kotor"><td style="text-align:left">Laba Kotor</td><td style="text-align:right">${rp(lr.labaKotor)}</td></tr>
+  <tr><td style="text-align:left">Pendapatan Lain-lain</td><td style="text-align:right">${rp(lr.pendLain)}</td></tr>
+  <tr><td style="text-align:left">Pendapatan/(Beban) Opname Stok</td><td style="text-align:right">${rp(lr.opnameNet)}</td></tr>
+  <tr><td style="text-align:left">Beban Lain-lain</td><td style="text-align:right">(${rp(lr.beban)})</td></tr>
+  <tr><td style="text-align:left">Beban Penyusutan Aset</td><td style="text-align:right">(${rp(lr.depresiasi)})</td></tr>
+  <tr class="laba-bersih${lr.labaBersih < 0 ? " negatif" : ""}"><td style="text-align:left">Laba Bersih</td><td style="text-align:right">${rp(lr.labaBersih)}</td></tr>`;
 
-  const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
-  const persediaan = items.reduce((s, i) => s + getEffectiveStock(i) * getHargaBeli(i), 0);
+ const posisi = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  // Persediaan = nilai batch FIFO yang tersisa (state saat ini)
+const fifo = computeFIFO();
+const persediaan = fifo.persediaan;
   const asetNeto = aset.reduce((s, a) => s + depreciation(a, posisi).nilaiBuku, 0);
   const totalMasuk = keuangan.filter(k => ["modal","pendapatan_lain","utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
   const totalKeluar = keuangan.filter(k => ["beban_lain","prive","bayar_utang"].includes(k.tipe)).reduce((s,k)=>s+Number(k.jumlah||0),0);
