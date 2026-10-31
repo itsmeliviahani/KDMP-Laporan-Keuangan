@@ -1984,11 +1984,27 @@ function computeLabaRugi(start, end) {
   return { pendapatan, hpp, labaKotor: pendapatan - hpp, beban, pendLain, labaBersih: pendapatan - hpp + pendLain - beban };
 }
 function hitungLabaKumulatif() {
-  const totalPenjualan = penjualan.reduce((s, p) => s + (Number(p.subtotal)||0), 0);
-  const totalHpp = penjualan.reduce((s, p) => { const it = items.find(i => i.nama === p.nama); return s + (Number(p.qty)||0) * getHargaBeli(it); }, 0);
-  const beban = keuangan.filter(k=>k.tipe==="beban_lain").reduce((s,k)=>s+Number(k.jumlah||0),0);
-  const pend = keuangan.filter(k=>k.tipe==="pendapatan_lain").reduce((s,k)=>s+Number(k.jumlah||0),0);
-  return totalPenjualan - totalHpp - beban + pend;
+  const totalPenjualan = penjualan.reduce((s, p) => s + (Number(p.subtotal) || 0), 0);
+  const totalHpp = penjualan.reduce((s, p) => {
+    const it = items.find(i => i.nama === p.nama);
+    return s + (Number(p.qty) || 0) * getHargaBeli(it);
+  }, 0);
+  const beban = keuangan.filter(k => k.tipe === "beban_lain")
+    .reduce((s, k) => s + Number(k.jumlah || 0), 0);
+  const pend  = keuangan.filter(k => k.tipe === "pendapatan_lain")
+    .reduce((s, k) => s + Number(k.jumlah || 0), 0);
+
+  // 🔧 FIX #1: kurangi laba dengan akumulasi penyusutan aset
+  const posisi  = val("aPosisi") || new Date().toISOString().slice(0, 10);
+  const akumDep = aset.reduce((s, a) => s + depreciation(a, posisi).akumulasi, 0);
+
+  // 🔧 FIX #2: perhitungkan net opname (selisih stok fisik)
+  //   r.jumlah = selisih (bisa +/−), r.harga_satuan = harga beli
+  const opnameNet = riwayat
+    .filter(r => r.tipe === "opname")
+    .reduce((s, r) => s + (Number(r.jumlah) || 0) * (Number(r.harga_satuan) || 0), 0);
+
+  return totalPenjualan - totalHpp - beban + pend - akumDep + opnameNet;
 }
 function renderLaporan() {
   const s = $("periodStart").value, e = $("periodEnd").value;
