@@ -1460,7 +1460,7 @@ function printReceipt() {
 }
 
 /* ============================================================
-   CAMERA SCANNER (html5-qrcode)
+   CAMERA SCANNER (html5-qrcode) — v2 robust
    ============================================================ */
 let html5QrCode = null;
 let cameraCallback = null;
@@ -1468,33 +1468,98 @@ let cameraCallback = null;
 async function openCameraScanner(callback, title) {
   cameraCallback = callback;
   if (title) $("cameraTitle").textContent = title;
+
+  // Reset dulu — pastikan tidak ada instance nyangkut dari pemakaian sebelumnya
+  await stopCameraSilently();
+  $("cameraReader").innerHTML = "";
   $("cameraModal").classList.add("show");
-  if (!html5QrCode) html5QrCode = new Html5Qrcode("cameraReader");
+
+  // Buat instance BARU setiap kali (bukan di-cache)
+  html5QrCode = new Html5Qrcode("cameraReader", { verbose: false });
+
+  // Cek environment dulu — kalau bukan HTTPS/localhost, langsung kasih pesan jelas
+  const isSecure = location.protocol === "https:"
+                || location.hostname === "localhost"
+                || location.hostname === "127.0.0.1";
+  if (!isSecure) {
+    toast("Kamera butuh HTTPS. Buka aplikasi via https:// atau localhost, bukan file://.", "err");
+    console.error("[Camera] blocked: insecure context. protocol =", location.protocol);
+    closeCameraScanner();
+    return;
+  }
+
+  // Cek dukungan API
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    toast("Browser tidak mendukung akses kamera. Coba Chrome / Safari terbaru.", "err");
+    closeCameraScanner();
+    return;
+  }
+
   try {
+    // Dapatkan daftar kamera — pilih yang belakang kalau ada
+    const cameras = await Html5Qrcode.getCameras();
+    if (!cameras || cameras.length === 0) {
+      throw new Error("Tidak ada kamera terdeteksi di perangkat ini");
+    }
+    const back = cameras.find(c => /back|rear|environment|belakang/i.test(c.label || ""));
+    const cameraId = (back || cameras[cameras.length - 1]).id;
+    console.log("[Camera] using:", (back || cameras[cameras.length - 1]).label, cameraId);
+
     await html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: { width: 260, height: 180 } },
+      cameraId,
+      {
+        fps: 10,
+        qrbox: (vw, vh) => {
+          const s = Math.min(vw, vh) * 0.75;
+          return { width: Math.floor(s), height: Math.floor(s * 0.7) };
+        },
+        aspectRatio: 1.7
+      },
       (decodedText) => {
+        // Frame decoded
         if (cameraCallback) {
-          try { cameraCallback(decodedText); }
+          const cb = cameraCallback;
+          cameraCallback = null; // cegah double fire
+          try { cb(decodedText); }
           finally { closeCameraScanner(); }
         }
       },
-      () => {}
+      (/* ignore per-frame decode failures */) => {}
     );
+    console.log("[Camera] started OK");
   } catch (err) {
-    toast("Gagal akses kamera: " + err.message, "err");
+    console.error("[Camera] START FAILED:", err);
+    const raw = (err && (err.message || err.name)) ? (err.message || err.name) : String(err);
+    let msg = raw;
+    if (/permission|denied|NotAllowed/i.test(raw))
+      msg = "Izin kamera ditolak. Klik ikon 🔒 di address bar → Camera → Allow, lalu reload.";
+    else if (/notfound|NotFound|devices/i.test(raw))
+      msg = "Kamera tidak terdeteksi. Cek apakah perangkat punya kamera.";
+    else if (/NotReadable|in use|TrackStart/i.test(raw))
+      msg = "Kamera sedang dipakai aplikasi lain. Tutup aplikasi lain yang pakai kamera.";
+    else if (/secure|https/i.test(raw))
+      msg = "Kamera butuh HTTPS.";
+    toast("Gagal akses kamera: " + msg, "err");
     closeCameraScanner();
   }
 }
-async function closeCameraScanner() {
-  $("cameraModal").classList.remove("show");
-  if (html5QrCode && html5QrCode.isScanning) {
-    try { await html5QrCode.stop(); } catch (e) {}
+
+async function stopCameraSilently() {
+  if (html5QrCode) {
+    try {
+      if (html5QrCode.isScanning) await html5QrCode.stop();
+      await html5QrCode.clear();
+    } catch (e) { /* ignore */ }
   }
-  cameraCallback = null;
+  html5QrCode = null;
 }
 
+async function closeCameraScanner() {
+  $("cameraModal").classList.remove("show");
+  await stopCameraSilently();
+  $("cameraReader").innerHTML = "";
+  cameraCallback = null;
+}
 /* ============================================================
    ASET
    ============================================================ */
